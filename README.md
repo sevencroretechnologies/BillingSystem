@@ -3,7 +3,7 @@
 A simple full-stack billing / invoice management application.
 
 * **Backend:** Laravel 10 REST API (PHP 8.1+) with SQLite by default
-* **Frontend:** React 19 (Vite) + Bootstrap 5, Axios, React Router
+* **Frontend:** React 19 (Create React App) + Bootstrap 5, Axios, React Router
 
 > Note on versions: Laravel 10 is used because this project targets PHP 8.1.
 > All features specified in the brief (MVC, migrations, models, controllers,
@@ -63,11 +63,14 @@ BillingSystem/
 │   │   └── seeders/         # Sample customers + items
 │   ├── resources/views/invoices/pdf.blade.php   # PDF template
 │   └── routes/api.php
-└── frontend/                # React + Vite + Bootstrap
+└── frontend/                # React (Create React App) + Bootstrap
+    ├── public/              # index.html + static assets
     ├── src/
     │   ├── api/             # Axios client + endpoint helpers
     │   ├── components/      # Reusable UI (Layout, DataTable, FormField, ...)
-    │   └── pages/           # Customer/Item/Invoice pages (list, form, view)
+    │   ├── pages/           # Customer/Item/Invoice pages (list, form, view)
+    │   ├── App.jsx          # Route definitions
+    │   └── index.js         # React entry point
     └── .env.example
 ```
 
@@ -126,17 +129,20 @@ npm install
 # Environment (optional – defaults to http://localhost:8000)
 cp .env.example .env
 
-# Start the dev server (http://localhost:5173)
-npm run dev
+# Start the dev server (http://localhost:3000)
+npm start
 ```
 
-Open http://localhost:5173 in your browser. The sample seeder creates two
+Open http://localhost:3000 in your browser. The sample seeder creates two
 customers and three items so you can create an invoice immediately.
+
+> Environment variables exposed to the React app **must** be prefixed with
+> `REACT_APP_` (Create React App convention). See `frontend/.env.example`.
 
 ### 4. Production build (frontend)
 ```bash
 cd frontend
-npm run build   # outputs dist/
+npm run build   # outputs build/
 ```
 
 ## API Endpoints

@@ -29,11 +29,12 @@ export default function InvoiceView() {
   if (!invoice) return null;
 
   const company = {
-    name: import.meta.env.VITE_COMPANY_NAME || 'Your Company Pvt. Ltd.',
-    address: import.meta.env.VITE_COMPANY_ADDRESS || '123 Business Street, City',
-    phone: import.meta.env.VITE_COMPANY_PHONE || '+00 0000 0000',
-    email: import.meta.env.VITE_COMPANY_EMAIL || 'billing@example.com',
-    currencySymbol: import.meta.env.VITE_CURRENCY_SYMBOL || '₹',
+    name: process.env.REACT_APP_COMPANY_NAME || 'Your Company Pvt. Ltd.',
+    address:
+      process.env.REACT_APP_COMPANY_ADDRESS || '123 Business Street, City',
+    phone: process.env.REACT_APP_COMPANY_PHONE || '+00 0000 0000',
+    email: process.env.REACT_APP_COMPANY_EMAIL || 'billing@example.com',
+    currencySymbol: process.env.REACT_APP_CURRENCY_SYMBOL || '₹',
   };
 
   return (
