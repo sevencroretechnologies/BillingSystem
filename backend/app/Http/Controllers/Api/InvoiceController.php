@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\InvoiceResource;
+use App\Models\Company;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
+use App\Models\Tax;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -63,8 +65,9 @@ class InvoiceController extends Controller
 
     /**
      * POST /api/invoices
-     * Create a new invoice with line items. Subtotal / tax / grand total are
-     * computed on the server from the submitted item rows for safety.
+     * Create a new invoice with line items. Price is entered per line; tax
+     * is pulled from the taxes table (SGST + CGST) and applied on the
+     * invoice subtotal. Totals are computed on the server for safety.
      */
     public function store(Request $request): JsonResponse
     {
@@ -77,54 +80,28 @@ class InvoiceController extends Controller
             'items.*.item_name' => 'required|string|max:255',
             'items.*.quantity' => 'required|integer|min:1',
             'items.*.price' => 'required|numeric|min:0',
-            'items.*.tax_percent' => 'nullable|numeric|min:0|max:100',
         ]);
 
         try {
             $invoice = DB::transaction(function () use ($validated) {
+                $tax = Tax::current();
+
                 $invoice = Invoice::create([
                     'invoice_number' => Invoice::generateInvoiceNumber(),
                     'customer_id' => $validated['customer_id'],
                     'invoice_date' => $validated['invoice_date'],
                     'notes' => $validated['notes'] ?? null,
                     'subtotal' => 0,
+                    'sgst_percent' => $tax->sgst,
+                    'cgst_percent' => $tax->cgst,
+                    'sgst_amount' => 0,
+                    'cgst_amount' => 0,
                     'tax_total' => 0,
                     'grand_total' => 0,
                 ]);
 
-                $subtotal = 0;
-                $taxTotal = 0;
-
-                foreach ($validated['items'] as $row) {
-                    $qty = (int) $row['quantity'];
-                    $price = (float) $row['price'];
-                    $taxPercent = (float) ($row['tax_percent'] ?? 0);
-
-                    $lineSubtotal = round($qty * $price, 2);
-                    $lineTax = round($lineSubtotal * ($taxPercent / 100), 2);
-                    $lineTotal = round($lineSubtotal + $lineTax, 2);
-
-                    InvoiceItem::create([
-                        'invoice_id' => $invoice->id,
-                        'item_id' => $row['item_id'] ?? null,
-                        'item_name' => $row['item_name'],
-                        'quantity' => $qty,
-                        'price' => $price,
-                        'tax_percent' => $taxPercent,
-                        'line_subtotal' => $lineSubtotal,
-                        'line_tax' => $lineTax,
-                        'line_total' => $lineTotal,
-                    ]);
-
-                    $subtotal += $lineSubtotal;
-                    $taxTotal += $lineTax;
-                }
-
-                $invoice->update([
-                    'subtotal' => round($subtotal, 2),
-                    'tax_total' => round($taxTotal, 2),
-                    'grand_total' => round($subtotal + $taxTotal, 2),
-                ]);
+                $subtotal = $this->persistItems($invoice, $validated['items']);
+                $this->applyTotals($invoice, $subtotal, $tax);
 
                 return $invoice->load(['customer', 'items']);
             });
@@ -165,7 +142,8 @@ class InvoiceController extends Controller
 
     /**
      * PUT /api/invoices/{id}
-     * Update an existing invoice. Replaces all items and recomputes totals.
+     * Update an existing invoice. Replaces all items and recomputes totals
+     * against the current SGST / CGST configuration.
      */
     public function update(Request $request, int $id): JsonResponse
     {
@@ -178,7 +156,6 @@ class InvoiceController extends Controller
             'items.*.item_name' => 'required_with:items|string|max:255',
             'items.*.quantity' => 'required_with:items|integer|min:1',
             'items.*.price' => 'required_with:items|numeric|min:0',
-            'items.*.tax_percent' => 'nullable|numeric|min:0|max:100',
         ]);
 
         try {
@@ -192,41 +169,17 @@ class InvoiceController extends Controller
                 ], fn ($v) => $v !== null));
 
                 if (isset($validated['items'])) {
+                    $tax = Tax::current();
                     $invoice->items()->delete();
 
-                    $subtotal = 0;
-                    $taxTotal = 0;
-
-                    foreach ($validated['items'] as $row) {
-                        $qty = (int) $row['quantity'];
-                        $price = (float) $row['price'];
-                        $taxPercent = (float) ($row['tax_percent'] ?? 0);
-
-                        $lineSubtotal = round($qty * $price, 2);
-                        $lineTax = round($lineSubtotal * ($taxPercent / 100), 2);
-                        $lineTotal = round($lineSubtotal + $lineTax, 2);
-
-                        InvoiceItem::create([
-                            'invoice_id' => $invoice->id,
-                            'item_id' => $row['item_id'] ?? null,
-                            'item_name' => $row['item_name'],
-                            'quantity' => $qty,
-                            'price' => $price,
-                            'tax_percent' => $taxPercent,
-                            'line_subtotal' => $lineSubtotal,
-                            'line_tax' => $lineTax,
-                            'line_total' => $lineTotal,
-                        ]);
-
-                        $subtotal += $lineSubtotal;
-                        $taxTotal += $lineTax;
-                    }
+                    $subtotal = $this->persistItems($invoice, $validated['items']);
 
                     $invoice->update([
-                        'subtotal' => round($subtotal, 2),
-                        'tax_total' => round($taxTotal, 2),
-                        'grand_total' => round($subtotal + $taxTotal, 2),
+                        'sgst_percent' => $tax->sgst,
+                        'cgst_percent' => $tax->cgst,
                     ]);
+
+                    $this->applyTotals($invoice, $subtotal, $tax);
                 }
 
                 return $invoice->load(['customer', 'items']);
@@ -269,14 +222,16 @@ class InvoiceController extends Controller
     /**
      * GET /api/invoices/{id}/pdf
      * Stream a PDF for the invoice. Pass ?download=1 to force a download.
+     * Company details are pulled from the company table.
      */
     public function pdf(Request $request, int $id): Response
     {
         try {
             $invoice = Invoice::with(['customer', 'items'])->findOrFail($id);
-            $company = config('billing.company');
+            $company = Company::current();
+            $currencySymbol = config('billing.currency_symbol', '₹');
 
-            $pdf = Pdf::loadView('invoices.pdf', compact('invoice', 'company'));
+            $pdf = Pdf::loadView('invoices.pdf', compact('invoice', 'company', 'currencySymbol'));
             $filename = $invoice->invoice_number.'.pdf';
 
             return $request->boolean('download')
@@ -289,5 +244,53 @@ class InvoiceController extends Controller
 
             return response('Failed to render invoice PDF.', 500);
         }
+    }
+
+    /**
+     * Persist the submitted item rows and return the running subtotal
+     * (sum of quantity × price). Prices are taken verbatim from the
+     * request so the caller's entered rate is always honoured.
+     */
+    private function persistItems(Invoice $invoice, array $items): float
+    {
+        $subtotal = 0;
+
+        foreach ($items as $row) {
+            $qty = (int) $row['quantity'];
+            $price = (float) $row['price'];
+            $lineTotal = round($qty * $price, 2);
+
+            InvoiceItem::create([
+                'invoice_id' => $invoice->id,
+                'item_id' => $row['item_id'] ?? null,
+                'item_name' => $row['item_name'],
+                'quantity' => $qty,
+                'price' => $price,
+                'line_total' => $lineTotal,
+            ]);
+
+            $subtotal += $lineTotal;
+        }
+
+        return round($subtotal, 2);
+    }
+
+    /**
+     * Apply the tax rates against the invoice subtotal and persist the
+     * SGST / CGST amounts, combined tax total and grand total.
+     */
+    private function applyTotals(Invoice $invoice, float $subtotal, Tax $tax): void
+    {
+        $sgstAmount = round($subtotal * ((float) $tax->sgst / 100), 2);
+        $cgstAmount = round($subtotal * ((float) $tax->cgst / 100), 2);
+        $taxTotal = round($sgstAmount + $cgstAmount, 2);
+
+        $invoice->update([
+            'subtotal' => $subtotal,
+            'sgst_amount' => $sgstAmount,
+            'cgst_amount' => $cgstAmount,
+            'tax_total' => $taxTotal,
+            'grand_total' => round($subtotal + $taxTotal, 2),
+        ]);
     }
 }

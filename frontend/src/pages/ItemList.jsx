@@ -52,8 +52,6 @@ export default function ItemList() {
 
   const columns = [
     { key: 'name', header: 'Name' },
-    { key: 'price', header: 'Price', render: (r) => Number(r.price).toFixed(2) },
-    { key: 'tax_percent', header: 'Tax %', render: (r) => Number(r.tax_percent).toFixed(2) },
     { key: 'description', header: 'Description' },
     {
       key: 'actions',

@@ -10,12 +10,8 @@ class Item extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'price', 'tax_percent', 'description'];
-
-    protected $casts = [
-        'price' => 'decimal:2',
-        'tax_percent' => 'decimal:2',
-    ];
+    // Items are a simple catalogue entry; pricing is captured per-invoice.
+    protected $fillable = ['name', 'description'];
 
     public function invoiceItems(): HasMany
     {

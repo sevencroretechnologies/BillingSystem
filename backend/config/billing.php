@@ -3,21 +3,14 @@
 return [
     /*
     |--------------------------------------------------------------------------
-    | Company Details
+    | Invoice Presentation
     |--------------------------------------------------------------------------
     |
-    | These values are rendered on the PDF invoice and can be customised
-    | through the .env file without touching code.
+    | Company details now live in the `company` database table and are
+    | managed through the /api/company endpoint. Only presentation-level
+    | values that don't belong to a tenant remain here.
     |
     */
-    'company' => [
-        'name' => env('COMPANY_NAME', 'Your Company Pvt. Ltd.'),
-        'address' => env('COMPANY_ADDRESS', '123 Business Street, City, State'),
-        'phone' => env('COMPANY_PHONE', '+00 0000 0000'),
-        'email' => env('COMPANY_EMAIL', 'billing@example.com'),
-        'website' => env('COMPANY_WEBSITE', 'www.example.com'),
-        'tax_id' => env('COMPANY_TAX_ID', ''),
-        'currency' => env('COMPANY_CURRENCY', 'INR'),
-        'currency_symbol' => env('COMPANY_CURRENCY_SYMBOL', '₹'),
-    ],
+    'currency' => env('BILLING_CURRENCY', 'INR'),
+    'currency_symbol' => env('BILLING_CURRENCY_SYMBOL', '₹'),
 ];

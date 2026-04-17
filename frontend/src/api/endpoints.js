@@ -24,3 +24,33 @@ export const deleteInvoice = (id) => api.delete(`/invoices/${id}`);
 // URL to the invoice PDF — used directly in <a> / <iframe> tags.
 export const invoicePdfUrl = (id, download = false) =>
   `${backendUrl}/api/invoices/${id}/pdf${download ? '?download=1' : ''}`;
+
+// -------- Tax settings (single-row resource) --------
+export const getTax = () => api.get('/tax');
+export const updateTax = (data) => api.put('/tax', data);
+
+// -------- Company settings (single-row resource) --------
+export const getCompany = () => api.get('/company');
+
+/**
+ * Update the company record. When a logo file is provided we send a
+ * multipart form with `_method=PUT` so the file actually reaches Laravel
+ * (browsers cannot send multipart bodies on PUT requests directly).
+ */
+export const updateCompany = ({ company_name, address, phone, email, logo, removeLogo }) => {
+  const form = new FormData();
+  form.append('_method', 'PUT');
+  form.append('company_name', company_name ?? '');
+  form.append('address', address ?? '');
+  form.append('phone', phone ?? '');
+  form.append('email', email ?? '');
+  if (logo instanceof File) {
+    form.append('logo', logo);
+  }
+  if (removeLogo) {
+    form.append('remove_logo', '1');
+  }
+  return api.post('/company', form, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+};

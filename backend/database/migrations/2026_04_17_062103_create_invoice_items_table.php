@@ -8,6 +8,9 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // Invoice items carry the price entered at billing time. Tax is
+        // computed at invoice level (SGST + CGST) so no per-line tax
+        // columns are needed any more.
         Schema::create('invoice_items', function (Blueprint $table) {
             $table->id();
             $table->foreignId('invoice_id')->constrained('invoices')->cascadeOnDelete();
@@ -15,9 +18,6 @@ return new class extends Migration
             $table->string('item_name');
             $table->integer('quantity')->default(1);
             $table->decimal('price', 12, 2)->default(0);
-            $table->decimal('tax_percent', 5, 2)->default(0);
-            $table->decimal('line_subtotal', 14, 2)->default(0);
-            $table->decimal('line_tax', 14, 2)->default(0);
             $table->decimal('line_total', 14, 2)->default(0);
             $table->timestamps();
         });

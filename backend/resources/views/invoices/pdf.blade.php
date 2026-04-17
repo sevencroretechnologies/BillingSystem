@@ -11,6 +11,7 @@
         .header { display: table; width: 100%; margin-bottom: 24px; }
         .header .col { display: table-cell; vertical-align: top; }
         .company-name { font-size: 22px; font-weight: bold; color: #1a73e8; }
+        .logo { max-height: 72px; max-width: 180px; margin-bottom: 8px; }
         .muted { color: #666; }
         .right { text-align: right; }
         .mt-8 { margin-top: 8px; }
@@ -19,7 +20,7 @@
         table { width: 100%; border-collapse: collapse; }
         th, td { border: 1px solid #ddd; padding: 8px; }
         th { background: #f5f5f5; text-align: left; }
-        .totals { width: 40%; margin-left: auto; margin-top: 16px; }
+        .totals { width: 45%; margin-left: auto; margin-top: 16px; }
         .totals td { border: none; padding: 4px 8px; }
         .totals .grand { font-weight: bold; font-size: 14px; border-top: 2px solid #1a73e8; padding-top: 8px; }
         .label { color: #888; font-size: 10px; text-transform: uppercase; letter-spacing: .5px; }
@@ -28,17 +29,24 @@
 </head>
 <body>
     <div class="container">
+        {{-- Company header rendered from the database `company` row. --}}
         <div class="header">
             <div class="col">
-                <div class="company-name">{{ $company['name'] }}</div>
-                <div class="muted mt-8">{{ $company['address'] }}</div>
-                <div class="muted">{{ $company['phone'] }} &middot; {{ $company['email'] }}</div>
-                @if(!empty($company['website']))
-                    <div class="muted">{{ $company['website'] }}</div>
+                @if($company->logo)
+                    @php
+                        $logoPath = storage_path('app/public/'.$company->logo);
+                    @endphp
+                    @if(file_exists($logoPath))
+                        <img class="logo" src="{{ $logoPath }}" alt="Logo">
+                    @endif
                 @endif
-                @if(!empty($company['tax_id']))
-                    <div class="muted">Tax ID: {{ $company['tax_id'] }}</div>
-                @endif
+                <div class="company-name">{{ $company->company_name }}</div>
+                @if($company->address)<div class="muted mt-8">{{ $company->address }}</div>@endif
+                <div class="muted">
+                    @if($company->phone){{ $company->phone }}@endif
+                    @if($company->phone && $company->email) &middot; @endif
+                    @if($company->email){{ $company->email }}@endif
+                </div>
             </div>
             <div class="col right">
                 <h1>INVOICE</h1>
@@ -55,6 +63,11 @@
             @if($invoice->customer?->address)<div class="muted">{{ $invoice->customer->address }}</div>@endif
         </div>
 
+        {{-- Item table. Tax is calculated at invoice level, so each row
+             shows the effective (SGST + CGST) percentage for reference. --}}
+        @php
+            $combinedTax = (float) $invoice->sgst_percent + (float) $invoice->cgst_percent;
+        @endphp
         <table class="mt-24">
             <thead>
                 <tr>
@@ -72,26 +85,35 @@
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $item->item_name }}</td>
                         <td class="right">{{ $item->quantity }}</td>
-                        <td class="right">{{ $company['currency_symbol'] }}{{ number_format((float) $item->price, 2) }}</td>
-                        <td class="right">{{ number_format((float) $item->tax_percent, 2) }}%</td>
-                        <td class="right">{{ $company['currency_symbol'] }}{{ number_format((float) $item->line_total, 2) }}</td>
+                        <td class="right">{{ $currencySymbol }}{{ number_format((float) $item->price, 2) }}</td>
+                        <td class="right">{{ number_format($combinedTax, 2) }}%</td>
+                        <td class="right">{{ $currencySymbol }}{{ number_format((float) $item->line_total, 2) }}</td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
 
+        {{-- Totals section with SGST + CGST breakdown. --}}
         <table class="totals">
             <tr>
                 <td class="label">Subtotal</td>
-                <td class="right">{{ $company['currency_symbol'] }}{{ number_format((float) $invoice->subtotal, 2) }}</td>
+                <td class="right">{{ $currencySymbol }}{{ number_format((float) $invoice->subtotal, 2) }}</td>
             </tr>
             <tr>
-                <td class="label">Tax</td>
-                <td class="right">{{ $company['currency_symbol'] }}{{ number_format((float) $invoice->tax_total, 2) }}</td>
+                <td class="label">SGST ({{ number_format((float) $invoice->sgst_percent, 2) }}%)</td>
+                <td class="right">{{ $currencySymbol }}{{ number_format((float) $invoice->sgst_amount, 2) }}</td>
+            </tr>
+            <tr>
+                <td class="label">CGST ({{ number_format((float) $invoice->cgst_percent, 2) }}%)</td>
+                <td class="right">{{ $currencySymbol }}{{ number_format((float) $invoice->cgst_amount, 2) }}</td>
+            </tr>
+            <tr>
+                <td class="label">Total Tax</td>
+                <td class="right">{{ $currencySymbol }}{{ number_format((float) $invoice->tax_total, 2) }}</td>
             </tr>
             <tr class="grand">
                 <td>Grand Total</td>
-                <td class="right">{{ $company['currency_symbol'] }}{{ number_format((float) $invoice->grand_total, 2) }}</td>
+                <td class="right">{{ $currencySymbol }}{{ number_format((float) $invoice->grand_total, 2) }}</td>
             </tr>
         </table>
 

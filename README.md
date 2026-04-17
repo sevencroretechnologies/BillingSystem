@@ -17,22 +17,38 @@ A simple full-stack billing / invoice management application.
 - List customers with search (name, phone, email) and pagination
 
 ### Item / Product Module
-- Add / edit / delete item (name, price, tax %, description)
+- Add / edit / delete item (name, description)
+- Items are a lightweight catalog — **prices are entered per line** when
+  creating an invoice so different customers can be billed at different rates.
 - List items with search and pagination
+
+### Tax Settings
+- Single-row `taxes` table with **SGST** and **CGST** percentages
+- Managed from the frontend under **Settings → Tax**
+- Invoices snapshot the active SGST/CGST rates at creation time so historical
+  totals don't change if the rates are later edited.
+
+### Company Settings
+- Single-row `company` table storing name, address, phone, email and logo
+- Managed from the frontend under **Settings → Company** (logo upload supported)
+- Company details are **not** stored in `.env` — the invoice views and PDF read
+  them directly from the database.
 
 ### Billing / Invoice Module
 - Create invoice:
   - Select customer from dropdown
-  - Add multiple items, auto-fill price & tax from the selected item
-  - Adjust quantity, price, tax %; totals recalculate live
-  - Subtotal, tax and grand total computed on the server
+  - Add multiple items, manually enter the price for each line
+  - Tax (SGST + CGST) is fetched from the `taxes` table and applied to the
+    invoice subtotal; totals recalculate live
+  - Subtotal, SGST / CGST breakdown and grand total computed on the server
 - Auto-generated invoice numbers (`INV-000001`, `INV-000002`, ...)
-- View invoice details (clean printable layout)
+- View invoice details (clean printable layout with company logo)
 - List invoices with search (invoice # or customer name) and date range filter
 
 ### Invoice PDF
 - Server-rendered PDF using [`barryvdh/laravel-dompdf`](https://github.com/barryvdh/laravel-dompdf)
-- Includes company details, customer details, item table (qty, price, tax, total), final total
+- Includes company details + logo, customer details, item table (qty, price,
+  effective tax %, total) and SGST / CGST breakdown
 - Streamable or downloadable (`?download=1`)
 - `Print` button on the invoice view page uses `window.print()`
 
@@ -57,10 +73,10 @@ BillingSystem/
 │   │       ├── Item.php
 │   │       ├── Invoice.php
 │   │       └── InvoiceItem.php
-│   ├── config/billing.php   # Company display settings
+│   ├── config/billing.php   # Currency symbol only (company is in DB)
 │   ├── database/
-│   │   ├── migrations/      # customers, items, invoices, invoice_items
-│   │   └── seeders/         # Sample customers + items
+│   │   ├── migrations/      # customers, items, invoices, invoice_items, taxes, company
+│   │   └── seeders/         # Sample customers, items, default tax + company
 │   ├── resources/views/invoices/pdf.blade.php   # PDF template
 │   └── routes/api.php
 └── frontend/                # React (Create React App) + Bootstrap
@@ -80,6 +96,8 @@ BillingSystem/
 - `Invoice` belongsTo `Customer`, hasMany `InvoiceItem`
 - `InvoiceItem` belongsTo `Invoice` and `Item`
 - `Item` hasMany `InvoiceItem`
+- `Tax` — single-row settings (SGST, CGST)
+- `Company` — single-row settings (name, address, phone, email, logo)
 
 ## Step-by-Step Setup
 
@@ -110,6 +128,10 @@ touch database/database.sqlite
 
 # Schema + sample data
 php artisan migrate --seed
+
+# Symlink public/storage -> storage/app/public so uploaded company
+# logos are served over HTTP.
+php artisan storage:link
 
 # Start the API (http://localhost:8000)
 php artisan serve
@@ -168,6 +190,10 @@ Base URL: `http://localhost:8000/api`
 | PUT    | `/invoices/{id}`         | Update an invoice                                                |
 | DELETE | `/invoices/{id}`         | Delete an invoice (cascades to `invoice_items`)                  |
 | GET    | `/invoices/{id}/pdf`     | Stream the invoice as PDF. Append `?download=1` to force a download |
+| GET    | `/tax`                   | Get current SGST / CGST settings                                 |
+| PUT    | `/tax`                   | Update SGST / CGST                                               |
+| GET    | `/company`               | Get company details (includes `logo_url`)                        |
+| PUT/POST | `/company`             | Update company details (POST + `_method=PUT` for logo uploads)   |
 
 ### Sample: create an invoice
 
@@ -179,8 +205,8 @@ curl -X POST http://localhost:8000/api/invoices \
     "invoice_date": "2026-04-17",
     "notes": "Thanks for your business!",
     "items": [
-      { "item_id": 1, "item_name": "Consulting Hour", "quantity": 2, "price": 1500, "tax_percent": 18 },
-      { "item_id": null, "item_name": "Custom service", "quantity": 1, "price": 500, "tax_percent": 18 }
+      { "item_id": 1, "item_name": "Consulting Hour", "quantity": 2, "price": 1500 },
+      { "item_id": null, "item_name": "Custom service", "quantity": 1, "price": 500 }
     ]
   }'
 ```
@@ -196,6 +222,10 @@ Response:
     "customer": { "id": 1, "name": "Acme Corp", ... },
     "invoice_date": "2026-04-17",
     "subtotal": 3500,
+    "sgst_percent": 9,
+    "cgst_percent": 9,
+    "sgst_amount": 315,
+    "cgst_amount": 315,
     "tax_total": 630,
     "grand_total": 4130,
     "items": [ ... ]
@@ -216,6 +246,11 @@ curl "http://localhost:8000/api/invoices/1/pdf?download=1" -o invoice.pdf
   (`CustomerResource`, `ItemResource`, `InvoiceResource`, `InvoiceItemResource`).
 - Invoice creation/update runs inside a **DB transaction** and recomputes all
   line totals and invoice totals on the server.
+- SGST and CGST percentages are fetched from the `taxes` table at invoice
+  creation time and snapshotted on the invoice row (`sgst_percent`,
+  `cgst_percent`, `sgst_amount`, `cgst_amount`).
+- Company details (including logo) live in the `company` table and are
+  fetched at PDF render time — nothing is read from `.env`.
 - Invoice numbers are generated by `Invoice::generateInvoiceNumber()`.
 
 ## Frontend Implementation Notes

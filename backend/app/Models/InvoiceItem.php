@@ -16,18 +16,12 @@ class InvoiceItem extends Model
         'item_name',
         'quantity',
         'price',
-        'tax_percent',
-        'line_subtotal',
-        'line_tax',
         'line_total',
     ];
 
     protected $casts = [
         'quantity' => 'integer',
         'price' => 'decimal:2',
-        'tax_percent' => 'decimal:2',
-        'line_subtotal' => 'decimal:2',
-        'line_tax' => 'decimal:2',
         'line_total' => 'decimal:2',
     ];
 

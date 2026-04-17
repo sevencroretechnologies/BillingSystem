@@ -5,15 +5,14 @@ import Alert from '../components/Alert';
 import FormField from '../components/FormField';
 import Loading from '../components/Loading';
 
-// Form for creating/editing an item/product.
+// Form for creating/editing an item/product. Price is no longer stored
+// on the item — it is entered per line when creating an invoice.
 export default function ItemForm() {
   const { id } = useParams();
   const isEdit = Boolean(id);
   const navigate = useNavigate();
   const [form, setForm] = useState({
     name: '',
-    price: '',
-    tax_percent: '',
     description: '',
   });
   const [errors, setErrors] = useState({});
@@ -25,7 +24,12 @@ export default function ItemForm() {
     if (!isEdit) return;
     setLoading(true);
     getItem(id)
-      .then((res) => setForm(res.data.data))
+      .then((res) =>
+        setForm({
+          name: res.data.data.name ?? '',
+          description: res.data.data.description ?? '',
+        })
+      )
       .catch((e) => setError(e?.response?.data?.message || 'Failed to load item.'))
       .finally(() => setLoading(false));
   }, [id, isEdit]);
@@ -40,15 +44,10 @@ export default function ItemForm() {
     setErrors({});
     setError('');
     try {
-      const payload = {
-        ...form,
-        price: Number(form.price),
-        tax_percent: Number(form.tax_percent || 0),
-      };
       if (isEdit) {
-        await updateItem(id, payload);
+        await updateItem(id, form);
       } else {
-        await createItem(payload);
+        await createItem(form);
       }
       navigate('/items');
     } catch (err) {
@@ -82,34 +81,6 @@ export default function ItemForm() {
           required
           error={errors.name}
         />
-        <div className="row">
-          <div className="col-md-6">
-            <FormField
-              label="Price"
-              name="price"
-              type="number"
-              step="0.01"
-              min="0"
-              value={form.price}
-              onChange={handleChange}
-              required
-              error={errors.price}
-            />
-          </div>
-          <div className="col-md-6">
-            <FormField
-              label="Tax %"
-              name="tax_percent"
-              type="number"
-              step="0.01"
-              min="0"
-              max="100"
-              value={form.tax_percent}
-              onChange={handleChange}
-              error={errors.tax_percent}
-            />
-          </div>
-        </div>
         <FormField
           label="Description"
           name="description"
@@ -119,6 +90,10 @@ export default function ItemForm() {
           onChange={handleChange}
           error={errors.description}
         />
+        <p className="text-muted small mb-3">
+          Price is entered per line while creating an invoice so different
+          customers can be billed at different rates.
+        </p>
         <div className="d-flex gap-2">
           <button type="submit" className="btn btn-primary" disabled={saving}>
             {saving ? 'Saving...' : 'Save'}

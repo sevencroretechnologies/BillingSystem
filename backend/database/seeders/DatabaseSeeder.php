@@ -2,15 +2,18 @@
 
 namespace Database\Seeders;
 
+use App\Models\Company;
 use App\Models\Customer;
 use App\Models\Item;
+use App\Models\Tax;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
     /**
-     * Seed the application's database with a few sample customers and items
-     * so the UI has something to show on a fresh install.
+     * Seed the application's database with sample customers, items and
+     * the default single-row tax / company settings so the UI has
+     * something to show on a fresh install.
      */
     public function run(): void
     {
@@ -32,21 +35,30 @@ class DatabaseSeeder extends Seeder
         if (Item::count() === 0) {
             Item::create([
                 'name' => 'Consulting Hour',
-                'price' => 1500.00,
-                'tax_percent' => 18.00,
                 'description' => 'General consulting service, billed per hour.',
             ]);
             Item::create([
                 'name' => 'Software License',
-                'price' => 9999.00,
-                'tax_percent' => 18.00,
                 'description' => 'Annual software license per seat.',
             ]);
             Item::create([
                 'name' => 'Printer Paper (A4)',
-                'price' => 250.00,
-                'tax_percent' => 12.00,
                 'description' => 'Ream of 500 sheets, 80 GSM.',
+            ]);
+        }
+
+        // Default SGST / CGST of 9% each (18% combined) — matches the
+        // common GST rate for standard services in India.
+        if (Tax::count() === 0) {
+            Tax::create(['sgst' => 9.00, 'cgst' => 9.00]);
+        }
+
+        if (Company::count() === 0) {
+            Company::create([
+                'company_name' => 'Your Company Pvt. Ltd.',
+                'address' => '123 Business Street, City, State',
+                'phone' => '+00 0000 0000',
+                'email' => 'billing@example.com',
             ]);
         }
     }

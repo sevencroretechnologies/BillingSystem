@@ -1,0 +1,113 @@
+import { useEffect, useState } from 'react';
+import { getTax, updateTax } from '../api/endpoints';
+import Alert from '../components/Alert';
+import FormField from '../components/FormField';
+import Loading from '../components/Loading';
+
+// Settings page for the single-row tax configuration used on every
+// invoice. Stores SGST + CGST as separate percentages.
+export default function TaxSettings() {
+  const [form, setForm] = useState({ sgst: '', cgst: '' });
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await getTax();
+        setForm({
+          sgst: String(res.data.data.sgst ?? ''),
+          cgst: String(res.data.data.cgst ?? ''),
+        });
+      } catch (e) {
+        setError(e?.response?.data?.message || 'Failed to load tax settings.');
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    setError('');
+    setSuccess('');
+    try {
+      await updateTax({
+        sgst: Number(form.sgst || 0),
+        cgst: Number(form.cgst || 0),
+      });
+      setSuccess('Tax settings saved.');
+    } catch (err) {
+      setError(err?.response?.data?.message || 'Failed to save tax settings.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) return <Loading label="Loading tax settings..." />;
+
+  const combined = (Number(form.sgst) || 0) + (Number(form.cgst) || 0);
+
+  return (
+    <div>
+      <h3 className="mb-3">Tax Settings</h3>
+      <p className="text-muted">
+        These rates are applied on every new invoice. Total tax = SGST + CGST,
+        calculated on the invoice subtotal.
+      </p>
+      <Alert message={error} onClose={() => setError('')} />
+      {success && (
+        <div className="alert alert-success" role="alert">
+          {success}
+        </div>
+      )}
+      <form onSubmit={handleSubmit} className="card card-body shadow-sm" style={{ maxWidth: 520 }}>
+        <div className="row">
+          <div className="col-md-6">
+            <FormField
+              label="SGST %"
+              name="sgst"
+              type="number"
+              step="0.01"
+              min="0"
+              max="100"
+              value={form.sgst}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="col-md-6">
+            <FormField
+              label="CGST %"
+              name="cgst"
+              type="number"
+              step="0.01"
+              min="0"
+              max="100"
+              value={form.cgst}
+              onChange={handleChange}
+              required
+            />
+          </div>
+        </div>
+        <div className="mb-3">
+          <span className="badge text-bg-light border">
+            Combined tax: {combined.toFixed(2)}%
+          </span>
+        </div>
+        <div>
+          <button type="submit" className="btn btn-primary" disabled={saving}>
+            {saving ? 'Saving...' : 'Save'}
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+}

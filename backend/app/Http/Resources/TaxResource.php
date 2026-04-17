@@ -5,18 +5,18 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ItemResource extends JsonResource
+class TaxResource extends JsonResource
 {
     /**
-     * Transform the Item model into an array for API responses.
+     * Transform the Tax settings model into an API response array.
      */
     public function toArray(Request $request): array
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
-            'description' => $this->description,
-            'created_at' => $this->created_at?->toDateTimeString(),
+            'sgst' => (float) $this->sgst,
+            'cgst' => (float) $this->cgst,
+            'total' => (float) $this->sgst + (float) $this->cgst,
             'updated_at' => $this->updated_at?->toDateTimeString(),
         ];
     }
