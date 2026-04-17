@@ -30,10 +30,10 @@ class Company extends Model
     public static function current(): self
     {
         return static::query()->orderBy('id')->firstOrCreate([], [
-            'company_name' => 'Your Company Pvt. Ltd.',
-            'address' => '123 Business Street, City',
-            'phone' => '+00 0000 0000',
-            'email' => 'billing@example.com',
+            'company_name' => env('COMPANY_NAME', 'Your Company Pvt. Ltd.'),
+            'address' => env('COMPANY_ADDRESS', '123 Business Street, City'),
+            'phone' => env('COMPANY_PHONE', '+00 0000 0000'),
+            'email' => env('COMPANY_EMAIL', 'billing@example.com'),
         ]);
     }
 }

@@ -22,6 +22,7 @@ return new class extends Migration
             $table->decimal('sgst_amount', 14, 2)->default(0);
             $table->decimal('cgst_amount', 14, 2)->default(0);
             $table->decimal('tax_total', 14, 2)->default(0);
+            $table->decimal('total_tax', 14, 2)->default(0);
             $table->decimal('grand_total', 14, 2)->default(0);
             $table->text('notes')->nullable();
             $table->timestamps();

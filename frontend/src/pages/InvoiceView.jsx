@@ -171,7 +171,7 @@ export default function InvoiceView() {
                   </tr>
                   <tr>
                     <th>Total Tax</th>
-                    <td className="text-end">{money(invoice.tax_total)}</td>
+                    <td className="text-end">{money(invoice.total_tax)}</td>
                   </tr>
                   <tr className="border-top">
                     <th className="fs-5">Grand Total</th>

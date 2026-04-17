@@ -109,7 +109,7 @@
             </tr>
             <tr>
                 <td class="label">Total Tax</td>
-                <td class="right">{{ $currencySymbol }}{{ number_format((float) $invoice->tax_total, 2) }}</td>
+                <td class="right">{{ $currencySymbol }}{{ number_format((float) $invoice->total_tax, 2) }}</td>
             </tr>
             <tr class="grand">
                 <td>Grand Total</td>

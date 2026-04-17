@@ -97,6 +97,7 @@ class InvoiceController extends Controller
                     'sgst_amount' => 0,
                     'cgst_amount' => 0,
                     'tax_total' => 0,
+                    'total_tax' => 0,
                     'grand_total' => 0,
                 ]);
 
@@ -290,6 +291,7 @@ class InvoiceController extends Controller
             'sgst_amount' => $sgstAmount,
             'cgst_amount' => $cgstAmount,
             'tax_total' => $taxTotal,
+            'total_tax' => $taxTotal,
             'grand_total' => round($subtotal + $taxTotal, 2),
         ]);
     }

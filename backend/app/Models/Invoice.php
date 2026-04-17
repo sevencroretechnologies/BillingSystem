@@ -21,6 +21,7 @@ class Invoice extends Model
         'sgst_amount',
         'cgst_amount',
         'tax_total',
+        'total_tax',
         'grand_total',
         'notes',
     ];
@@ -33,6 +34,7 @@ class Invoice extends Model
         'sgst_amount' => 'decimal:2',
         'cgst_amount' => 'decimal:2',
         'tax_total' => 'decimal:2',
+        'total_tax' => 'decimal:2',
         'grand_total' => 'decimal:2',
     ];
 

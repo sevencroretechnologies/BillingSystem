@@ -24,6 +24,7 @@ class InvoiceResource extends JsonResource
             'sgst_amount' => (float) $this->sgst_amount,
             'cgst_amount' => (float) $this->cgst_amount,
             'tax_total' => (float) $this->tax_total,
+            'total_tax' => (float) $this->total_tax,
             'grand_total' => (float) $this->grand_total,
             'notes' => $this->notes,
             'items' => InvoiceItemResource::collection($this->whenLoaded('items')),
