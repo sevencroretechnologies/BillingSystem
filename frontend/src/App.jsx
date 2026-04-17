@@ -1,5 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
 import Layout from './components/Layout';
+import CompanySettings from './pages/CompanySettings';
 import CustomerForm from './pages/CustomerForm';
 import CustomerList from './pages/CustomerList';
 import Home from './pages/Home';
@@ -8,6 +9,7 @@ import InvoiceList from './pages/InvoiceList';
 import InvoiceView from './pages/InvoiceView';
 import ItemForm from './pages/ItemForm';
 import ItemList from './pages/ItemList';
+import TaxSettings from './pages/TaxSettings';
 
 // Root component: declares every route nested under the Layout.
 export default function App() {
@@ -27,6 +29,9 @@ export default function App() {
         <Route path="invoices" element={<InvoiceList />} />
         <Route path="invoices/new" element={<InvoiceForm />} />
         <Route path="invoices/:id" element={<InvoiceView />} />
+
+        <Route path="settings/tax" element={<TaxSettings />} />
+        <Route path="settings/company" element={<CompanySettings />} />
       </Route>
     </Routes>
   );

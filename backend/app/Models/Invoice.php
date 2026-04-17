@@ -16,6 +16,10 @@ class Invoice extends Model
         'customer_id',
         'invoice_date',
         'subtotal',
+        'sgst_percent',
+        'cgst_percent',
+        'sgst_amount',
+        'cgst_amount',
         'tax_total',
         'grand_total',
         'notes',
@@ -24,6 +28,10 @@ class Invoice extends Model
     protected $casts = [
         'invoice_date' => 'date',
         'subtotal' => 'decimal:2',
+        'sgst_percent' => 'decimal:2',
+        'cgst_percent' => 'decimal:2',
+        'sgst_amount' => 'decimal:2',
+        'cgst_amount' => 'decimal:2',
         'tax_total' => 'decimal:2',
         'grand_total' => 'decimal:2',
     ];

@@ -7,6 +7,8 @@ export default function Home() {
     { to: '/items', title: 'Items', text: 'Define the products and services you sell.' },
     { to: '/invoices', title: 'Invoices', text: 'View, search and download your invoices.' },
     { to: '/invoices/new', title: 'New Invoice', text: 'Create a new invoice with multiple items.' },
+    { to: '/settings/tax', title: 'Tax Settings', text: 'Configure SGST and CGST rates.' },
+    { to: '/settings/company', title: 'Company Settings', text: 'Set company details and logo for invoices.' },
   ];
 
   return (

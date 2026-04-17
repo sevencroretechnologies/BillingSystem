@@ -8,11 +8,12 @@ return new class extends Migration
 {
     public function up(): void
     {
+        // Items are a lightweight catalogue of products/services. Price is
+        // entered per-invoice (not stored here) so different customers can
+        // be billed at different rates.
         Schema::create('items', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->decimal('price', 12, 2)->default(0);
-            $table->decimal('tax_percent', 5, 2)->default(0);
             $table->text('description')->nullable();
             $table->timestamps();
         });

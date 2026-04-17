@@ -53,8 +53,6 @@ class ItemController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0',
-            'tax_percent' => 'nullable|numeric|min:0|max:100',
             'description' => 'nullable|string',
         ]);
 
@@ -103,8 +101,6 @@ class ItemController extends Controller
     {
         $validated = $request->validate([
             'name' => 'sometimes|required|string|max:255',
-            'price' => 'sometimes|required|numeric|min:0',
-            'tax_percent' => 'nullable|numeric|min:0|max:100',
             'description' => 'nullable|string',
         ]);
 

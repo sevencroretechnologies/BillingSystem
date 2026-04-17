@@ -1,15 +1,22 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createInvoice, listCustomers, listItems } from '../api/endpoints';
+import {
+  createInvoice,
+  getTax,
+  listCustomers,
+  listItems,
+} from '../api/endpoints';
 import Alert from '../components/Alert';
 import Loading from '../components/Loading';
 
-// Page to create a new invoice. Loads customers and items, lets the user
-// add multiple rows and auto-fills price/tax from the selected item.
+// Page to create a new invoice. Loads customers, items and the current
+// SGST/CGST configuration, lets the user enter a custom price per line,
+// and live-calculates the subtotal, tax breakdown and grand total.
 export default function InvoiceForm() {
   const navigate = useNavigate();
   const [customers, setCustomers] = useState([]);
   const [items, setItems] = useState([]);
+  const [tax, setTax] = useState({ sgst: 0, cgst: 0 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
@@ -26,20 +33,25 @@ export default function InvoiceForm() {
       item_id: '',
       item_name: '',
       quantity: 1,
-      price: 0,
-      tax_percent: 0,
+      price: '',
     };
   }
 
   useEffect(() => {
     (async () => {
       try {
-        const [c, i] = await Promise.all([
+        // Load customers, items and current tax rates in parallel.
+        const [c, i, t] = await Promise.all([
           listCustomers({ per_page: 100 }),
           listItems({ per_page: 100 }),
+          getTax(),
         ]);
         setCustomers(c.data.data);
         setItems(i.data.data);
+        setTax({
+          sgst: Number(t.data.data.sgst) || 0,
+          cgst: Number(t.data.data.cgst) || 0,
+        });
       } catch (e) {
         setError(e?.response?.data?.message || 'Failed to load form data.');
       } finally {
@@ -52,13 +64,13 @@ export default function InvoiceForm() {
     const next = [...rows];
     next[idx] = { ...next[idx], [field]: value };
 
-    // Auto-fill price / tax / name when the user picks an existing item.
+    // When the user picks an existing item, only auto-fill the name.
+    // Prices are always entered manually so each customer can be
+    // billed at their own rate.
     if (field === 'item_id') {
       const item = items.find((it) => String(it.id) === String(value));
       if (item) {
         next[idx].item_name = item.name;
-        next[idx].price = Number(item.price);
-        next[idx].tax_percent = Number(item.tax_percent);
       }
     }
     setRows(next);
@@ -67,23 +79,26 @@ export default function InvoiceForm() {
   const addRow = () => setRows([...rows, blankRow()]);
   const removeRow = (idx) => setRows(rows.filter((_, i) => i !== idx));
 
+  // Live totals. Tax is calculated once on the full subtotal using the
+  // SGST + CGST rates fetched from the backend — matching server-side
+  // logic so the displayed grand total is what gets saved.
   const totals = useMemo(() => {
-    let subtotal = 0;
-    let tax = 0;
-    rows.forEach((r) => {
+    const subtotal = rows.reduce((sum, r) => {
       const qty = Number(r.quantity) || 0;
       const price = Number(r.price) || 0;
-      const taxPct = Number(r.tax_percent) || 0;
-      const lineSub = qty * price;
-      subtotal += lineSub;
-      tax += lineSub * (taxPct / 100);
-    });
+      return sum + qty * price;
+    }, 0);
+    const sgstAmount = subtotal * (tax.sgst / 100);
+    const cgstAmount = subtotal * (tax.cgst / 100);
+    const taxTotal = sgstAmount + cgstAmount;
     return {
       subtotal: round(subtotal),
-      tax: round(tax),
-      total: round(subtotal + tax),
+      sgstAmount: round(sgstAmount),
+      cgstAmount: round(cgstAmount),
+      taxTotal: round(taxTotal),
+      total: round(subtotal + taxTotal),
     };
-  }, [rows]);
+  }, [rows, tax]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -99,7 +114,6 @@ export default function InvoiceForm() {
           item_name: r.item_name,
           quantity: Number(r.quantity),
           price: Number(r.price),
-          tax_percent: Number(r.tax_percent || 0),
         })),
       };
       const res = await createInvoice(payload);
@@ -155,6 +169,15 @@ export default function InvoiceForm() {
               required
             />
           </div>
+          <div className="col-md-3">
+            <label className="form-label">Tax Rates</label>
+            <div className="form-control-plaintext small">
+              SGST {Number(tax.sgst).toFixed(2)}% + CGST {Number(tax.cgst).toFixed(2)}%
+              <div className="text-muted">
+                Manage in <a href="/settings/tax">Settings → Tax</a>
+              </div>
+            </div>
+          </div>
         </div>
 
         <hr className="my-4" />
@@ -167,10 +190,9 @@ export default function InvoiceForm() {
                 <th style={{ width: '25%' }}>Item</th>
                 <th>Name</th>
                 <th style={{ width: 80 }}>Qty</th>
-                <th style={{ width: 110 }}>Price</th>
-                <th style={{ width: 90 }}>Tax %</th>
+                <th style={{ width: 120 }}>Price</th>
                 <th style={{ width: 120 }} className="text-end">
-                  Total
+                  Line Total
                 </th>
                 <th style={{ width: 40 }}></th>
               </tr>
@@ -179,8 +201,7 @@ export default function InvoiceForm() {
               {rows.map((row, idx) => {
                 const qty = Number(row.quantity) || 0;
                 const price = Number(row.price) || 0;
-                const taxPct = Number(row.tax_percent) || 0;
-                const lineTotal = round(qty * price * (1 + taxPct / 100));
+                const lineTotal = round(qty * price);
                 return (
                   <tr key={idx}>
                     <td>
@@ -224,18 +245,8 @@ export default function InvoiceForm() {
                         className="form-control form-control-sm"
                         value={row.price}
                         onChange={(e) => handleRowChange(idx, 'price', e.target.value)}
+                        placeholder="0.00"
                         required
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        max="100"
-                        className="form-control form-control-sm"
-                        value={row.tax_percent}
-                        onChange={(e) => handleRowChange(idx, 'tax_percent', e.target.value)}
                       />
                     </td>
                     <td className="text-end align-middle">{lineTotal.toFixed(2)}</td>
@@ -282,8 +293,16 @@ export default function InvoiceForm() {
                   <td className="text-end">{totals.subtotal.toFixed(2)}</td>
                 </tr>
                 <tr>
-                  <th>Tax</th>
-                  <td className="text-end">{totals.tax.toFixed(2)}</td>
+                  <th>SGST ({Number(tax.sgst).toFixed(2)}%)</th>
+                  <td className="text-end">{totals.sgstAmount.toFixed(2)}</td>
+                </tr>
+                <tr>
+                  <th>CGST ({Number(tax.cgst).toFixed(2)}%)</th>
+                  <td className="text-end">{totals.cgstAmount.toFixed(2)}</td>
+                </tr>
+                <tr>
+                  <th>Total Tax</th>
+                  <td className="text-end">{totals.taxTotal.toFixed(2)}</td>
                 </tr>
                 <tr>
                   <th className="fs-5">Grand Total</th>

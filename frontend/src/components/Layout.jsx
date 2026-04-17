@@ -13,7 +13,7 @@ export default function Layout() {
             Billing System
           </NavLink>
           <div>
-            <ul className="navbar-nav flex-row gap-3">
+            <ul className="navbar-nav flex-row flex-wrap gap-3 align-items-center">
               <li className="nav-item">
                 <NavLink to="/customers" className={linkClass}>
                   Customers
@@ -32,6 +32,16 @@ export default function Layout() {
               <li className="nav-item">
                 <NavLink to="/invoices/new" className={linkClass}>
                   New Invoice
+                </NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink to="/settings/tax" className={linkClass}>
+                  Tax
+                </NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink to="/settings/company" className={linkClass}>
+                  Company
                 </NavLink>
               </li>
             </ul>

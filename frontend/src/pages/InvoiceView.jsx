@@ -1,21 +1,27 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { getInvoice, invoicePdfUrl } from '../api/endpoints';
+import { getCompany, getInvoice, invoicePdfUrl } from '../api/endpoints';
 import Alert from '../components/Alert';
 import Loading from '../components/Loading';
 
+const CURRENCY_SYMBOL = process.env.REACT_APP_CURRENCY_SYMBOL || '₹';
+
 // Printable invoice detail page with download + print actions.
+// Company details (including logo) are pulled from the backend so the
+// information stays in sync with the Settings → Company page.
 export default function InvoiceView() {
   const { id } = useParams();
   const [invoice, setInvoice] = useState(null);
+  const [company, setCompany] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
     (async () => {
       try {
-        const res = await getInvoice(id);
-        setInvoice(res.data.data);
+        const [inv, co] = await Promise.all([getInvoice(id), getCompany()]);
+        setInvoice(inv.data.data);
+        setCompany(co.data.data);
       } catch (e) {
         setError(e?.response?.data?.message || 'Failed to load invoice.');
       } finally {
@@ -28,14 +34,7 @@ export default function InvoiceView() {
   if (error) return <Alert message={error} />;
   if (!invoice) return null;
 
-  const company = {
-    name: process.env.REACT_APP_COMPANY_NAME || 'Your Company Pvt. Ltd.',
-    address:
-      process.env.REACT_APP_COMPANY_ADDRESS || '123 Business Street, City',
-    phone: process.env.REACT_APP_COMPANY_PHONE || '+00 0000 0000',
-    email: process.env.REACT_APP_COMPANY_EMAIL || 'billing@example.com',
-    currencySymbol: process.env.REACT_APP_CURRENCY_SYMBOL || '₹',
-  };
+  const money = (n) => `${CURRENCY_SYMBOL}${Number(n || 0).toFixed(2)}`;
 
   return (
     <div>
@@ -63,11 +62,26 @@ export default function InvoiceView() {
         <div className="card-body invoice-print">
           <div className="row mb-4">
             <div className="col-6">
-              <h4 className="text-primary mb-1">{company.name}</h4>
-              <div className="text-muted small">{company.address}</div>
-              <div className="text-muted small">
-                {company.phone} · {company.email}
-              </div>
+              {company?.logo_url && (
+                <img
+                  src={company.logo_url}
+                  alt="Company logo"
+                  style={{ maxHeight: 72, maxWidth: 180, marginBottom: 8 }}
+                />
+              )}
+              <h4 className="text-primary mb-1">
+                {company?.company_name || 'Your Company'}
+              </h4>
+              {company?.address && (
+                <div className="text-muted small">{company.address}</div>
+              )}
+              {(company?.phone || company?.email) && (
+                <div className="text-muted small">
+                  {company.phone}
+                  {company.phone && company.email ? ' · ' : ''}
+                  {company.email}
+                </div>
+              )}
             </div>
             <div className="col-6 text-end">
               <h2 className="m-0">INVOICE</h2>
@@ -90,44 +104,46 @@ export default function InvoiceView() {
             )}
           </div>
 
-          <table className="table table-bordered">
-            <thead className="table-light">
-              <tr>
-                <th style={{ width: 40 }}>#</th>
-                <th>Item</th>
-                <th className="text-end" style={{ width: 80 }}>
-                  Qty
-                </th>
-                <th className="text-end" style={{ width: 110 }}>
-                  Price
-                </th>
-                <th className="text-end" style={{ width: 80 }}>
-                  Tax %
-                </th>
-                <th className="text-end" style={{ width: 120 }}>
-                  Total
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {invoice.items.map((it, idx) => (
-                <tr key={it.id}>
-                  <td>{idx + 1}</td>
-                  <td>{it.item_name}</td>
-                  <td className="text-end">{it.quantity}</td>
-                  <td className="text-end">
-                    {company.currencySymbol}
-                    {Number(it.price).toFixed(2)}
-                  </td>
-                  <td className="text-end">{Number(it.tax_percent).toFixed(2)}%</td>
-                  <td className="text-end">
-                    {company.currencySymbol}
-                    {Number(it.line_total).toFixed(2)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          {/* Tax is applied at the invoice level; show the effective
+              combined rate per line for reference. */}
+          {(() => {
+            const combinedTax =
+              Number(invoice.sgst_percent || 0) + Number(invoice.cgst_percent || 0);
+            return (
+              <table className="table table-bordered">
+                <thead className="table-light">
+                  <tr>
+                    <th style={{ width: 40 }}>#</th>
+                    <th>Item</th>
+                    <th className="text-end" style={{ width: 80 }}>
+                      Qty
+                    </th>
+                    <th className="text-end" style={{ width: 110 }}>
+                      Price
+                    </th>
+                    <th className="text-end" style={{ width: 80 }}>
+                      Tax %
+                    </th>
+                    <th className="text-end" style={{ width: 120 }}>
+                      Total
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {invoice.items.map((it, idx) => (
+                    <tr key={it.id}>
+                      <td>{idx + 1}</td>
+                      <td>{it.item_name}</td>
+                      <td className="text-end">{it.quantity}</td>
+                      <td className="text-end">{money(it.price)}</td>
+                      <td className="text-end">{combinedTax.toFixed(2)}%</td>
+                      <td className="text-end">{money(it.line_total)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            );
+          })()}
 
           <div className="row">
             <div className="col-md-7">
@@ -143,24 +159,23 @@ export default function InvoiceView() {
                 <tbody>
                   <tr>
                     <th>Subtotal</th>
-                    <td className="text-end">
-                      {company.currencySymbol}
-                      {Number(invoice.subtotal).toFixed(2)}
-                    </td>
+                    <td className="text-end">{money(invoice.subtotal)}</td>
                   </tr>
                   <tr>
-                    <th>Tax</th>
-                    <td className="text-end">
-                      {company.currencySymbol}
-                      {Number(invoice.tax_total).toFixed(2)}
-                    </td>
+                    <th>SGST ({Number(invoice.sgst_percent || 0).toFixed(2)}%)</th>
+                    <td className="text-end">{money(invoice.sgst_amount)}</td>
+                  </tr>
+                  <tr>
+                    <th>CGST ({Number(invoice.cgst_percent || 0).toFixed(2)}%)</th>
+                    <td className="text-end">{money(invoice.cgst_amount)}</td>
+                  </tr>
+                  <tr>
+                    <th>Total Tax</th>
+                    <td className="text-end">{money(invoice.tax_total)}</td>
                   </tr>
                   <tr className="border-top">
                     <th className="fs-5">Grand Total</th>
-                    <td className="text-end fs-5 fw-bold">
-                      {company.currencySymbol}
-                      {Number(invoice.grand_total).toFixed(2)}
-                    </td>
+                    <td className="text-end fs-5 fw-bold">{money(invoice.grand_total)}</td>
                   </tr>
                 </tbody>
               </table>
