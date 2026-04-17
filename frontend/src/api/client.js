@@ -1,9 +1,9 @@
 import axios from 'axios';
 
-// Base URL for the Laravel API. Override via VITE_API_URL in a `.env` file
-// inside the `frontend` directory (e.g. VITE_API_URL=http://localhost:8000).
-const baseURL =
-  (import.meta.env && import.meta.env.VITE_API_URL) || 'http://localhost:8000';
+// Base URL for the Laravel API. Override via REACT_APP_API_URL in a `.env`
+// file inside the `frontend` directory
+// (e.g. REACT_APP_API_URL=http://localhost:8000).
+const baseURL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
 const api = axios.create({
   baseURL: `${baseURL.replace(/\/$/, '')}/api`,
