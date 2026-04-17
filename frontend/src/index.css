@@ -1,0 +1,18 @@
+/* Global overrides on top of Bootstrap. */
+body {
+  background-color: #f5f6fa;
+}
+
+/* Hide non-print helpers when the user hits print on the invoice page. */
+@media print {
+  .no-print,
+  .navbar {
+    display: none !important;
+  }
+  body {
+    background-color: #fff !important;
+  }
+  .invoice-print {
+    padding: 0 !important;
+  }
+}
