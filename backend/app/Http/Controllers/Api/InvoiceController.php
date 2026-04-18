@@ -262,10 +262,19 @@ class InvoiceController extends Controller
             $price = (float) $row['price'];
             $lineTotal = round($qty * $price, 2);
 
+            $itemId = $row['item_id'] ?? null;
+            $itemName = $row['item_name'];
+
+            // If no item ID is provided, try to find/create it in the master Items table.
+            if (!$itemId && !empty($itemName)) {
+                $masterItem = \App\Models\Item::firstOrCreate(['name' => $itemName]);
+                $itemId = $masterItem->id;
+            }
+
             InvoiceItem::create([
                 'invoice_id' => $invoice->id,
-                'item_id' => $row['item_id'] ?? null,
-                'item_name' => $row['item_name'],
+                'item_id' => $itemId,
+                'item_name' => $itemName,
                 'quantity' => $qty,
                 'price' => $price,
                 'line_total' => $lineTotal,

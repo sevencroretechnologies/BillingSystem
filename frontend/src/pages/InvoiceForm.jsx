@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   createInvoice,
+  createItem,
   getInvoice,
   getTax,
   listCustomers,
@@ -10,6 +11,8 @@ import {
 } from '../api/endpoints';
 import Alert from '../components/Alert';
 import Loading from '../components/Loading';
+import Select from 'react-select';
+import CreatableSelect from 'react-select/creatable';
 
 // Page to create or edit an invoice. Loads customers, items and the current
 // SGST/CGST configuration, lets the user enter a custom price per line,
@@ -30,6 +33,7 @@ export default function InvoiceForm() {
     invoice_date: new Date().toISOString().slice(0, 10),
     notes: '',
   });
+
   const [rows, setRows] = useState([blankRow()]);
 
   function blankRow() {
@@ -90,18 +94,50 @@ export default function InvoiceForm() {
 
   const handleRowChange = (idx, field, value) => {
     const next = [...rows];
-    next[idx] = { ...next[idx], [field]: value };
 
-    // When the user picks an existing item, only auto-fill the name.
-    // Prices are always entered manually so each customer can be
-    // billed at their own rate.
     if (field === 'item_id') {
       const item = items.find((it) => String(it.id) === String(value));
-      if (item) {
-        next[idx].item_name = item.name;
-      }
+      next[idx] = {
+        ...next[idx],
+        item_id: value,
+        item_name: item ? item.name : value, // Fallback to value if it's a new item name
+      };
+    } else {
+      next[idx] = { ...next[idx], [field]: value };
     }
+
     setRows(next);
+  };
+
+  // Convert items to react-select options
+  const productOptions = useMemo(() => {
+    return items.map((it) => ({
+      value: String(it.id),
+      label: `${it.name}`,
+    }));
+  }, [items]);
+
+  const customSelectStyles = {
+    control: (provided) => ({
+      ...provided,
+      minHeight: '38px',
+      borderRadius: '0.375rem',
+      borderColor: '#dee2e6',
+      boxShadow: 'none',
+      '&:hover': {
+        borderColor: '#86b7fe',
+      },
+    }),
+    valueContainer: (provided) => ({
+      ...provided,
+      padding: '0 12px',
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      backgroundColor: state.isSelected ? '#0d6efd' : state.isFocused ? '#f8f9fa' : 'white',
+      color: state.isSelected ? 'white' : 'black',
+      fontSize: '0.875rem',
+    }),
   };
 
   const addRow = () => setRows([...rows, blankRow()]);
@@ -217,41 +253,41 @@ export default function InvoiceForm() {
         {/* DESKTOP TABLE (Hidden on mobile) */}
         <div className="d-none d-md-block">
           <h5>Items</h5>
-          <div className="table-responsive">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th style={{ width: '40%' }}>Item</th>
-                  <th style={{ width: 80 }}>Qty</th>
-                  <th style={{ width: 120 }}>Price</th>
-                  <th style={{ width: 120 }} className="text-end">
-                    Line Total
-                  </th>
-                  <th style={{ width: 40 }}></th>
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map((row, idx) => {
-                  const qty = Number(row.quantity) || 0;
-                  const price = Number(row.price) || 0;
-                  const lineTotal = round(qty * price);
-                  return (
-                    <tr key={idx}>
-                      <td>
-                        <select
-                          className="form-select form-select-sm"
-                          value={row.item_id}
-                          onChange={(e) => handleRowChange(idx, 'item_id', e.target.value)}
-                          required
-                        >
-                          <option value="">Select item...</option>
-                          {items.map((it) => (
-                            <option key={it.id} value={it.id}>
-                              {it.name}
-                            </option>
-                          ))}
-                        </select>
-                      </td>
+          <table className="table">
+            <thead>
+              <tr>
+                <th style={{ width: '40%' }}>Item</th>
+                <th style={{ width: 80 }}>Qty</th>
+                <th style={{ width: 120 }}>Price</th>
+                <th style={{ width: 120 }} className="text-end">
+                  Line Total
+                </th>
+                <th style={{ width: 40 }}></th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row, idx) => {
+                const qty = Number(row.quantity) || 0;
+                const price = Number(row.price) || 0;
+                const lineTotal = round(qty * price);
+                return (
+                  <tr key={idx}>
+                    <td>
+                      <CreatableSelect
+                        options={productOptions}
+                        styles={customSelectStyles}
+                        value={
+                          productOptions.find((opt) => opt.value === String(row.item_id)) ||
+                          (row.item_name ? { value: String(row.item_id), label: row.item_name } : null)
+                        }
+                        onChange={(opt) => handleRowChange(idx, 'item_id', opt ? opt.value : '')}
+                        onCreateOption={(val) => handleRowChange(idx, 'item_id', val)}
+                        placeholder="Search or type item..."
+                        isSearchable
+                        menuPortalTarget={document.body}
+                        menuPosition="fixed"
+                      />
+                    </td>
 
                       <td>
                         <input
@@ -291,11 +327,10 @@ export default function InvoiceForm() {
                     </tr>
                   );
                 })}
-              </tbody>
-            </table>
-          </div>
+            </tbody>
+          </table>
 
-          <div>
+          <div className="mt-2">
             <button type="button" className="btn btn-outline-secondary btn-sm" onClick={addRow}>
               + Add Row
             </button>
@@ -313,19 +348,20 @@ export default function InvoiceForm() {
               <div key={index} className="bg-white border rounded-lg p-3 shadow-sm">
                 {/* Row 1: Product Select */}
                 <div className="mb-2">
-                  <select
-                    value={item.item_id}
-                    onChange={(e) => handleRowChange(index, 'item_id', e.target.value)}
-                    className="form-select text-sm p-2"
-                    required
-                  >
-                    <option value="">Select item...</option>
-                    {items.map((p) => (
-                      <option key={p.id} value={p.id}>
-                        {p.name}
-                      </option>
-                    ))}
-                  </select>
+                  <CreatableSelect
+                    options={productOptions}
+                    styles={customSelectStyles}
+                    value={
+                      productOptions.find((opt) => opt.value === String(item.item_id)) ||
+                      (item.item_name ? { value: String(item.item_id), label: item.item_name } : null)
+                    }
+                    onChange={(opt) => handleRowChange(index, 'item_id', opt ? opt.value : '')}
+                    onCreateOption={(val) => handleRowChange(index, 'item_id', val)}
+                    placeholder="Search or type item..."
+                    isSearchable
+                    menuPortalTarget={document.body}
+                    menuPosition="fixed"
+                  />
                 </div>
 
                 {/* Row 2: Qty + Price */}
@@ -436,6 +472,7 @@ export default function InvoiceForm() {
           </button>
         </div>
       </form>
+
     </div>
   );
 }
