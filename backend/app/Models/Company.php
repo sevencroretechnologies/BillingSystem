@@ -4,13 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Single-row model for the company details shown on every invoice.
  */
 class Company extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     // Custom table name (singular to match the business meaning).
     protected $table = 'company';

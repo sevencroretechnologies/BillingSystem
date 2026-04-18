@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Single-row settings model holding the current SGST and CGST
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Tax extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = ['sgst', 'cgst'];
 

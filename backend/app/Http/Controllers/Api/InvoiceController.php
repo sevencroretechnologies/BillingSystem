@@ -171,7 +171,7 @@ class InvoiceController extends Controller
 
                 if (isset($validated['items'])) {
                     $tax = Tax::current();
-                    $invoice->items()->delete();
+                    $invoice->items()->forceDelete();
 
                     $subtotal = $this->persistItems($invoice, $validated['items']);
 
