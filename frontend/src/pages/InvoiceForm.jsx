@@ -220,8 +220,7 @@ export default function InvoiceForm() {
           <table className="table">
             <thead>
               <tr>
-                <th style={{ width: '25%' }}>Item</th>
-                <th>Name</th>
+                <th style={{ width: '40%' }}>Item</th>
                 <th style={{ width: 80 }}>Qty</th>
                 <th style={{ width: 120 }}>Price</th>
                 <th style={{ width: 120 }} className="text-end">
@@ -242,8 +241,9 @@ export default function InvoiceForm() {
                         className="form-select form-select-sm"
                         value={row.item_id}
                         onChange={(e) => handleRowChange(idx, 'item_id', e.target.value)}
+                        required
                       >
-                        <option value="">Custom...</option>
+                        <option value="">Select item...</option>
                         {items.map((it) => (
                           <option key={it.id} value={it.id}>
                             {it.name}
@@ -251,15 +251,7 @@ export default function InvoiceForm() {
                         ))}
                       </select>
                     </td>
-                    <td>
-                      <input
-                        type="text"
-                        className="form-control form-control-sm"
-                        value={row.item_name}
-                        onChange={(e) => handleRowChange(idx, 'item_name', e.target.value)}
-                        required
-                      />
-                    </td>
+
                     <td>
                       <input
                         type="number"
