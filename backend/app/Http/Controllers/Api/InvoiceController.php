@@ -208,6 +208,7 @@ class InvoiceController extends Controller
     {
         try {
             $invoice = Invoice::findOrFail($id);
+            $invoice->items()->delete();
             $invoice->delete();
 
             return response()->json(['success' => true, 'message' => 'Invoice deleted successfully.']);
