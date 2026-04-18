@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { getCompany, getInvoice, invoicePdfUrl } from '../api/endpoints';
 import Alert from '../components/Alert';
 import Loading from '../components/Loading';
@@ -11,6 +11,7 @@ const CURRENCY_SYMBOL = process.env.REACT_APP_CURRENCY_SYMBOL || '₹';
 // information stays in sync with the Settings → Company page.
 export default function InvoiceView() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [invoice, setInvoice] = useState(null);
   const [company, setCompany] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -40,10 +41,17 @@ export default function InvoiceView() {
     <div>
       <div className="d-flex justify-content-between align-items-center mb-3 no-print">
         <h3 className="m-0">Invoice {invoice.invoice_number}</h3>
-        <div className="d-flex gap-2">
+        <div className="d-flex gap-2 flex-wrap">
           <Link to="/invoices" className="btn btn-outline-secondary">
             Back
           </Link>
+          <button
+            type="button"
+            className="btn btn-outline-primary"
+            onClick={() => navigate(`/invoices/${invoice.id}/edit`)}
+          >
+            Edit
+          </button>
           <button type="button" className="btn btn-outline-primary" onClick={() => window.print()}>
             Print
           </button>
@@ -61,7 +69,7 @@ export default function InvoiceView() {
       <div className="card shadow-sm">
         <div className="card-body invoice-print">
           <div className="row mb-4">
-            <div className="col-6">
+            <div className="col-sm-6">
               {company?.logo_url && (
                 <img
                   src={company.logo_url}
@@ -83,7 +91,7 @@ export default function InvoiceView() {
                 </div>
               )}
             </div>
-            <div className="col-6 text-end">
+            <div className="col-sm-6 text-end">
               <h2 className="m-0">INVOICE</h2>
               <div className="small text-muted mt-2">
                 <strong>Invoice #:</strong> {invoice.invoice_number}
@@ -171,7 +179,7 @@ export default function InvoiceView() {
                   </tr>
                   <tr>
                     <th>Total Tax</th>
-                    <td className="text-end">{money(invoice.tax_total)}</td>
+                    <td className="text-end">{money(invoice.total_tax)}</td>
                   </tr>
                   <tr className="border-top">
                     <th className="fs-5">Grand Total</th>

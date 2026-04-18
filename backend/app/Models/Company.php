@@ -4,13 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Single-row model for the company details shown on every invoice.
  */
 class Company extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     // Custom table name (singular to match the business meaning).
     protected $table = 'company';
@@ -30,10 +31,10 @@ class Company extends Model
     public static function current(): self
     {
         return static::query()->orderBy('id')->firstOrCreate([], [
-            'company_name' => 'Your Company Pvt. Ltd.',
-            'address' => '123 Business Street, City',
-            'phone' => '+00 0000 0000',
-            'email' => 'billing@example.com',
+            'company_name' => env('COMPANY_NAME', 'Your Company Pvt. Ltd.'),
+            'address' => env('COMPANY_ADDRESS', '123 Business Street, City'),
+            'phone' => env('COMPANY_PHONE', '+00 0000 0000'),
+            'email' => env('COMPANY_EMAIL', 'billing@example.com'),
         ]);
     }
 }

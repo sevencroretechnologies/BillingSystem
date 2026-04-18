@@ -29,6 +29,7 @@ export default function App() {
         <Route path="invoices" element={<InvoiceList />} />
         <Route path="invoices/new" element={<InvoiceForm />} />
         <Route path="invoices/:id" element={<InvoiceView />} />
+        <Route path="invoices/:id/edit" element={<InvoiceForm />} />
 
         <Route path="settings/tax" element={<TaxSettings />} />
         <Route path="settings/company" element={<CompanySettings />} />

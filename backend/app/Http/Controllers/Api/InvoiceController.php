@@ -97,6 +97,7 @@ class InvoiceController extends Controller
                     'sgst_amount' => 0,
                     'cgst_amount' => 0,
                     'tax_total' => 0,
+                    'total_tax' => 0,
                     'grand_total' => 0,
                 ]);
 
@@ -170,7 +171,7 @@ class InvoiceController extends Controller
 
                 if (isset($validated['items'])) {
                     $tax = Tax::current();
-                    $invoice->items()->delete();
+                    $invoice->items()->forceDelete();
 
                     $subtotal = $this->persistItems($invoice, $validated['items']);
 
@@ -207,6 +208,7 @@ class InvoiceController extends Controller
     {
         try {
             $invoice = Invoice::findOrFail($id);
+            $invoice->items()->delete();
             $invoice->delete();
 
             return response()->json(['success' => true, 'message' => 'Invoice deleted successfully.']);
@@ -290,6 +292,7 @@ class InvoiceController extends Controller
             'sgst_amount' => $sgstAmount,
             'cgst_amount' => $cgstAmount,
             'tax_total' => $taxTotal,
+            'total_tax' => $taxTotal,
             'grand_total' => round($subtotal + $taxTotal, 2),
         ]);
     }

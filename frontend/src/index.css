@@ -16,3 +16,72 @@ body {
     padding: 0 !important;
   }
 }
+
+/* ---- Mobile responsiveness ---- */
+
+/* Ensure tables scroll horizontally on small screens */
+.table-responsive {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Stack action buttons vertically on very small screens */
+@media (max-width: 575.98px) {
+  /* Page headers: stack title + button vertically */
+  .d-flex.justify-content-between.align-items-center {
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: 0.5rem;
+  }
+
+  /* Full-width buttons on mobile */
+  .d-flex.justify-content-between.align-items-center > .btn,
+  .d-flex.justify-content-between.align-items-center > a.btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  /* Invoice view header buttons */
+  .d-flex.gap-2.flex-wrap {
+    width: 100%;
+  }
+  .d-flex.gap-2.flex-wrap > .btn,
+  .d-flex.gap-2.flex-wrap > a.btn {
+    flex: 1 1 auto;
+    text-align: center;
+    font-size: 0.85rem;
+  }
+
+  /* Card bodies get less padding on mobile */
+  .card-body {
+    padding: 0.75rem;
+  }
+
+  /* Make form cards not overflow */
+  .card.card-body.shadow-sm {
+    padding: 0.75rem;
+  }
+
+  /* Invoice view: stack company/invoice info */
+  .invoice-print .row .col-6 {
+    width: 100%;
+    text-align: left !important;
+  }
+  .invoice-print .row .col-6.text-end {
+    text-align: left !important;
+    margin-top: 1rem;
+  }
+
+  /* Summary table in forms: full width on mobile */
+  .col-md-5,
+  .col-md-7 {
+    width: 100%;
+  }
+}
+
+/* Medium screens: ensure filter forms don't break */
+@media (max-width: 767.98px) {
+  .row.g-2.mb-3 > div {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
