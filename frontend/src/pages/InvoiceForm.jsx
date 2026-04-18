@@ -1,18 +1,22 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   createInvoice,
+  getInvoice,
   getTax,
   listCustomers,
   listItems,
+  updateInvoice,
 } from '../api/endpoints';
 import Alert from '../components/Alert';
 import Loading from '../components/Loading';
 
-// Page to create a new invoice. Loads customers, items and the current
+// Page to create or edit an invoice. Loads customers, items and the current
 // SGST/CGST configuration, lets the user enter a custom price per line,
 // and live-calculates the subtotal, tax breakdown and grand total.
 export default function InvoiceForm() {
+  const { id } = useParams();
+  const isEdit = Boolean(id);
   const navigate = useNavigate();
   const [customers, setCustomers] = useState([]);
   const [items, setItems] = useState([]);
@@ -41,24 +45,48 @@ export default function InvoiceForm() {
     (async () => {
       try {
         // Load customers, items and current tax rates in parallel.
-        const [c, i, t] = await Promise.all([
+        const promises = [
           listCustomers({ per_page: 100 }),
           listItems({ per_page: 100 }),
           getTax(),
-        ]);
+        ];
+        if (isEdit) {
+          promises.push(getInvoice(id));
+        }
+        const results = await Promise.all(promises);
+        const [c, i, t] = results;
         setCustomers(c.data.data);
         setItems(i.data.data);
         setTax({
           sgst: Number(t.data.data.sgst) || 0,
           cgst: Number(t.data.data.cgst) || 0,
         });
+
+        if (isEdit && results[3]) {
+          const inv = results[3].data.data;
+          setForm({
+            customer_id: String(inv.customer_id || ''),
+            invoice_date: inv.invoice_date || '',
+            notes: inv.notes || '',
+          });
+          if (inv.items && inv.items.length > 0) {
+            setRows(
+              inv.items.map((it) => ({
+                item_id: it.item_id ? String(it.item_id) : '',
+                item_name: it.item_name || '',
+                quantity: it.quantity || 1,
+                price: it.price || '',
+              }))
+            );
+          }
+        }
       } catch (e) {
         setError(e?.response?.data?.message || 'Failed to load form data.');
       } finally {
         setLoading(false);
       }
     })();
-  }, []);
+  }, [id, isEdit]);
 
   const handleRowChange = (idx, field, value) => {
     const next = [...rows];
@@ -116,15 +144,20 @@ export default function InvoiceForm() {
           price: Number(r.price),
         })),
       };
-      const res = await createInvoice(payload);
-      navigate(`/invoices/${res.data.data.id}`);
+      if (isEdit) {
+        await updateInvoice(id, payload);
+        navigate(`/invoices/${id}`);
+      } else {
+        const res = await createInvoice(payload);
+        navigate(`/invoices/${res.data.data.id}`);
+      }
     } catch (err) {
       if (err?.response?.status === 422) {
         const errs = err.response.data.errors || {};
         const first = Object.values(errs)[0]?.[0];
         setError(first || 'Please check the form values.');
       } else {
-        setError(err?.response?.data?.message || 'Failed to create invoice.');
+        setError(err?.response?.data?.message || `Failed to ${isEdit ? 'update' : 'create'} invoice.`);
       }
     } finally {
       setSaving(false);
@@ -135,7 +168,7 @@ export default function InvoiceForm() {
 
   return (
     <div>
-      <h3 className="mb-3">New Invoice</h3>
+      <h3 className="mb-3">{isEdit ? 'Edit Invoice' : 'New Invoice'}</h3>
       <Alert message={error} onClose={() => setError('')} />
       <form onSubmit={handleSubmit} className="card card-body shadow-sm">
         <div className="row g-3">
@@ -174,7 +207,7 @@ export default function InvoiceForm() {
             <div className="form-control-plaintext small">
               SGST {Number(tax.sgst).toFixed(2)}% + CGST {Number(tax.cgst).toFixed(2)}%
               <div className="text-muted">
-                Manage in <a href="/settings/tax">Settings → Tax</a>
+                Manage in <a href="/settings/tax">Settings &rarr; Tax</a>
               </div>
             </div>
           </div>
@@ -258,7 +291,7 @@ export default function InvoiceForm() {
                           onClick={() => removeRow(idx)}
                           aria-label="Remove row"
                         >
-                          ×
+                          &times;
                         </button>
                       )}
                     </td>
@@ -315,7 +348,7 @@ export default function InvoiceForm() {
 
         <div className="d-flex gap-2">
           <button type="submit" className="btn btn-primary" disabled={saving}>
-            {saving ? 'Saving...' : 'Save Invoice'}
+            {saving ? 'Saving...' : isEdit ? 'Update Invoice' : 'Save Invoice'}
           </button>
           <button
             type="button"

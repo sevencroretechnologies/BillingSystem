@@ -62,11 +62,14 @@ export default function InvoiceList() {
     {
       key: 'actions',
       header: 'Actions',
-      style: { width: 260 },
+      style: { width: 320 },
       render: (row) => (
         <div className="d-flex gap-2 flex-wrap">
           <Link className="btn btn-sm btn-outline-primary" to={`/invoices/${row.id}`}>
             View
+          </Link>
+          <Link className="btn btn-sm btn-outline-secondary" to={`/invoices/${row.id}/edit`}>
+            Edit
           </Link>
           <a
             className="btn btn-sm btn-outline-success"

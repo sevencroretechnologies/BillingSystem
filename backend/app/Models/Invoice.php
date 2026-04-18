@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Invoice extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'invoice_number',
@@ -40,7 +41,7 @@ class Invoice extends Model
 
     public function customer(): BelongsTo
     {
-        return $this->belongsTo(Customer::class);
+        return $this->belongsTo(Customer::class)->withTrashed();
     }
 
     public function items(): HasMany
@@ -53,7 +54,7 @@ class Invoice extends Model
      */
     public static function generateInvoiceNumber(): string
     {
-        $lastId = static::max('id');
+        $lastId = static::withTrashed()->max('id');
         $next = (int) $lastId + 1;
 
         return 'INV-'.str_pad((string) $next, 6, '0', STR_PAD_LEFT);

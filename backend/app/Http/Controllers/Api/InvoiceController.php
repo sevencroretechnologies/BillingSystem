@@ -171,7 +171,7 @@ class InvoiceController extends Controller
 
                 if (isset($validated['items'])) {
                     $tax = Tax::current();
-                    $invoice->items()->delete();
+                    $invoice->items()->forceDelete();
 
                     $subtotal = $this->persistItems($invoice, $validated['items']);
 
@@ -208,6 +208,7 @@ class InvoiceController extends Controller
     {
         try {
             $invoice = Invoice::findOrFail($id);
+            $invoice->items()->delete();
             $invoice->delete();
 
             return response()->json(['success' => true, 'message' => 'Invoice deleted successfully.']);
