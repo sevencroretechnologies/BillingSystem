@@ -85,8 +85,8 @@ export default function CustomerList() {
         </Link>
       </div>
 
-      <form className="row g-2 mb-3" onSubmit={handleSearch}>
-        <div className="col-md-4">
+      <form className="mb-3" onSubmit={handleSearch}>
+        <div className="d-flex gap-2" style={{ maxWidth: '400px' }}>
           <input
             type="text"
             className="form-control"
@@ -94,8 +94,6 @@ export default function CustomerList() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-        </div>
-        <div className="col-auto">
           <button type="submit" className="btn btn-outline-secondary">
             Search
           </button>
@@ -108,7 +106,45 @@ export default function CustomerList() {
         <Loading label="Loading customers..." />
       ) : (
         <>
-          <DataTable columns={columns} rows={rows} emptyMessage="No customers yet." />
+          {/* Desktop/Tablet View */}
+          <div className="d-none d-md-block">
+            <DataTable columns={columns} rows={rows} emptyMessage="No customers yet." />
+          </div>
+
+          {/* Mobile Card View */}
+          <div className="d-block d-md-none">
+            {rows.length === 0 ? (
+              <div className="text-center py-4 text-muted">No customers yet.</div>
+            ) : (
+              rows.map((row) => (
+                <div key={row.id} className="card shadow-sm mb-3">
+                  <div className="card-body">
+                    <h5 className="card-title mb-2">{row.name}</h5>
+                    <div className="mb-3 text-muted small">
+                      <div className="d-flex gap-3 mb-1 flex-wrap">
+                        {row.phone && <div><strong>Phone:</strong> {row.phone}</div>}
+                        {row.email && <div><strong>Email:</strong> {row.email}</div>}
+                      </div>
+                      {row.address && <div><strong>Address:</strong> {row.address}</div>}
+                    </div>
+                    <div className="d-flex gap-2">
+                      <Link className="btn btn-sm btn-outline-primary flex-fill" to={`/customers/${row.id}/edit`}>
+                        Edit
+                      </Link>
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-outline-danger flex-fill"
+                        onClick={() => handleDelete(row.id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+
           <Pagination meta={meta} onPageChange={setPage} />
         </>
       )}
