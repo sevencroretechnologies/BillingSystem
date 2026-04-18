@@ -113,7 +113,7 @@ export default function InvoiceList() {
           <input
             type="text"
             className="form-control"
-            placeholder="Search by invoice # or customer"
+            placeholder="Search by invoice number or customer"
             value={filters.search}
             onChange={(e) => setFilters({ ...filters, search: e.target.value })}
           />
