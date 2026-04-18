@@ -83,8 +83,8 @@ export default function ItemList() {
         </Link>
       </div>
 
-      <form className="row g-2 mb-3" onSubmit={handleSearch}>
-        <div className="col-md-4">
+      <form className="mb-3" onSubmit={handleSearch}>
+        <div className="d-flex gap-2" style={{ maxWidth: '400px' }}>
           <input
             type="text"
             className="form-control"
@@ -92,8 +92,6 @@ export default function ItemList() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-        </div>
-        <div className="col-auto">
           <button type="submit" className="btn btn-outline-secondary">
             Search
           </button>
@@ -106,7 +104,41 @@ export default function ItemList() {
         <Loading label="Loading items..." />
       ) : (
         <>
-          <DataTable columns={columns} rows={rows} emptyMessage="No items yet." />
+          {/* Desktop/Tablet View */}
+          <div className="d-none d-md-block">
+            <DataTable columns={columns} rows={rows} emptyMessage="No items yet." />
+          </div>
+
+          {/* Mobile Card View */}
+          <div className="d-block d-md-none">
+            {rows.length === 0 ? (
+              <div className="text-center py-4 text-muted">No items yet.</div>
+            ) : (
+              rows.map((row) => (
+                <div key={row.id} className="card shadow-sm mb-3">
+                  <div className="card-body">
+                    <h5 className="card-title mb-2">{row.name}</h5>
+                    <p className="card-text text-muted mb-3 text-truncate">
+                      {row.description || 'No description'}
+                    </p>
+                    <div className="d-flex gap-2">
+                      <Link className="btn btn-sm btn-outline-primary flex-fill" to={`/items/${row.id}/edit`}>
+                        Edit
+                      </Link>
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-outline-danger flex-fill"
+                        onClick={() => handleDelete(row.id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+
           <Pagination meta={meta} onPageChange={setPage} />
         </>
       )}
