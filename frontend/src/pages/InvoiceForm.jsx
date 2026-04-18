@@ -214,89 +214,174 @@ export default function InvoiceForm() {
         </div>
 
         <hr className="my-4" />
-        <h5>Items</h5>
-
-        <div className="table-responsive">
-          <table className="table">
-            <thead>
-              <tr>
-                <th style={{ width: '40%' }}>Item</th>
-                <th style={{ width: 80 }}>Qty</th>
-                <th style={{ width: 120 }}>Price</th>
-                <th style={{ width: 120 }} className="text-end">
-                  Line Total
-                </th>
-                <th style={{ width: 40 }}></th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((row, idx) => {
-                const qty = Number(row.quantity) || 0;
-                const price = Number(row.price) || 0;
-                const lineTotal = round(qty * price);
-                return (
-                  <tr key={idx}>
-                    <td>
-                      <select
-                        className="form-select form-select-sm"
-                        value={row.item_id}
-                        onChange={(e) => handleRowChange(idx, 'item_id', e.target.value)}
-                        required
-                      >
-                        <option value="">Select item...</option>
-                        {items.map((it) => (
-                          <option key={it.id} value={it.id}>
-                            {it.name}
-                          </option>
-                        ))}
-                      </select>
-                    </td>
-
-                    <td>
-                      <input
-                        type="number"
-                        min="1"
-                        className="form-control form-control-sm"
-                        value={row.quantity}
-                        onChange={(e) => handleRowChange(idx, 'quantity', e.target.value)}
-                        required
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        className="form-control form-control-sm"
-                        value={row.price}
-                        onChange={(e) => handleRowChange(idx, 'price', e.target.value)}
-                        placeholder="0.00"
-                        required
-                      />
-                    </td>
-                    <td className="text-end align-middle">{lineTotal.toFixed(2)}</td>
-                    <td className="align-middle">
-                      {rows.length > 1 && (
-                        <button
-                          type="button"
-                          className="btn btn-sm btn-outline-danger"
-                          onClick={() => removeRow(idx)}
-                          aria-label="Remove row"
+        {/* DESKTOP TABLE (Hidden on mobile) */}
+        <div className="d-none d-md-block">
+          <h5>Items</h5>
+          <div className="table-responsive">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th style={{ width: '40%' }}>Item</th>
+                  <th style={{ width: 80 }}>Qty</th>
+                  <th style={{ width: 120 }}>Price</th>
+                  <th style={{ width: 120 }} className="text-end">
+                    Line Total
+                  </th>
+                  <th style={{ width: 40 }}></th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((row, idx) => {
+                  const qty = Number(row.quantity) || 0;
+                  const price = Number(row.price) || 0;
+                  const lineTotal = round(qty * price);
+                  return (
+                    <tr key={idx}>
+                      <td>
+                        <select
+                          className="form-select form-select-sm"
+                          value={row.item_id}
+                          onChange={(e) => handleRowChange(idx, 'item_id', e.target.value)}
+                          required
                         >
-                          &times;
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                          <option value="">Select item...</option>
+                          {items.map((it) => (
+                            <option key={it.id} value={it.id}>
+                              {it.name}
+                            </option>
+                          ))}
+                        </select>
+                      </td>
+
+                      <td>
+                        <input
+                          type="number"
+                          min="1"
+                          className="form-control form-control-sm"
+                          value={row.quantity}
+                          onChange={(e) => handleRowChange(idx, 'quantity', e.target.value)}
+                          required
+                        />
+                      </td>
+                      <td>
+                        <input
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          className="form-control form-control-sm"
+                          value={row.price}
+                          onChange={(e) => handleRowChange(idx, 'price', e.target.value)}
+                          placeholder="0.00"
+                          required
+                        />
+                      </td>
+                      <td className="text-end align-middle">{lineTotal.toFixed(2)}</td>
+                      <td className="align-middle">
+                        {rows.length > 1 && (
+                          <button
+                            type="button"
+                            className="btn btn-sm btn-outline-danger"
+                            onClick={() => removeRow(idx)}
+                            aria-label="Remove row"
+                          >
+                            &times;
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          <div>
+            <button type="button" className="btn btn-outline-secondary btn-sm" onClick={addRow}>
+              + Add Row
+            </button>
+          </div>
         </div>
 
-        <div>
-          <button type="button" className="btn btn-outline-secondary btn-sm" onClick={addRow}>
-            + Add Row
+        {/* MOBILE COMPACT ROWS (Only visible on mobile) */}
+        <div className="d-md-none space-y-3">
+          <p className="text-sm font-semibold text-gray-700">Items</p>
+          {rows.map((item, index) => {
+            const qty = Number(item.quantity) || 0;
+            const price = Number(item.price) || 0;
+            const lineTotal = round(qty * price);
+            return (
+              <div key={index} className="bg-white border rounded-lg p-3 shadow-sm">
+                {/* Row 1: Product Select */}
+                <div className="mb-2">
+                  <select
+                    value={item.item_id}
+                    onChange={(e) => handleRowChange(index, 'item_id', e.target.value)}
+                    className="form-select text-sm p-2"
+                    required
+                  >
+                    <option value="">Select item...</option>
+                    {items.map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {p.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Row 2: Qty + Price */}
+                <div className="row g-2 mb-2">
+                  <div className="col-6">
+                    <p className="mb-1 text-secondary" style={{ fontSize: '10px' }}>
+                      Qty
+                    </p>
+                    <input
+                      type="number"
+                      min="1"
+                      value={item.quantity}
+                      onChange={(e) => handleRowChange(index, 'quantity', e.target.value)}
+                      className="form-control text-sm p-2"
+                      required
+                    />
+                  </div>
+                  <div className="col-6">
+                    <p className="mb-1 text-secondary" style={{ fontSize: '10px' }}>
+                      Price
+                    </p>
+                    <input
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      value={item.price}
+                      onChange={(e) => handleRowChange(index, 'price', e.target.value)}
+                      className="form-control text-sm p-2"
+                      placeholder="0.00"
+                      required
+                    />
+                  </div>
+                </div>
+
+                {/* Row 3: Total + Remove */}
+                <div className="d-flex justify-content-between align-items-center">
+                  <span className="text-sm font-medium">₹{lineTotal.toFixed(2)}</span>
+                  <button
+                    type="button"
+                    onClick={() => removeRow(index)}
+                    className="btn btn-link text-danger p-0 text-decoration-none text-sm"
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+
+          {/* Add Row Button */}
+          <button
+            type="button"
+            onClick={addRow}
+            className="w-full border border-dashed p-2 rounded text-sm text-primary bg-light mt-2"
+          >
+            + Add Item
           </button>
         </div>
 
