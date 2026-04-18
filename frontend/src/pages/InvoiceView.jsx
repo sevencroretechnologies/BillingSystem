@@ -42,8 +42,8 @@ export default function InvoiceView() {
 
   return (
     <div>
-      {/* DESKTOP VIEW (md and above) */}
-      <div className="d-none d-md-block">
+      {/* DESKTOP VIEW (md and above OR Print) */}
+      <div className="d-none d-md-block d-print-block">
         <div className="d-flex justify-content-between align-items-center mb-3 no-print">
           <h3 className="m-0">Invoice {invoice.invoice_number}</h3>
           <div className="d-flex gap-2 flex-wrap">
@@ -188,8 +188,8 @@ export default function InvoiceView() {
         </div>
       </div>
 
-      {/* MOBILE VIEW (Below md) */}
-      <div className="d-md-none p-3 space-y-4 bg-light">
+      {/* MOBILE VIEW (Below md - Hidden on Print) */}
+      <div className="d-md-none p-3 space-y-4 bg-light d-print-none">
         {/* ACTION BUTTONS (Top Static - 1 Row) */}
         <div className="bg-white p-3 d-flex gap-2 rounded-xl shadow-sm border no-print">
           <button
