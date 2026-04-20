@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-  createInvoice,
-  createItem,
+import{createInvoice,
   getInvoice,
   getTax,
   listCustomers,
@@ -11,7 +9,6 @@ import {
 } from '../api/endpoints';
 import Alert from '../components/Alert';
 import Loading from '../components/Loading';
-import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 
 // Page to create or edit an invoice. Loads customers, items and the current

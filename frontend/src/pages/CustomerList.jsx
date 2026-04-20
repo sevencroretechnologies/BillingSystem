@@ -14,6 +14,7 @@ export default function CustomerList() {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [viewModalData, setViewModalData] = useState(null);
 
   const fetchData = async () => {
     setLoading(true);
@@ -58,9 +59,16 @@ export default function CustomerList() {
     {
       key: 'actions',
       header: 'Actions',
-      style: { width: 170 },
+      style: { width: 220 },
       render: (row) => (
         <div className="d-flex gap-2">
+          <button
+            type="button"
+            className="btn btn-sm btn-outline-info"
+            onClick={() => setViewModalData(row)}
+          >
+            View
+          </button>
           <Link className="btn btn-sm btn-outline-primary" to={`/customers/${row.id}/edit`}>
             Edit
           </Link>
@@ -128,6 +136,13 @@ export default function CustomerList() {
                       {row.address && <div><strong>Address:</strong> {row.address}</div>}
                     </div>
                     <div className="d-flex gap-2">
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-outline-info flex-fill"
+                        onClick={() => setViewModalData(row)}
+                      >
+                        View
+                      </button>
                       <Link className="btn btn-sm btn-outline-primary flex-fill" to={`/customers/${row.id}/edit`}>
                         Edit
                       </Link>
@@ -147,6 +162,66 @@ export default function CustomerList() {
 
           <Pagination meta={meta} onPageChange={setPage} />
         </>
+      )}
+
+      {/* View Customer Modal */}
+      {viewModalData && (
+        <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }} tabIndex="-1">
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Customer Details</h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={() => setViewModalData(null)}
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div className="modal-body">
+                <div className="mb-3">
+                  <label className="fw-bold d-block text-muted small uppercase">Name</label>
+                  <div>{viewModalData.name}</div>
+                </div>
+                <div className="row mb-3">
+                  <div className="col-6">
+                    <label className="fw-bold d-block text-muted small uppercase">Phone</label>
+                    <div>{viewModalData.phone || '-'}</div>
+                  </div>
+                  <div className="col-6">
+                    <label className="fw-bold d-block text-muted small uppercase">Email</label>
+                    <div>{viewModalData.email || '-'}</div>
+                  </div>
+                </div>
+                <div className="mb-3">
+                  <label className="fw-bold d-block text-muted small uppercase">Address</label>
+                  <div>{viewModalData.address || '-'}</div>
+                </div>
+                {viewModalData.tax_number && (
+                  <div className="mb-3">
+                    <label className="fw-bold d-block text-muted small uppercase">Tax Number / GSTIN</label>
+                    <div>{viewModalData.tax_number}</div>
+                  </div>
+                )}
+                {viewModalData.notes && (
+                  <div className="mb-3">
+                    <label className="fw-bold d-block text-muted small uppercase">Notes</label>
+                    <div style={{ whiteSpace: 'pre-wrap' }}>{viewModalData.notes}</div>
+                  </div>
+                )}
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => setViewModalData(null)}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
