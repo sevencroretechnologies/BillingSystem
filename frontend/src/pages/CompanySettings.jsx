@@ -12,9 +12,9 @@ export default function CompanySettings() {
         address: "",
         phone: "",
         email: "",
-        k2_recipient_code: "2900834547",
-        gstin: "29AAGAS0338G1ZH",
-        pan: "AAGAS0338G",
+        k2_recipient_code: "",
+        gstin: "",
+        pan: "",
     });
     const [logoFile, setLogoFile] = useState(null);
     const [logoUrl, setLogoUrl] = useState(null);
@@ -33,9 +33,9 @@ export default function CompanySettings() {
                 address: data.address ?? "",
                 phone: data.phone ?? "",
                 email: data.email ?? "",
-                k2_recipient_code: data.k2_recipient_code || "2900834547",
-                gstin: data.gstin || "29AAGAS0338G1ZH",
-                pan: data.pan || "AAGAS0338G",
+                k2_recipient_code: data.k2_recipient_code ?? "",
+                gstin: data.gstin ?? "",
+                pan: data.pan ?? "",
             });
             setLogoUrl(data.logo_url || null);
             setLogoFile(null);
