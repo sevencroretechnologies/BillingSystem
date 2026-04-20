@@ -17,6 +17,9 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->string('email')->nullable();
             $table->string('logo')->nullable();
+            $table->string('k2_recipient_code')->nullable();
+            $table->string('gstin')->nullable();
+            $table->string('pan')->nullable();
             $table->timestamps();
         });
     }

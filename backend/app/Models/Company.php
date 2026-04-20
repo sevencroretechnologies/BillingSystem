@@ -22,6 +22,9 @@ class Company extends Model
         'phone',
         'email',
         'logo',
+        'k2_recipient_code',
+        'gstin',
+        'pan',
     ];
 
     /**
@@ -35,6 +38,9 @@ class Company extends Model
             'address' => env('COMPANY_ADDRESS', '123 Business Street, City'),
             'phone' => env('COMPANY_PHONE', '+00 0000 0000'),
             'email' => env('COMPANY_EMAIL', 'billing@example.com'),
+            'k2_recipient_code' => env('COMPANY_K2_CODE', '2900834547'),
+            'gstin' => env('COMPANY_GSTIN', '29AAGAS0338G1ZH'),
+            'pan' => env('COMPANY_PAN', 'AAGAS0338G'),
         ]);
     }
 }

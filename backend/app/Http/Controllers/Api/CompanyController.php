@@ -51,6 +51,9 @@ class CompanyController extends Controller
             'email' => 'nullable|email|max:255',
             'logo' => 'nullable|image|mimes:jpg,jpeg,png,gif,svg,webp|max:2048',
             'remove_logo' => 'nullable|boolean',
+            'k2_recipient_code' => 'nullable|string|max:50',
+            'gstin' => 'nullable|string|max:20',
+            'pan' => 'nullable|string|max:15',
         ]);
 
         try {

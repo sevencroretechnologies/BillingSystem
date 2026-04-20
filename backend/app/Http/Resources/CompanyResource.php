@@ -23,6 +23,9 @@ class CompanyResource extends JsonResource
             'email' => $this->email,
             'logo' => $this->logo,
             'logo_url' => $this->logo ? Storage::disk('public')->url($this->logo) : null,
+            'k2_recipient_code' => $this->k2_recipient_code,
+            'gstin' => $this->gstin,
+            'pan' => $this->pan,
             'updated_at' => $this->updated_at?->toDateTimeString(),
         ];
     }
