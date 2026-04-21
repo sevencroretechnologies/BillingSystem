@@ -1,32 +1,122 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <title>Invoice {{ $invoice->invoice_number }}</title>
     <style>
-        * { font-family: DejaVu Sans, sans-serif; }
-        body { color: #222; font-size: 12px; margin: 0; }
-        .container { padding: 24px; }
-        h1, h2, h3 { margin: 0; }
-        .header { display: table; width: 100%; margin-bottom: 24px; }
-        .header .col { display: table-cell; vertical-align: top; }
-        .company-name { font-size: 22px; font-weight: bold; color: #1a73e8; }
-        .logo { max-height: 72px; max-width: 180px; margin-bottom: 8px; }
-        .muted { color: #666; }
-        .right { text-align: right; }
-        .mt-8 { margin-top: 8px; }
-        .mt-16 { margin-top: 16px; }
-        .mt-24 { margin-top: 24px; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { border: 1px solid #ddd; padding: 8px; }
-        th { background: #f5f5f5; text-align: left; }
-        .totals { width: 45%; margin-left: auto; margin-top: 16px; }
-        .totals td { border: none; padding: 4px 8px; }
-        .totals .grand { font-weight: bold; font-size: 14px; border-top: 2px solid #1a73e8; padding-top: 8px; }
-        .label { color: #888; font-size: 10px; text-transform: uppercase; letter-spacing: .5px; }
-        .box { padding: 10px 12px; background: #fafafa; border: 1px solid #eee; }
+        * {
+            font-family: DejaVu Sans, sans-serif;
+        }
+
+        body {
+            color: #222;
+            font-size: 12px;
+            margin: 0;
+        }
+
+        .container {
+            padding: 24px;
+        }
+
+        h1,
+        h2,
+        h3 {
+            margin: 0;
+        }
+
+        .header {
+            display: table;
+            width: 100%;
+            margin-bottom: 24px;
+        }
+
+        .header .col {
+            display: table-cell;
+            vertical-align: top;
+        }
+
+        .company-name {
+            font-size: 22px;
+            font-weight: bold;
+            color: #1a73e8;
+        }
+
+        .logo {
+            max-height: 72px;
+            max-width: 180px;
+            margin-bottom: 8px;
+        }
+
+        .muted {
+            color: #666;
+        }
+
+        .right {
+            text-align: right;
+        }
+
+        .mt-8 {
+            margin-top: 8px;
+        }
+
+        .mt-16 {
+            margin-top: 16px;
+        }
+
+        .mt-24 {
+            margin-top: 24px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        th {
+            background: #f5f5f5;
+            text-align: left;
+        }
+
+        .totals {
+            width: 45%;
+            margin-left: auto;
+            margin-top: 16px;
+        }
+
+        .totals td {
+            border: none;
+            padding: 4px 8px;
+        }
+
+        .totals .grand {
+            font-weight: bold;
+            font-size: 14px;
+            border-top: 2px solid #1a73e8;
+            padding-top: 8px;
+        }
+
+        .label {
+            color: #888;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
+
+        .box {
+            padding: 10px 12px;
+            background: #fafafa;
+            border: 1px solid #eee;
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
         {{-- Company header rendered from the database `company` row. --}}
@@ -34,14 +124,21 @@
             <div class="col">
                 @if($company->logo)
                     @php
-                        $logoPath = storage_path('app/public/'.$company->logo);
+                        $logoPath = storage_path('app/public/' . $company->logo);
                     @endphp
                     @if(file_exists($logoPath))
                         <img class="logo" src="{{ $logoPath }}" alt="Logo">
                     @endif
                 @endif
                 <div class="company-name">{{ $company->company_name }}</div>
-                @if($company->address)<div class="muted mt-8">{{ $company->address }}</div>@endif
+                @if($company->k2_recipient_code)
+                <div class="muted mt-8"><strong>K-2 Recipient Code:</strong> {{ $company->k2_recipient_code }}</div>@endif
+                @if($company->gstin)
+                <div class="muted"><strong>GSTIN:</strong> {{ $company->gstin }}</div>@endif
+                @if($company->pan)
+                <div class="muted"><strong>PAN:</strong> {{ $company->pan }}</div>@endif
+                @if($company->address)
+                <div class="muted mt-8">{{ $company->address }}</div>@endif
                 <div class="muted">
                     @if($company->phone){{ $company->phone }}@endif
                     @if($company->phone && $company->email) &middot; @endif
@@ -50,7 +147,8 @@
             </div>
             <div class="col right">
                 <h1>INVOICE</h1>
-                <div class="mt-8"><span class="label">Invoice #</span> <strong>{{ $invoice->invoice_number }}</strong></div>
+                <div class="mt-8"><span class="label">Invoice #</span> <strong>{{ $invoice->invoice_number }}</strong>
+                </div>
                 <div><span class="label">Date</span> {{ $invoice->invoice_date?->format('d M Y') }}</div>
             </div>
         </div>
@@ -58,13 +156,16 @@
         <div class="box">
             <div class="label">Bill To</div>
             <div style="font-weight:bold;">{{ $invoice->customer->name ?? '—' }}</div>
-            @if($invoice->customer?->phone)<div class="muted">{{ $invoice->customer->phone }}</div>@endif
-            @if($invoice->customer?->email)<div class="muted">{{ $invoice->customer->email }}</div>@endif
-            @if($invoice->customer?->address)<div class="muted">{{ $invoice->customer->address }}</div>@endif
+            @if($invoice->customer?->phone)
+            <div class="muted">{{ $invoice->customer->phone }}</div>@endif
+            @if($invoice->customer?->email)
+            <div class="muted">{{ $invoice->customer->email }}</div>@endif
+            @if($invoice->customer?->address)
+            <div class="muted">{{ $invoice->customer->address }}</div>@endif
         </div>
 
         {{-- Item table. Tax is calculated at invoice level, so each row
-             shows the effective (SGST + CGST) percentage for reference. --}}
+        shows the effective (SGST + CGST) percentage for reference. --}}
         @php
             $combinedTax = (float) $invoice->sgst_percent + (float) $invoice->cgst_percent;
         @endphp
@@ -127,4 +228,5 @@
         <div class="mt-24 muted right" style="font-size:11px;">Thank you for your business!</div>
     </div>
 </body>
+
 </html>
