@@ -5,20 +5,29 @@ import FormField from "../components/FormField";
 import Loading from "../components/Loading";
 
 // Settings page for the single-row company record. All fields are
-// editable; the logo is optional and uploaded as multipart/form-data.
+// editable; the logo and signature are optional and uploaded as multipart/form-data.
 export default function CompanySettings() {
     const [form, setForm] = useState({
         company_name: "",
         address: "",
         phone: "",
+        whatsapp_no: "",
         email: "",
         k2_recipient_code: "",
         gstin: "",
         pan: "",
     });
+
+    // Logo state
     const [logoFile, setLogoFile] = useState(null);
     const [logoUrl, setLogoUrl] = useState(null);
     const [removeLogo, setRemoveLogo] = useState(false);
+
+    // Signature image state
+    const [signatureFile, setSignatureFile] = useState(null);
+    const [signatureUrl, setSignatureUrl] = useState(null);
+    const [removeSignature, setRemoveSignature] = useState(false);
+
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState("");
@@ -32,6 +41,7 @@ export default function CompanySettings() {
                 company_name: data.company_name ?? "",
                 address: data.address ?? "",
                 phone: data.phone ?? "",
+                whatsapp_no: data.whatsapp_no ?? "",
                 email: data.email ?? "",
                 k2_recipient_code: data.k2_recipient_code ?? "",
                 gstin: data.gstin ?? "",
@@ -40,6 +50,9 @@ export default function CompanySettings() {
             setLogoUrl(data.logo_url || null);
             setLogoFile(null);
             setRemoveLogo(false);
+            setSignatureUrl(data.signature_url || null);
+            setSignatureFile(null);
+            setRemoveSignature(false);
         } catch (e) {
             setError(
                 e?.response?.data?.message || "Failed to load company details.",
@@ -57,10 +70,16 @@ export default function CompanySettings() {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
-    const handleFileChange = (e) => {
+    const handleLogoChange = (e) => {
         const file = e.target.files?.[0] || null;
         setLogoFile(file);
         if (file) setRemoveLogo(false);
+    };
+
+    const handleSignatureChange = (e) => {
+        const file = e.target.files?.[0] || null;
+        setSignatureFile(file);
+        if (file) setRemoveSignature(false);
     };
 
     const handleSubmit = async (e) => {
@@ -73,13 +92,15 @@ export default function CompanySettings() {
                 ...form,
                 logo: logoFile,
                 removeLogo,
+                signature: signatureFile,
+                removeSignature,
             });
             setSuccess("Company details saved.");
             await load();
         } catch (err) {
             setError(
                 err?.response?.data?.message ||
-                    "Failed to save company details.",
+                "Failed to save company details.",
             );
         } finally {
             setSaving(false);
@@ -92,8 +113,8 @@ export default function CompanySettings() {
         <div>
             <h3 className='mb-3'>Company Settings</h3>
             <p className='text-muted'>
-                These details (and the logo) appear at the top of every invoice
-                and PDF.
+                These details (logo and signature) appear on every invoice and
+                PDF.
             </p>
             <Alert message={error} onClose={() => setError("")} />
             {success && (
@@ -130,6 +151,17 @@ export default function CompanySettings() {
                             onChange={handleChange}
                         />
                     </div>
+                    <div className='col-md-6'>
+                        <FormField
+                            label='WhatsApp No'
+                            name='whatsapp_no'
+                            value={form.whatsapp_no}
+                            onChange={handleChange}
+                            placeholder='+91 98765 43210'
+                        />
+                    </div>
+                </div>
+                <div className='row'>
                     <div className='col-md-6'>
                         <FormField
                             label='Email'
@@ -172,6 +204,7 @@ export default function CompanySettings() {
                     placeholder=' 2900834547'
                 />
 
+                {/* ── Logo ── */}
                 <hr className='my-3' />
                 <div className='mb-3'>
                     <label className='form-label'>Logo</label>
@@ -203,12 +236,53 @@ export default function CompanySettings() {
                         type='file'
                         accept='image/*'
                         className='form-control'
-                        onChange={handleFileChange}
+                        onChange={handleLogoChange}
                     />
                     <div className='form-text'>
                         PNG, JPG, SVG or WebP up to 2 MB.
                     </div>
                 </div>
+
+                {/* ── Signature Image ── */}
+                <div className='mb-3'>
+                    <label className='form-label'>Signature Image</label>
+                    {signatureUrl && !removeSignature && (
+                        <div className='mb-2'>
+                            <img
+                                src={signatureUrl}
+                                alt='Current signature'
+                                style={{
+                                    maxHeight: 80,
+                                    maxWidth: 220,
+                                    border: "1px solid #eee",
+                                    padding: 4,
+                                    background: "#fafafa",
+                                }}
+                            />
+                            <button
+                                type='button'
+                                className='btn btn-sm btn-link text-danger ms-2'
+                                onClick={() => {
+                                    setRemoveSignature(true);
+                                    setSignatureFile(null);
+                                }}
+                            >
+                                Remove signature
+                            </button>
+                        </div>
+                    )}
+                    <input
+                        type='file'
+                        accept='image/*'
+                        className='form-control'
+                        onChange={handleSignatureChange}
+                    />
+                    <div className='form-text'>
+                        Upload an authorised signatory image. PNG, JPG, SVG or
+                        WebP up to 2 MB.
+                    </div>
+                </div>
+
                 <div>
                     <button
                         type='submit'

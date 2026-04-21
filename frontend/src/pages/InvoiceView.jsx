@@ -45,35 +45,35 @@ export default function InvoiceView() {
     if (num === 0) return 'Zero Rupees Only';
     const a = ['', 'One ', 'Two ', 'Three ', 'Four ', 'Five ', 'Six ', 'Seven ', 'Eight ', 'Nine ', 'Ten ', 'Eleven ', 'Twelve ', 'Thirteen ', 'Fourteen ', 'Fifteen ', 'Sixteen ', 'Seventeen ', 'Eighteen ', 'Nineteen '];
     const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
-    
+
     const inWords = (n) => {
-        let str = '';
-        if (n > 99) {
-            str += a[Math.floor(n / 100)] + 'Hundred ';
-            n %= 100;
-        }
-        if (n > 19) {
-            str += b[Math.floor(n / 10)] + ' ';
-            n %= 10;
-        }
-        if (n > 0) {
-            str += a[n];
-        }
-        return str;
+      let str = '';
+      if (n > 99) {
+        str += a[Math.floor(n / 100)] + 'Hundred ';
+        n %= 100;
+      }
+      if (n > 19) {
+        str += b[Math.floor(n / 10)] + ' ';
+        n %= 10;
+      }
+      if (n > 0) {
+        str += a[n];
+      }
+      return str;
     };
-    
+
     let words = '';
     if (Math.floor(num / 10000000) > 0) {
-        words += inWords(Math.floor(num / 10000000)) + 'Crore ';
-        num %= 10000000;
+      words += inWords(Math.floor(num / 10000000)) + 'Crore ';
+      num %= 10000000;
     }
     if (Math.floor(num / 100000) > 0) {
-        words += inWords(Math.floor(num / 100000)) + 'Lakh ';
-        num %= 100000;
+      words += inWords(Math.floor(num / 100000)) + 'Lakh ';
+      num %= 100000;
     }
     if (Math.floor(num / 1000) > 0) {
-        words += inWords(Math.floor(num / 1000)) + 'Thousand ';
-        num %= 1000;
+      words += inWords(Math.floor(num / 1000)) + 'Thousand ';
+      num %= 1000;
     }
     words += inWords(num);
     return words.trim() + ' Rupees Only';
@@ -125,122 +125,133 @@ export default function InvoiceView() {
         <div className="card shadow-sm border-0">
           <div className="card-body invoice-print" style={{ color: '#000', fontSize: '13px', lineHeight: 1.4, padding: 0 }}>
             <div style={{ border: '1px solid #000', padding: '15px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginBottom: '10px' }}>
-                    <div style={{ flex: '0 0 35%', textAlign: 'left', whiteSpace: 'nowrap' }}>
-                        {company?.k2_recipient_code ? <>K-2 Recipient Code : {company.k2_recipient_code}<br /></> : null}
-                        {company?.gstin ? <>GSTIN : {company.gstin}<br /></> : null}
-                        {company?.pan ? <>Pan No : {company.pan}</> : null}
-                    </div>
-                    <div style={{ flex: '0 0 30%', textAlign: 'center' }}>
-                        {/* <span style={{ fontSize: '14px', fontWeight: 'bold' }}>|| Shri ||</span><br /> */}
-                        <div style={{ border: '1px solid #000', display: 'inline-block', padding: '2px 10px', marginTop: '5px', fontWeight: 'bold', fontSize: '13px' }}>
-                            CASH / CREDIT BILL
-                        </div>
-                    </div>
-                    <div style={{ flex: '0 0 35%', textAlign: 'right', fontWeight: 'bold', fontSize: '12px' }}>
-                        {company?.phone && <span>Phone : {company.phone}<br /></span>}
-                        {company?.email}
-                    </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginBottom: '10px' }}>
+                <div style={{ flex: '0 0 35%', textAlign: 'left', whiteSpace: 'nowrap' }}>
+                  {company?.k2_recipient_code ? <>K-2 Recipient Code : {company.k2_recipient_code}<br /></> : null}
+                  {company?.gstin ? <>GSTIN : {company.gstin}<br /></> : null}
+                  {company?.pan ? <>Pan No : {company.pan}</> : null}
                 </div>
-
-                <div style={{ display: 'flex', borderBottom: '2px solid #000', paddingBottom: '10px', marginBottom: '10px', alignItems: 'center' }}>
-                    <div style={{ flex: '0 0 20%', textAlign: 'center' }}>
-                        {company?.logo_url && <img src={company.logo_url} alt="Logo" style={{ maxHeight: '60px', maxWidth: '150px' }} />}
-                    </div>
-                    <div style={{ flex: '0 0 80%', textAlign: 'center' }}>
-                        <div style={{ fontSize: '22px', fontWeight: 'bold', marginBottom: '5px', textTransform: 'uppercase' }}>{company?.company_name || 'Your Company'}</div>
-                        {company?.address && <div style={{ fontSize: '13px' }}>{company.address}</div>}
-                    </div>
+                <div style={{ flex: '0 0 30%', textAlign: 'center' }}>
+                  {/* <span style={{ fontSize: '14px', fontWeight: 'bold' }}>|| Shri ||</span><br /> */}
+                  <div style={{ border: '1px solid #000', display: 'inline-block', padding: '2px 10px', marginTop: '5px', fontWeight: 'bold', fontSize: '13px' }}>
+                    CASH / CREDIT BILL
+                  </div>
                 </div>
-
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px', fontSize: '15px', fontWeight: 'bold' }}>
-                    <div>No. <span style={{ color: '#d00' }}>{invoice.invoice_number}</span></div>
-                    <div>Date: {invoice.invoice_date}</div>
+                <div style={{ flex: '0 0 35%', textAlign: 'right', fontWeight: 'bold', fontSize: '12px' }}>
+                  {company?.phone && <span>Phone : {company.phone}<br /></span>}
+                  {company?.whatsapp_no && <span>WhatsApp : {company.whatsapp_no}<br /></span>}
+                  {company?.email}
                 </div>
+              </div>
 
-                <div style={{ marginBottom: '15px', fontSize: '15px' }}>
-                    <div style={{ display: 'flex', alignItems: 'flex-end', marginBottom: '8px' }}>
-                        <span style={{ fontWeight: 'bold', fontSize: '16px', marginRight: '8px' }}>To,</span>
-                        <span style={{ flex: 1, fontSize: '16px', fontWeight: 'bold', borderBottom: '1px dotted #000', paddingBottom: '2px' }}>
-                            {invoice.customer?.name || ''}
-                        </span>
-                    </div>
+              <div style={{ display: 'flex', borderBottom: '2px solid #000', paddingBottom: '10px', marginBottom: '10px', alignItems: 'center' }}>
+                <div style={{ flex: '0 0 20%', textAlign: 'center' }}>
+                  {company?.logo_url && <img src={company.logo_url} alt="Logo" style={{ maxHeight: '60px', maxWidth: '150px' }} />}
                 </div>
+                <div style={{ flex: '0 0 80%', textAlign: 'center' }}>
+                  <div style={{ fontSize: '22px', fontWeight: 'bold', marginBottom: '5px', textTransform: 'uppercase' }}>{company?.company_name || 'Your Company'}</div>
+                  {company?.address && <div style={{ fontSize: '13px' }}>{company.address}</div>}
+                </div>
+              </div>
 
-                <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid #000' }}>
-                    <thead>
-                        <tr>
-                            <th style={{ border: '1px solid #000', padding: '6px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '13px', borderTop: '2px solid #000', borderBottom: '2px solid #000', width: '40px' }}>Sl.No.</th>
-                            <th style={{ border: '1px solid #000', padding: '6px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '13px', borderTop: '2px solid #000', borderBottom: '2px solid #000' }}>Particulars</th>
-                            <th style={{ border: '1px solid #000', padding: '6px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '13px', borderTop: '2px solid #000', borderBottom: '2px solid #000', width: '70px' }}>Quantity</th>
-                            <th style={{ border: '1px solid #000', padding: '6px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '13px', borderTop: '2px solid #000', borderBottom: '2px solid #000', width: '90px' }}>Rate</th>
-                            <th style={{ border: '1px solid #000', padding: '6px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '13px', borderTop: '2px solid #000', borderBottom: '2px solid #000', width: '110px' }}>Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {invoice.items.map((it, idx) => {
-                            const isAbsoluteLast = idx === invoice.items.length - 1 && (5 - invoice.items.length) <= 0;
-                            return (
-                                <tr key={it.id || idx}>
-                                    <td style={{ borderLeft: '1px solid #000', borderRight: '1px solid #000', padding: '4px 8px', textAlign: 'center', borderBottom: 'none', paddingBottom: isAbsoluteLast ? '60px' : '4px' }}>{String(idx + 1).padStart(2, '0')}.</td>
-                                    <td style={{ borderLeft: '1px solid #000', borderRight: '1px solid #000', padding: '4px 8px', textAlign: 'left', borderBottom: 'none', paddingBottom: isAbsoluteLast ? '60px' : '4px' }}>{it.item_name}</td>
-                                    <td style={{ borderLeft: '1px solid #000', borderRight: '1px solid #000', padding: '4px 8px', textAlign: 'center', borderBottom: 'none', paddingBottom: isAbsoluteLast ? '60px' : '4px' }}>{it.quantity}</td>
-                                    <td style={{ borderLeft: '1px solid #000', borderRight: '1px solid #000', padding: '4px 8px', textAlign: 'center', borderBottom: 'none', paddingBottom: isAbsoluteLast ? '60px' : '4px' }}>{Math.round(it.price)}/-</td>
-                                    <td style={{ borderLeft: '1px solid #000', borderRight: '1px solid #000', padding: '4px 8px', textAlign: 'right', borderBottom: 'none', paddingBottom: isAbsoluteLast ? '60px' : '4px' }}>{Number(it.line_total).toFixed(2)}</td>
-                                </tr>
-                            );
-                        })}
-                        {/* Empty rows filling */}
-                        {Array.from({ length: Math.max(5 - invoice.items.length, 0) }).map((_, i) => {
-                            const isAbsoluteLast = i === Math.max(5 - invoice.items.length, 0) - 1;
-                            return (
-                                <tr key={`empty-${i}`}>
-                                    <td style={{ borderLeft: '1px solid #000', borderRight: '1px solid #000', padding: '4px 8px', borderBottom: 'none', paddingBottom: isAbsoluteLast ? '60px' : '4px' }}><br /><br /></td>
-                                    <td style={{ borderLeft: '1px solid #000', borderRight: '1px solid #000', padding: '4px 8px', borderBottom: 'none', paddingBottom: isAbsoluteLast ? '60px' : '4px' }}></td>
-                                    <td style={{ borderLeft: '1px solid #000', borderRight: '1px solid #000', padding: '4px 8px', borderBottom: 'none', paddingBottom: isAbsoluteLast ? '60px' : '4px' }}></td>
-                                    <td style={{ borderLeft: '1px solid #000', borderRight: '1px solid #000', padding: '4px 8px', borderBottom: 'none', paddingBottom: isAbsoluteLast ? '60px' : '4px' }}></td>
-                                    <td style={{ borderLeft: '1px solid #000', borderRight: '1px solid #000', padding: '4px 8px', borderBottom: 'none', paddingBottom: isAbsoluteLast ? '60px' : '4px' }}></td>
-                                </tr>
-                            );
-                        })}
-                    </tbody>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px', fontSize: '15px', fontWeight: 'bold' }}>
+                <div>No. <span style={{ color: '#d00' }}>{invoice.invoice_number}</span></div>
+                <div>Date: {invoice.invoice_date}</div>
+              </div>
+
+              <div style={{ marginBottom: '15px', fontSize: '15px' }}>
+                <div style={{ display: 'flex', alignItems: 'flex-end', marginBottom: '8px' }}>
+                  <span style={{ fontWeight: 'bold', fontSize: '16px', marginRight: '8px' }}>To,</span>
+                  <span style={{ flex: 1, fontSize: '16px', fontWeight: 'bold', borderBottom: '1px dotted #000', paddingBottom: '2px' }}>
+                    {invoice.customer?.name || ''}
+                  </span>
+                </div>
+              </div>
+
+              <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid #000' }}>
+                <thead>
+                  <tr>
+                    <th style={{ border: '1px solid #000', padding: '6px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '13px', borderTop: '2px solid #000', borderBottom: '2px solid #000', width: '40px' }}>Sl.No.</th>
+                    <th style={{ border: '1px solid #000', padding: '6px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '13px', borderTop: '2px solid #000', borderBottom: '2px solid #000' }}>Particulars</th>
+                    <th style={{ border: '1px solid #000', padding: '6px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '13px', borderTop: '2px solid #000', borderBottom: '2px solid #000', width: '70px' }}>Quantity</th>
+                    <th style={{ border: '1px solid #000', padding: '6px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '13px', borderTop: '2px solid #000', borderBottom: '2px solid #000', width: '90px' }}>Rate</th>
+                    <th style={{ border: '1px solid #000', padding: '6px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '13px', borderTop: '2px solid #000', borderBottom: '2px solid #000', width: '110px' }}>Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {invoice.items.map((it, idx) => {
+                    const isAbsoluteLast = idx === invoice.items.length - 1 && (5 - invoice.items.length) <= 0;
+                    return (
+                      <tr key={it.id || idx}>
+                        <td style={{ borderLeft: '1px solid #000', borderRight: '1px solid #000', padding: '4px 8px', textAlign: 'center', borderBottom: 'none', paddingBottom: isAbsoluteLast ? '60px' : '4px' }}>{String(idx + 1).padStart(2, '0')}.</td>
+                        <td style={{ borderLeft: '1px solid #000', borderRight: '1px solid #000', padding: '4px 8px', textAlign: 'left', borderBottom: 'none', paddingBottom: isAbsoluteLast ? '60px' : '4px' }}>{it.item_name}</td>
+                        <td style={{ borderLeft: '1px solid #000', borderRight: '1px solid #000', padding: '4px 8px', textAlign: 'center', borderBottom: 'none', paddingBottom: isAbsoluteLast ? '60px' : '4px' }}>{it.quantity}</td>
+                        <td style={{ borderLeft: '1px solid #000', borderRight: '1px solid #000', padding: '4px 8px', textAlign: 'center', borderBottom: 'none', paddingBottom: isAbsoluteLast ? '60px' : '4px' }}>{Math.round(it.price)}/-</td>
+                        <td style={{ borderLeft: '1px solid #000', borderRight: '1px solid #000', padding: '4px 8px', textAlign: 'right', borderBottom: 'none', paddingBottom: isAbsoluteLast ? '60px' : '4px' }}>{Number(it.line_total).toFixed(2)}</td>
+                      </tr>
+                    );
+                  })}
+                  {/* Empty rows filling */}
+                  {Array.from({ length: Math.max(5 - invoice.items.length, 0) }).map((_, i) => {
+                    const isAbsoluteLast = i === Math.max(5 - invoice.items.length, 0) - 1;
+                    return (
+                      <tr key={`empty-${i}`}>
+                        <td style={{ borderLeft: '1px solid #000', borderRight: '1px solid #000', padding: '4px 8px', borderBottom: 'none', paddingBottom: isAbsoluteLast ? '60px' : '4px' }}><br /><br /></td>
+                        <td style={{ borderLeft: '1px solid #000', borderRight: '1px solid #000', padding: '4px 8px', borderBottom: 'none', paddingBottom: isAbsoluteLast ? '60px' : '4px' }}></td>
+                        <td style={{ borderLeft: '1px solid #000', borderRight: '1px solid #000', padding: '4px 8px', borderBottom: 'none', paddingBottom: isAbsoluteLast ? '60px' : '4px' }}></td>
+                        <td style={{ borderLeft: '1px solid #000', borderRight: '1px solid #000', padding: '4px 8px', borderBottom: 'none', paddingBottom: isAbsoluteLast ? '60px' : '4px' }}></td>
+                        <td style={{ borderLeft: '1px solid #000', borderRight: '1px solid #000', padding: '4px 8px', borderBottom: 'none', paddingBottom: isAbsoluteLast ? '60px' : '4px' }}></td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 0 }}>
+                <table style={{ width: '45%', borderCollapse: 'collapse', border: '1px solid #000', borderTop: 'none' }}>
+                  <tbody>
+                    <tr>
+                      <th style={{ border: '1px solid #000', padding: '6px 8px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold', borderLeft: 'none' }}>Total</th>
+                      <td style={{ border: '1px solid #000', padding: '6px 8px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold', width: '110px' }}>{Number(invoice.subtotal).toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                      <th style={{ border: '1px solid #000', padding: '6px 8px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold', borderLeft: 'none' }}>CGST {Number(invoice.cgst_percent || 0).toFixed(1)}%</th>
+                      <td style={{ border: '1px solid #000', padding: '6px 8px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold' }}>{Number(invoice.cgst_amount).toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                      <th style={{ border: '1px solid #000', padding: '6px 8px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold', borderLeft: 'none' }}>SGST {Number(invoice.sgst_percent || 0).toFixed(1)}%</th>
+                      <td style={{ border: '1px solid #000', padding: '6px 8px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold' }}>{Number(invoice.sgst_amount).toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                      <th style={{ border: '1px solid #000', padding: '6px 8px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold', borderLeft: 'none' }}>Grand Total</th>
+                      <td style={{ border: '1px solid #000', padding: '6px 8px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold' }}>{Number(invoice.grand_total).toFixed(2)}</td>
+                    </tr>
+                  </tbody>
                 </table>
+              </div>
 
-                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 0 }}>
-                    <table style={{ width: '45%', borderCollapse: 'collapse', border: '1px solid #000', borderTop: 'none' }}>
-                        <tbody>
-                            <tr>
-                                <th style={{ border: '1px solid #000', padding: '6px 8px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold', borderLeft: 'none' }}>Total</th>
-                                <td style={{ border: '1px solid #000', padding: '6px 8px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold', width: '110px' }}>{Number(invoice.subtotal).toFixed(2)}</td>
-                            </tr>
-                            <tr>
-                                <th style={{ border: '1px solid #000', padding: '6px 8px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold', borderLeft: 'none' }}>CGST {Number(invoice.cgst_percent || 0).toFixed(1)}%</th>
-                                <td style={{ border: '1px solid #000', padding: '6px 8px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold' }}>{Number(invoice.cgst_amount).toFixed(2)}</td>
-                            </tr>
-                            <tr>
-                                <th style={{ border: '1px solid #000', padding: '6px 8px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold', borderLeft: 'none' }}>SGST {Number(invoice.sgst_percent || 0).toFixed(1)}%</th>
-                                <td style={{ border: '1px solid #000', padding: '6px 8px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold' }}>{Number(invoice.sgst_amount).toFixed(2)}</td>
-                            </tr>
-                            <tr>
-                                <th style={{ border: '1px solid #000', padding: '6px 8px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold', borderLeft: 'none' }}>Grand Total</th>
-                                <td style={{ border: '1px solid #000', padding: '6px 8px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold' }}>{Number(invoice.grand_total).toFixed(2)}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '40px', marginBottom: '10px' }}>
+                <div style={{ flex: '0 0 60%', fontSize: '14px', lineHeight: 1.6, alignSelf: 'flex-end' }}>
+                  Rupees in words:<br />
+                  <span style={{ fontSize: '16px', borderBottom: '1px dotted #000', paddingBottom: '2px', fontWeight: 'bold' }}>
+                    {numberToWords(invoice.grand_total)}
+                  </span>
                 </div>
-
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '40px', marginBottom: '10px' }}>
-                    <div style={{ flex: '0 0 60%', fontSize: '14px', lineHeight: 1.6, alignSelf: 'flex-end' }}>
-                        Rupees in words:<br />
-                        <span style={{ fontSize: '16px', borderBottom: '1px dotted #000', paddingBottom: '2px', fontWeight: 'bold' }}>
-                            {numberToWords(invoice.grand_total)}
-                        </span>
+                <div style={{ flex: '0 0 40%', textAlign: 'right', fontSize: '13px', alignSelf: 'flex-end' }}>
+                  {company?.signature_url ? (
+                    <div style={{ marginBottom: '4px' }}>
+                      <img
+                        src={company.signature_url}
+                        alt='Authorised Signatory'
+                        style={{ maxHeight: '70px', maxWidth: '180px' }}
+                      />
                     </div>
-                    <div style={{ flex: '0 0 40%', textAlign: 'right', fontSize: '13px', alignSelf: 'flex-end' }}>
-                        {/* <div style={{ marginBottom: '60px', fontWeight: 'bold', fontSize: '15px' }}>For {company?.company_name}</div> */}
-                        <span style={{ borderTop: '1px solid #000', display: 'inline-block', paddingTop: '5px', fontWeight: 'bold' }}>Authorized Signatory</span>
-                    </div>
+                  ) : (
+                    <div style={{ height: '60px' }} />
+                  )}
+                  <span style={{ borderTop: '1px solid #000', display: 'inline-block', paddingTop: '5px', fontWeight: 'bold' }}>Authorized Signatory</span>
                 </div>
+              </div>
 
             </div>
           </div>

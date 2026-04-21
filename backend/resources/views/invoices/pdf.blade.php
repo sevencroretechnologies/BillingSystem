@@ -141,7 +141,9 @@
                 <div class="muted mt-8">{{ $company->address }}</div>@endif
                 <div class="muted">
                     @if($company->phone){{ $company->phone }}@endif
-                    @if($company->phone && $company->email) &middot; @endif
+                    @if($company->phone && $company->whatsapp_no) &middot; @endif
+                    @if($company->whatsapp_no)WhatsApp: {{ $company->whatsapp_no }}@endif
+                    @if(($company->phone || $company->whatsapp_no) && $company->email) &middot; @endif
                     @if($company->email){{ $company->email }}@endif
                 </div>
             </div>
@@ -226,6 +228,21 @@
         @endif
 
         <div class="mt-24 muted right" style="font-size:11px;">Thank you for your business!</div>
+
+        {{-- Signature & Authorised Signatory --}}
+        <div style="margin-top:40px; text-align:right;">
+            @if($company->signature)
+                @php $sigPath = storage_path('app/public/' . $company->signature); @endphp
+                @if(file_exists($sigPath))
+                    <img src="{{ $sigPath }}" alt="Signature" style="max-height:70px; max-width:180px; display:block; margin-left:auto; margin-bottom:4px;">
+                @endif
+            @else
+                <div style="height:60px;"></div>
+            @endif
+            <div style="border-top:1px solid #000; display:inline-block; padding-top:5px; font-weight:bold; font-size:12px;">
+                Authorised Signatory
+            </div>
+        </div>
     </div>
 </body>
 

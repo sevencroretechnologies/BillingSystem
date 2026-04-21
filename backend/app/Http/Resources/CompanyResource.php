@@ -20,12 +20,15 @@ class CompanyResource extends JsonResource
             'company_name' => $this->company_name,
             'address' => $this->address,
             'phone' => $this->phone,
+            'whatsapp_no' => $this->whatsapp_no,
             'email' => $this->email,
             'logo' => $this->logo,
             'logo_url' => $this->logo ? Storage::disk('public')->url($this->logo) : null,
             'k2_recipient_code' => $this->k2_recipient_code,
             'gstin' => $this->gstin,
             'pan' => $this->pan,
+            'signature' => $this->signature,
+            'signature_url' => $this->signature ? Storage::disk('public')->url($this->signature) : null,
             'updated_at' => $this->updated_at?->toDateTimeString(),
         ];
     }

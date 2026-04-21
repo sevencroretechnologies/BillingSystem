@@ -20,11 +20,13 @@ class Company extends Model
         'company_name',
         'address',
         'phone',
+        'whatsapp_no',
         'email',
         'logo',
         'k2_recipient_code',
         'gstin',
         'pan',
+        'signature',
     ];
 
     /**

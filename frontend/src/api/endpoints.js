@@ -41,18 +41,22 @@ export const updateCompany = ({
     company_name,
     address,
     phone,
+    whatsapp_no,
     email,
     logo,
     removeLogo,
     k2_recipient_code,
     gstin,
     pan,
+    signature,
+    removeSignature,
 }) => {
     const form = new FormData();
     form.append("_method", "PUT");
     form.append("company_name", company_name ?? "");
     form.append("address", address ?? "");
     form.append("phone", phone ?? "");
+    form.append("whatsapp_no", whatsapp_no ?? "");
     form.append("email", email ?? "");
     form.append("k2_recipient_code", k2_recipient_code ?? "");
     form.append("gstin", gstin ?? "");
@@ -62,6 +66,12 @@ export const updateCompany = ({
     }
     if (removeLogo) {
         form.append("remove_logo", "1");
+    }
+    if (signature instanceof File) {
+        form.append("signature", signature);
+    }
+    if (removeSignature) {
+        form.append("remove_signature", "1");
     }
     return api.post("/company", form, {
         headers: { "Content-Type": "multipart/form-data" },

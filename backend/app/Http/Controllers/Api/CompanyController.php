@@ -48,12 +48,15 @@ class CompanyController extends Controller
             'company_name' => 'required|string|max:255',
             'address' => 'nullable|string|max:500',
             'phone' => 'nullable|string|max:50',
+            'whatsapp_no' => 'nullable|string|max:20',
             'email' => 'nullable|email|max:255',
             'logo' => 'nullable|image|mimes:jpg,jpeg,png,gif,svg,webp|max:2048',
             'remove_logo' => 'nullable|boolean',
             'k2_recipient_code' => 'nullable|string|max:50',
             'gstin' => 'nullable|string|max:20',
             'pan' => 'nullable|string|max:15',
+            'signature' => 'nullable|image|mimes:jpg,jpeg,png,gif,svg,webp|max:2048',
+            'remove_signature' => 'nullable|boolean',
         ]);
 
         try {
@@ -71,7 +74,20 @@ class CompanyController extends Controller
                 $validated['logo'] = null;
             }
 
-            unset($validated['remove_logo']);
+            // Handle signature image upload / removal
+            if ($request->hasFile('signature')) {
+                if ($company->signature) {
+                    Storage::disk('public')->delete($company->signature);
+                }
+                $validated['signature'] = $request->file('signature')->store('company/signatures', 'public');
+            } elseif ($request->boolean('remove_signature')) {
+                if ($company->signature) {
+                    Storage::disk('public')->delete($company->signature);
+                }
+                $validated['signature'] = null;
+            }
+
+            unset($validated['remove_logo'], $validated['remove_signature']);
             $company->update($validated);
 
             return response()->json([
