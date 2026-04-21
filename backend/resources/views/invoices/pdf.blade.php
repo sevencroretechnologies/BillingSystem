@@ -1,249 +1,210 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>Invoice {{ $invoice->invoice_number }}</title>
+    <meta charset="UTF-8">
+    <title>Invoice - {{ $invoice->invoice_number }}</title>
     <style>
-        * {
-            font-family: DejaVu Sans, sans-serif;
+        @page {
+            margin: 10mm;
         }
-
         body {
-            color: #222;
-            font-size: 12px;
+            font-family: 'DejaVu Sans', sans-serif;
+            background: #fff;
             margin: 0;
-        }
-
-        .container {
-            padding: 24px;
-        }
-
-        h1,
-        h2,
-        h3 {
-            margin: 0;
-        }
-
-        .header {
-            display: table;
+            padding: 0;
             width: 100%;
-            margin-bottom: 24px;
         }
-
-        .header .col {
-            display: table-cell;
-            vertical-align: top;
+        .invoice-container {
+            width: 100%;
+            margin: 0 auto;
+            border: 1px solid #000;
+            padding: 12px;
+            box-sizing: border-box;
         }
-
-        .company-name {
-            font-size: 22px;
-            font-weight: bold;
-            color: #1a73e8;
-        }
-
-        .logo {
-            max-height: 72px;
-            max-width: 180px;
-            margin-bottom: 8px;
-        }
-
-        .muted {
-            color: #666;
-        }
-
-        .right {
-            text-align: right;
-        }
-
-        .mt-8 {
-            margin-top: 8px;
-        }
-
-        .mt-16 {
-            margin-top: 16px;
-        }
-
-        .mt-24 {
-            margin-top: 24px;
-        }
-
         table {
             width: 100%;
             border-collapse: collapse;
         }
-
-        th,
-        td {
-            border: 1px solid #ddd;
-            padding: 8px;
+        td, th {
+            padding: 3px;
+            vertical-align: top;
         }
-
-        th {
-            background: #f5f5f5;
-            text-align: left;
+        .text-right { text-align: right; }
+        .text-center { text-align: center; }
+        .bold { font-weight: bold; }
+        .small { font-size: 10px; }
+        .divider {
+            border-top: 1px solid #000;
+            margin: 5px 0;
         }
-
-        .totals {
-            width: 45%;
-            margin-left: auto;
-            margin-top: 16px;
-        }
-
-        .totals td {
-            border: none;
-            padding: 4px 8px;
-        }
-
-        .totals .grand {
+        .items-header {
             font-weight: bold;
-            font-size: 14px;
-            border-top: 2px solid #1a73e8;
-            padding-top: 8px;
-        }
-
-        .label {
-            color: #888;
             font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: .5px;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
         }
-
-        .box {
-            padding: 10px 12px;
-            background: #fafafa;
-            border: 1px solid #eee;
+        .items-header th {
+            padding: 5px;
+        }
+        .item-row td {
+            font-size: 10px;
+            padding: 4px 5px;
+            border-bottom: 1px solid #eee;
+        }
+        .totals-box {
+            width: 250px;
+            float: right;
+            border: 1px solid #000;
+            margin-top: 10px;
+        }
+        .totals-box td {
+            font-size: 10px;
+            padding: 4px 8px;
+            border-bottom: 1px solid #000;
+        }
+        .totals-box .last-row td {
+            border-bottom: none;
+        }
+        .logo-img {
+            max-width: 50px;
+            max-height: 50px;
+        }
+        .clearfix::after {
+            content: "";
+            clear: both;
+            display: table;
         }
     </style>
 </head>
-
 <body>
-    <div class="container">
-        {{-- Company header rendered from the database `company` row. --}}
-        <div class="header">
-            <div class="col">
-                @if($company->logo)
-                    @php
-                        $logoPath = storage_path('app/public/' . $company->logo);
-                    @endphp
-                    @if(file_exists($logoPath))
-                        <img class="logo" src="{{ $logoPath }}" alt="Logo">
-                    @endif
-                @endif
-                <div class="company-name">{{ $company->company_name }}</div>
-                @if($company->k2_recipient_code)
-                <div class="muted mt-8"><strong>K-2 Recipient Code:</strong> {{ $company->k2_recipient_code }}</div>@endif
-                @if($company->gstin)
-                <div class="muted"><strong>GSTIN:</strong> {{ $company->gstin }}</div>@endif
-                @if($company->pan)
-                <div class="muted"><strong>PAN:</strong> {{ $company->pan }}</div>@endif
-                @if($company->address)
-                <div class="muted mt-8">{{ $company->address }}</div>@endif
-                <div class="muted">
-                    @if($company->phone){{ $company->phone }}@endif
-                    @if($company->phone && $company->whatsapp_no) &middot; @endif
-                    @if($company->whatsapp_no)WhatsApp: {{ $company->whatsapp_no }}@endif
-                    @if(($company->phone || $company->whatsapp_no) && $company->email) &middot; @endif
-                    @if($company->email){{ $company->email }}@endif
+
+<div class="invoice-container">
+    <!-- Header Section -->
+    <table class="small" style="margin-bottom: 2px;">
+        <tr>
+            <td width="35%">
+                K-2 Recipient Code: {{ $company->k2_recipient_code ?? '2900789345' }}<br>
+                GSTIN: {{ $company->gstin ?? '29AAGAS0338G1ZH' }}<br>
+                PAN: {{ $company->pan ?? 'AAGAS0338G' }}
+            </td>
+            <td width="30%" class="text-center">
+                <div class="bold" style="border: 1px solid #000; display: inline-block; padding: 1px 8px; font-size: 9px;">
+                    CASH / CREDIT BILL
                 </div>
-            </div>
-            <div class="col right">
-                <h1>INVOICE</h1>
-                <div class="mt-8"><span class="label">Invoice #</span> <strong>{{ $invoice->invoice_number }}</strong>
-                </div>
-                <div><span class="label">Date</span> {{ $invoice->invoice_date?->format('d M Y') }}</div>
-            </div>
-        </div>
+            </td>
+            <td width="35%" class="text-right">
+                Phone: {{ $company->phone ?? '+91 XXXXX' }}<br>
+                WhatsApp: {{ $company->whatsapp_no ?? 'XXXXX' }}
+            </td>
+        </tr>
+    </table>
 
-        <div class="box">
-            <div class="label">Bill To</div>
-            <div style="font-weight:bold;">{{ $invoice->customer->name ?? '—' }}</div>
-            @if($invoice->customer?->phone)
-            <div class="muted">{{ $invoice->customer->phone }}</div>@endif
-            @if($invoice->customer?->email)
-            <div class="muted">{{ $invoice->customer->email }}</div>@endif
-            @if($invoice->customer?->address)
-            <div class="muted">{{ $invoice->customer->address }}</div>@endif
-        </div>
-
-        {{-- Item table. Tax is calculated at invoice level, so each row
-        shows the effective (SGST + CGST) percentage for reference. --}}
-        @php
-            $combinedTax = (float) $invoice->sgst_percent + (float) $invoice->cgst_percent;
-        @endphp
-        <table class="mt-24">
-            <thead>
-                <tr>
-                    <th style="width:40px;">#</th>
-                    <th>Item</th>
-                    <th class="right" style="width:60px;">Qty</th>
-                    <th class="right" style="width:100px;">Price</th>
-                    <th class="right" style="width:70px;">Tax %</th>
-                    <th class="right" style="width:110px;">Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($invoice->items as $index => $item)
-                    <tr>
-                        <td>{{ $index + 1 }}</td>
-                        <td>{{ $item->item_name }}</td>
-                        <td class="right">{{ $item->quantity }}</td>
-                        <td class="right">{{ $currencySymbol }}{{ number_format((float) $item->price, 2) }}</td>
-                        <td class="right">{{ number_format($combinedTax, 2) }}%</td>
-                        <td class="right">{{ $currencySymbol }}{{ number_format((float) $item->line_total, 2) }}</td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
-
-        {{-- Totals section with SGST + CGST breakdown. --}}
-        <table class="totals">
-            <tr>
-                <td class="label">Subtotal</td>
-                <td class="right">{{ $currencySymbol }}{{ number_format((float) $invoice->subtotal, 2) }}</td>
-            </tr>
-            <tr>
-                <td class="label">SGST ({{ number_format((float) $invoice->sgst_percent, 2) }}%)</td>
-                <td class="right">{{ $currencySymbol }}{{ number_format((float) $invoice->sgst_amount, 2) }}</td>
-            </tr>
-            <tr>
-                <td class="label">CGST ({{ number_format((float) $invoice->cgst_percent, 2) }}%)</td>
-                <td class="right">{{ $currencySymbol }}{{ number_format((float) $invoice->cgst_amount, 2) }}</td>
-            </tr>
-            <tr>
-                <td class="label">Total Tax</td>
-                <td class="right">{{ $currencySymbol }}{{ number_format((float) $invoice->total_tax, 2) }}</td>
-            </tr>
-            <tr class="grand">
-                <td>Grand Total</td>
-                <td class="right">{{ $currencySymbol }}{{ number_format((float) $invoice->grand_total, 2) }}</td>
-            </tr>
-        </table>
-
-        @if($invoice->notes)
-            <div class="mt-24">
-                <div class="label">Notes</div>
-                <div>{{ $invoice->notes }}</div>
-            </div>
-        @endif
-
-        <div class="mt-24 muted right" style="font-size:11px;">Thank you for your business!</div>
-
-        {{-- Signature & Authorised Signatory --}}
-        <div style="margin-top:40px; text-align:right;">
-            @if($company->signature)
-                @php $sigPath = storage_path('app/public/' . $company->signature); @endphp
-                @if(file_exists($sigPath))
-                    <img src="{{ $sigPath }}" alt="Signature" style="max-height:70px; max-width:180px; display:block; margin-left:auto; margin-bottom:4px;">
+    <table class="no-border" style="width: 100%; margin-bottom: 5px;">
+        <tr>
+            <td width="15%" class="text-right">
+                @if(isset($company->logo))
+                    <img src="{{ public_path('storage/' . $company->logo) }}" class="logo-img">
                 @endif
-            @else
-                <div style="height:60px;"></div>
-            @endif
-            <div style="border-top:1px solid #000; display:inline-block; padding-top:5px; font-weight:bold; font-size:12px;">
-                Authorised Signatory
-            </div>
-        </div>
+            </td>
+            <td width="70%" class="text-center" style="vertical-align: middle;">
+                <div class="bold" style="font-size: 14px; line-height: 1.1;">{{ $company->company_name ?? 'GlobalTrade Exports Pvt. Ltd.' }}</div>
+                <div style="font-size: 9px; line-height: 1.1;">{{ $company->address ?? '' }}</div>
+            </td>
+            <td width="15%"></td>
+        </tr>
+    </table>
+
+    <div class="divider"></div>
+
+    <!-- Invoice Details -->
+    <table class="no-border small">
+        <tr>
+            <td class="bold">
+                No: <span style="color:red;">{{ $invoice->invoice_number }}</span>
+            </td>
+            <td class="text-right bold">
+                Date: {{ $invoice->invoice_date->format('d-m-Y') }}
+            </td>
+        </tr>
+    </table>
+
+    <!-- Customer Section -->
+    <div style="margin-top:5px; font-weight: bold; font-size: 11px;">
+        To, {{ $invoice->customer->name ?? '' }}
     </div>
-</body>
 
+    <div style="border-bottom: 1px dashed #000; margin: 3px 0;"></div>
+
+    <div class="text-right bold" style="font-size: 9px; padding: 1px 0;">
+        Month: {{ $invoice->invoice_date->format('F-Y') }}
+    </div>
+
+    <!-- Items Table -->
+    <table class="items-header" style="border: 1px solid #000;">
+        <tr>
+            <th width="8%" class="text-center" style="border-right: 1px solid #000;">Sl.No.</th>
+            <th width="42%" class="text-left" style="border-right: 1px solid #000;">Particulars</th>
+            <th width="15%" class="text-center" style="border-right: 1px solid #000;">Quantity</th>
+            <th width="15%" class="text-right" style="border-right: 1px solid #000;">Rate</th>
+            <th width="20%" class="text-right">Amount</th>
+        </tr>
+    </table>
+
+    <table class="item-row" style="border: 1px solid #000; border-top: none;">
+        @foreach($invoice->items as $i => $item)
+        <tr>
+            <td width="8%" class="text-center" style="border-right: 1px solid #000;">{{ sprintf('%02d', $i+1) }}.</td>
+            <td width="42%" style="border-right: 1px solid #000;">{{ $item->item_name }}</td>
+            <td width="15%" class="text-center" style="border-right: 1px solid #000;">{{ $item->quantity }}</td>
+            <td width="15%" class="text-right" style="border-right: 1px solid #000;">{{ number_format($item->price, 2) }}/-</td>
+            <td width="20%" class="text-right">{{ number_format($item->line_total, 2) }}</td>
+        </tr>
+        @endforeach
+    </table>
+
+    <div class="clearfix">
+        <!-- Totals Box -->
+        <table class="totals-box">
+            <tr>
+                <td width="55%" class="bold">Total</td>
+                <td width="45%" class="text-right">{{ number_format($subtotal, 2) }}</td>
+            </tr>
+            <tr>
+                <td class="bold">CGST ({{ number_format($invoice->cgst_percent, 1) }}%)</td>
+                <td class="text-right">{{ number_format($cgst, 2) }}</td>
+            </tr>
+            <tr>
+                <td class="bold">SGST ({{ number_format($invoice->sgst_percent, 1) }}%)</td>
+                <td class="text-right">{{ number_format($sgst, 2) }}</td>
+            </tr>
+            <tr class="last-row" style="background: #f9f9f9;">
+                <td class="bold" style="font-size: 11px;">Grand Total</td>
+                <td class="text-right bold" style="font-size: 11px;">{{ number_format($grand_total, 2) }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div style="clear: both;"></div>
+
+    <!-- Footer -->
+    <div style="margin-top:10px; font-size: 10px;">
+        <strong>Rupees in words:</strong> {{ $amount_in_words }}
+    </div>
+
+    <div style="text-align:right; margin-top:30px;">
+        @if(isset($company->signature))
+            <img src="{{ public_path('storage/' . $company->signature) }}" class="logo-img" style="max-height: 35px;"><br>
+        @endif
+        <strong style="font-size: 10px;">Authorized Signatory</strong><br>
+        <span style="font-size: 9px;">{{ $company->company_name ?? '' }}</span>
+    </div>
+
+</div>
+
+</body>
+</html>
+
+</div>
+
+</body>
 </html>
