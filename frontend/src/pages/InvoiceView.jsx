@@ -139,16 +139,16 @@ export default function InvoiceView() {
                 </div>
                 <div style={{ flex: '0 0 35%', textAlign: 'right', fontWeight: 'bold', fontSize: '12px' }}>
                   {company?.phone && <span>Phone : {company.phone}<br /></span>}
-                  {company?.whatsapp_no && <span>WhatsApp : {company.whatsapp_no}<br /></span>}
+                  {company?.whatsapp_no && <span> {company.whatsapp_no}<br /></span>}
                   {company?.email}
                 </div>
               </div>
 
               <div style={{ display: 'flex', borderBottom: '2px solid #000', paddingBottom: '10px', marginBottom: '10px', alignItems: 'center' }}>
-                <div style={{ flex: '0 0 20%', textAlign: 'center' }}>
+                <div style={{ flex: '0 0 20%' }}>
                   {company?.logo_url && <img src={company.logo_url} alt="Logo" style={{ maxHeight: '60px', maxWidth: '150px' }} />}
                 </div>
-                <div style={{ flex: '0 0 80%', textAlign: 'center' }}>
+                <div style={{ flex: '0 0 80%', textAlign: 'center', paddingRight: '200px' }}>
                   <div style={{ fontSize: '22px', fontWeight: 'bold', marginBottom: '5px', textTransform: 'uppercase' }}>{company?.company_name || 'Your Company'}</div>
                   {company?.address && <div style={{ fontSize: '13px' }}>{company.address}</div>}
                 </div>
