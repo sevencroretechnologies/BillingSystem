@@ -107,6 +107,12 @@ export default function InvoiceList() {
       <div className="d-md-none mb-3">
         <h3 className="m-0">Invoices</h3>
       </div>
+       <div className="d-flex justify-content-between align-items-center mb-3">
+        {/* <h3 className="m-0">Items</h3> */}
+        <Link className="btn btn-primary" to="/invoices/new">
+          + Add Invoice
+        </Link>
+      </div>
 
       <form className="row g-2 mb-3" onSubmit={handleSearch}>
         <div className="col-md-4">
@@ -224,7 +230,7 @@ export default function InvoiceList() {
           <Pagination meta={meta} onPageChange={setPage} />
 
           {/* FLOATING ACTION BUTTON (MOBILE ONLY) */}
-          <div
+          {/* <div
             className="fixed-bottom d-md-none text-end p-4 mb-2"
             style={{ pointerEvents: 'none', zIndex: 1050 }}
           >
@@ -241,7 +247,7 @@ export default function InvoiceList() {
             >
               +
             </Link>
-          </div>
+          </div> */}
         </>
       )}
     </div>
