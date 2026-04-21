@@ -99,6 +99,14 @@ export default function InvoiceForm() {
         item_id: value,
         item_name: item ? item.name : value, // Fallback to value if it's a new item name
       };
+    } else if (field === 'quantity' || field === 'price') {
+      // Prevent negative values from being entered
+      const numericValue = Number(value);
+      if (!isNaN(numericValue) && numericValue < 0) {
+        next[idx] = { ...next[idx], [field]: field === 'quantity' ? 1 : 0 };
+      } else {
+        next[idx] = { ...next[idx], [field]: value };
+      }
     } else {
       next[idx] = { ...next[idx], [field]: value };
     }
@@ -293,6 +301,7 @@ export default function InvoiceForm() {
                           className="form-control form-control-sm"
                           value={row.quantity}
                           onChange={(e) => handleRowChange(idx, 'quantity', e.target.value)}
+                          onKeyDown={(e) => (e.key === '-' || e.key === 'e') && e.preventDefault()}
                           required
                         />
                       </td>
@@ -304,6 +313,7 @@ export default function InvoiceForm() {
                           className="form-control form-control-sm"
                           value={row.price}
                           onChange={(e) => handleRowChange(idx, 'price', e.target.value)}
+                          onKeyDown={(e) => (e.key === '-' || e.key === 'e') && e.preventDefault()}
                           placeholder="0.00"
                           required
                         />
@@ -372,6 +382,7 @@ export default function InvoiceForm() {
                       min="1"
                       value={item.quantity}
                       onChange={(e) => handleRowChange(index, 'quantity', e.target.value)}
+                      onKeyDown={(e) => (e.key === '-' || e.key === 'e') && e.preventDefault()}
                       className="form-control text-sm p-2"
                       required
                     />
@@ -386,6 +397,7 @@ export default function InvoiceForm() {
                       min="0"
                       value={item.price}
                       onChange={(e) => handleRowChange(index, 'price', e.target.value)}
+                      onKeyDown={(e) => (e.key === '-' || e.key === 'e') && e.preventDefault()}
                       className="form-control text-sm p-2"
                       placeholder="0.00"
                       required

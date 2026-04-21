@@ -30,7 +30,12 @@ export default function TaxSettings() {
   }, []);
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    let value = e.target.value;
+    // Prevent negative values for numeric inputs
+    if (e.target.type === 'number' && Number(value) < 0) {
+      value = '0';
+    }
+    setForm({ ...form, [e.target.name]: value });
   };
 
   const handleSubmit = async (e) => {
@@ -80,6 +85,7 @@ export default function TaxSettings() {
               max="100"
               value={form.sgst}
               onChange={handleChange}
+              onKeyDown={(e) => (e.key === '-' || e.key === 'e') && e.preventDefault()}
               required
             />
           </div>
@@ -93,6 +99,7 @@ export default function TaxSettings() {
               max="100"
               value={form.cgst}
               onChange={handleChange}
+              onKeyDown={(e) => (e.key === '-' || e.key === 'e') && e.preventDefault()}
               required
             />
           </div>
