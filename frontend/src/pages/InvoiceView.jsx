@@ -104,6 +104,10 @@ export default function InvoiceView() {
           @media print {
             @page { margin: 0; }
             body { margin: 1cm; }
+            .print-col-sl { width: 30px !important; }
+            .print-col-qty { width: 40px !important; }
+            .print-col-rate { width: 70px !important; }
+            .print-col-amount { width: 80px !important; }
           }
         `}
       </style>
@@ -193,11 +197,11 @@ export default function InvoiceView() {
               <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid #000' }}>
                 <thead>
                   <tr>
-                    <th style={{ border: '1px solid #000', padding: '6px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '13px', borderTop: '2px solid #000', borderBottom: '2px solid #000', width: '60px' }}>Sl.No.</th>
+                    <th className="print-col-sl" style={{ border: '1px solid #000', padding: '6px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '13px', borderTop: '2px solid #000', borderBottom: '2px solid #000', width: '60px' }}>Sl.No.</th>
                     <th style={{ border: '1px solid #000', padding: '6px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '13px', borderTop: '2px solid #000', borderBottom: '2px solid #000' }}>Particulars</th>
-                    <th style={{ border: '1px solid #000', padding: '6px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '13px', borderTop: '2px solid #000', borderBottom: '2px solid #000', width: '100px' }}>Quantity</th>
-                    <th style={{ border: '1px solid #000', padding: '6px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '13px', borderTop: '2px solid #000', borderBottom: '2px solid #000', width: '120px' }}>Rate</th>
-                    <th style={{ border: '1px solid #000', padding: '6px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '13px', borderTop: '2px solid #000', borderBottom: '2px solid #000', width: '140px' }}>Amount</th>
+                    <th className="print-col-qty" style={{ border: '1px solid #000', padding: '6px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '13px', borderTop: '2px solid #000', borderBottom: '2px solid #000', width: '100px' }}>Quantity</th>
+                    <th className="print-col-rate" style={{ border: '1px solid #000', padding: '6px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '13px', borderTop: '2px solid #000', borderBottom: '2px solid #000', width: '120px' }}>Rate</th>
+                    <th className="print-col-amount" style={{ border: '1px solid #000', padding: '6px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '13px', borderTop: '2px solid #000', borderBottom: '2px solid #000', width: '140px' }}>Amount</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -230,7 +234,7 @@ export default function InvoiceView() {
               </table>
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 0 }}>
-                <table style={{ width: '360px', borderCollapse: 'collapse', border: '1px solid #000', borderTop: 'none' }}>
+                <table style={{ borderCollapse: 'collapse', border: '1px solid #000', borderTop: 'none' }}>
                   <tbody>
                     <tr>
                       <th style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'left', fontWeight: 'bold', borderLeft: 'none' }}>Total</th>
