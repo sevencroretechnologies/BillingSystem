@@ -12,14 +12,12 @@
             background: #fff;
             margin: 0;
             padding: 0;
-            width: 100%;
             color: #000;
         }
         .invoice-container {
-            width: 100%;
             border: 1px solid #000;
             padding: 15px;
-            box-sizing: border-box;
+            position: relative;
         }
         table {
             width: 100%;
@@ -80,8 +78,8 @@
             font-weight: bold;
         }
         .logo-img {
-            max-width: 150px;
-            max-height: 60px;
+            max-width: 140px;
+            max-height: 70px;
         }
         .clearfix::after {
             content: "";
@@ -94,7 +92,7 @@
 
 <div class="invoice-container">
     <!-- Top Metadata -->
-    <table class="small" style="margin-bottom: 10px;">
+    <table class="small" style="margin-bottom: 10px; width: 100%;">
         <tr>
             <td width="35%">
                 @if($company->k2_recipient_code) K-2 Recipient Code: {{ $company->k2_recipient_code }}<br> @endif
@@ -117,12 +115,14 @@
     <!-- Company Branding -->
     <table style="width: 100%; margin-bottom: 10px;">
         <tr>
-            <td width="20%">
-                @if(isset($company->logo))
+            <!-- Logo Section -->
+            <td width="120">
+                @if($company->logo && file_exists(public_path('storage/' . $company->logo)))
                     <img src="{{ public_path('storage/' . $company->logo) }}" class="logo-img">
                 @endif
             </td>
-            <td width="80%" class="text-center" style="vertical-align: middle;">
+            <!-- Company Details -->
+            <td class="text-center" style="vertical-align: middle;">
                 <div class="bold" style="font-size: 20px; text-transform: uppercase;">{{ $company->company_name ?? 'Your Company' }}</div>
                 <div style="font-size: 11px; margin-top: 3px;">{{ $company->address ?? '' }}</div>
             </td>
@@ -132,7 +132,7 @@
     <div class="divider"></div>
 
     <!-- Invoice No/Date -->
-    <table class="bold" style="font-size: 14px; margin-bottom: 5px;">
+    <table class="bold" style="font-size: 14px; margin-bottom: 5px; width: 100%;">
         <tr>
             <td>No: <span style="color:#d00;">{{ $invoice->invoice_number }}</span></td>
             <td class="text-right">Date: {{ $invoice->invoice_date->format('d-m-Y') }}</td>
@@ -152,7 +152,7 @@
     </div>
 
     <!-- Items Table -->
-    <table class="items-table">
+    <table class="items-table" style="width: 100%;">
         <thead>
             <tr>
                 <th width="8%" class="text-center">Sl.No.</th>
@@ -167,7 +167,7 @@
             @foreach($invoice->items as $i => $item)
             <tr class="{{ ($i == $count - 1 && $count >= 5) ? 'last-item-row' : '' }}">
                 <td class="text-center">{{ sprintf('%02d', $i+1) }}.</td>
-                <td class="text-left">{{ $item->item_name }}</td>
+                <td class="text-left text-bold" style="font-weight: bold;">{{ $item->item_name }}</td>
                 <td class="text-center">{{ $item->quantity }}</td>
                 <td class="text-center">{{ round($item->price) }}/-</td>
                 <td class="text-right">{{ number_format($item->line_total, 2) }}</td>
@@ -218,7 +218,7 @@
     </div>
 
     <div style="float: right; width: 35%; text-align: right; margin-top: 20px;">
-        @if(isset($company->signature))
+        @if($company->signature && file_exists(public_path('storage/' . $company->signature)))
             <img src="{{ public_path('storage/' . $company->signature) }}" style="max-height: 50px; max-width: 150px;"><br>
         @else
             <div style="height: 50px;"></div>
