@@ -79,6 +79,24 @@ export default function InvoiceView() {
     return words.trim() + ' Rupees Only';
   };
 
+  const getMonthYear = (dateStr) => {
+    if (!dateStr) return '';
+    // Handle YYYY-MM-DD or DD-MM-YYYY
+    let date = new Date(dateStr);
+    if (isNaN(date.getTime())) {
+      const parts = dateStr.split('-');
+      if (parts.length === 3) {
+        // If it's DD-MM-YYYY
+        if (parts[2].length === 4) {
+          date = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+        }
+      }
+    }
+    if (isNaN(date.getTime())) return '';
+    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    return `${monthNames[date.getMonth()]}-${date.getFullYear()}`;
+  };
+
   return (
     <div>
       <style>
@@ -148,15 +166,19 @@ export default function InvoiceView() {
                 <div style={{ flex: '0 0 20%' }}>
                   {company?.logo_url && <img src={company.logo_url} alt="Logo" style={{ maxHeight: '60px', maxWidth: '150px' }} />}
                 </div>
-                <div style={{ flex: '0 0 80%', textAlign: 'center', paddingRight: '200px' }}>
+                <div style={{ flex: '0 0 80%', textAlign: 'center' }}>
                   <div style={{ fontSize: '22px', fontWeight: 'bold', marginBottom: '5px', textTransform: 'uppercase' }}>{company?.company_name || 'Your Company'}</div>
                   {company?.address && <div style={{ fontSize: '13px' }}>{company.address}</div>}
                 </div>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px', fontSize: '15px', fontWeight: 'bold' }}>
-                <div>No. <span style={{ color: '#d00' }}>{invoice.invoice_number}</span></div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px', fontSize: '15px', fontWeight: 'bold' }}>
+                <div>No: <span style={{ color: '#d00' }}>{invoice.invoice_number}</span></div>
                 <div>Date: {invoice.invoice_date}</div>
+              </div>
+
+              <div style={{ textAlign: 'right', marginBottom: '10px', fontSize: '13px', fontWeight: 'bold' }}>
+                Month: {getMonthYear(invoice.invoice_date)}
               </div>
 
               <div style={{ marginBottom: '15px', fontSize: '15px' }}>
@@ -171,11 +193,11 @@ export default function InvoiceView() {
               <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid #000' }}>
                 <thead>
                   <tr>
-                    <th style={{ border: '1px solid #000', padding: '6px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '13px', borderTop: '2px solid #000', borderBottom: '2px solid #000', width: '40px' }}>Sl.No.</th>
+                    <th style={{ border: '1px solid #000', padding: '6px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '13px', borderTop: '2px solid #000', borderBottom: '2px solid #000', width: '60px' }}>Sl.No.</th>
                     <th style={{ border: '1px solid #000', padding: '6px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '13px', borderTop: '2px solid #000', borderBottom: '2px solid #000' }}>Particulars</th>
-                    <th style={{ border: '1px solid #000', padding: '6px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '13px', borderTop: '2px solid #000', borderBottom: '2px solid #000', width: '70px' }}>Quantity</th>
-                    <th style={{ border: '1px solid #000', padding: '6px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '13px', borderTop: '2px solid #000', borderBottom: '2px solid #000', width: '90px' }}>Rate</th>
-                    <th style={{ border: '1px solid #000', padding: '6px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '13px', borderTop: '2px solid #000', borderBottom: '2px solid #000', width: '110px' }}>Amount</th>
+                    <th style={{ border: '1px solid #000', padding: '6px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '13px', borderTop: '2px solid #000', borderBottom: '2px solid #000', width: '100px' }}>Quantity</th>
+                    <th style={{ border: '1px solid #000', padding: '6px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '13px', borderTop: '2px solid #000', borderBottom: '2px solid #000', width: '120px' }}>Rate</th>
+                    <th style={{ border: '1px solid #000', padding: '6px 8px', textAlign: 'center', fontWeight: 'bold', fontSize: '13px', borderTop: '2px solid #000', borderBottom: '2px solid #000', width: '140px' }}>Amount</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -208,23 +230,23 @@ export default function InvoiceView() {
               </table>
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 0 }}>
-                <table style={{ width: '45%', borderCollapse: 'collapse', border: '1px solid #000', borderTop: 'none' }}>
+                <table style={{ width: '360px', borderCollapse: 'collapse', border: '1px solid #000', borderTop: 'none' }}>
                   <tbody>
                     <tr>
-                      <th style={{ border: '1px solid #000', padding: '6px 8px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold', borderLeft: 'none' }}>Total</th>
-                      <td style={{ border: '1px solid #000', padding: '6px 8px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold', width: '110px' }}>{Number(invoice.subtotal).toFixed(2)}</td>
+                      <th style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'left', fontWeight: 'bold', borderLeft: 'none' }}>Total</th>
+                      <td style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold', width: '140px' }}>{Number(invoice.subtotal).toFixed(2)}</td>
                     </tr>
                     <tr>
-                      <th style={{ border: '1px solid #000', padding: '6px 8px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold', borderLeft: 'none' }}>CGST {Number(invoice.cgst_percent || 0).toFixed(1)}%</th>
-                      <td style={{ border: '1px solid #000', padding: '6px 8px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold' }}>{Number(invoice.cgst_amount).toFixed(2)}</td>
+                      <th style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'left', fontWeight: 'bold', borderLeft: 'none' }}>CGST ({Number(invoice.cgst_percent || 0).toFixed(1)}%)</th>
+                      <td style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold' }}>{Number(invoice.cgst_amount).toFixed(2)}</td>
                     </tr>
                     <tr>
-                      <th style={{ border: '1px solid #000', padding: '6px 8px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold', borderLeft: 'none' }}>SGST {Number(invoice.sgst_percent || 0).toFixed(1)}%</th>
-                      <td style={{ border: '1px solid #000', padding: '6px 8px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold' }}>{Number(invoice.sgst_amount).toFixed(2)}</td>
+                      <th style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'left', fontWeight: 'bold', borderLeft: 'none' }}>SGST ({Number(invoice.sgst_percent || 0).toFixed(1)}%)</th>
+                      <td style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold' }}>{Number(invoice.sgst_amount).toFixed(2)}</td>
                     </tr>
                     <tr>
-                      <th style={{ border: '1px solid #000', padding: '6px 8px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold', borderLeft: 'none' }}>Grand Total</th>
-                      <td style={{ border: '1px solid #000', padding: '6px 8px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold' }}>{Number(invoice.grand_total).toFixed(2)}</td>
+                      <th style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'left', fontWeight: 'bold', borderLeft: 'none', borderBottom: 'none' }}>Grand Total</th>
+                      <td style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold', borderBottom: 'none' }}>{Number(invoice.grand_total).toFixed(2)}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -249,7 +271,10 @@ export default function InvoiceView() {
                   ) : (
                     <div style={{ height: '60px' }} />
                   )}
-                  <span style={{ borderTop: '1px solid #000', display: 'inline-block', paddingTop: '5px', fontWeight: 'bold' }}>Authorized Signatory</span>
+                  <div style={{ borderTop: '1px solid #000', display: 'inline-block', paddingTop: '5px' }}>
+                    <div style={{ fontWeight: 'bold' }}>Authorized Signatory</div>
+                    <div style={{ fontSize: '11px' }}>{company?.company_name}</div>
+                  </div>
                 </div>
               </div>
 
