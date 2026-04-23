@@ -85,16 +85,12 @@ export default function TaxSettings() {
                             </div>
                             <div className="row g-4 mb-4">
                                 <div className="col-md-6">
-                                    <div className="p-4 rounded-4 bg-light">
-                                        <div className="skeleton skeleton-label"></div>
-                                        <div className="skeleton skeleton-input"></div>
-                                    </div>
+                                    <div className="skeleton skeleton-label"></div>
+                                    <div className="skeleton skeleton-input"></div>
                                 </div>
                                 <div className="col-md-6">
-                                    <div className="p-4 rounded-4 bg-light">
-                                        <div className="skeleton skeleton-label"></div>
-                                        <div className="skeleton skeleton-input"></div>
-                                    </div>
+                                    <div className="skeleton skeleton-label"></div>
+                                    <div className="skeleton skeleton-input"></div>
                                 </div>
                             </div>
                             <div className="mb-4">
@@ -132,36 +128,30 @@ export default function TaxSettings() {
                     <form onSubmit={handleSubmit} className="card card-body shadow-sm border-0 p-4">
                         <div className="row g-4 mb-4">
                             <div className="col-md-6">
-                                <div className="p-4 rounded-4 bg-light h-100">
-                                    <FormField
-                                        label="SGST (%)"
-                                        name="sgst"
-                                        type="number"
-                                        step="0.01"
-                                        value={form.sgst}
-                                        onChange={handleChange}
-                                        error={errors.sgst?.[0]}
-                                        className="form-control-lg border-0 shadow-sm"
-                                        placeholder="0.00"
-                                        required
-                                    />
-                                </div>
+                                <FormField
+                                    label="SGST (%)"
+                                    name="sgst"
+                                    type="number"
+                                    step="0.01"
+                                    value={form.sgst}
+                                    onChange={handleChange}
+                                    error={errors.sgst?.[0]}
+                                    placeholder="0.00"
+                                    required
+                                />
                             </div>
                             <div className="col-md-6">
-                                <div className="p-4 rounded-4 bg-light h-100">
-                                    <FormField
-                                        label="CGST (%)"
-                                        name="cgst"
-                                        type="number"
-                                        step="0.01"
-                                        value={form.cgst}
-                                        onChange={handleChange}
-                                        error={errors.cgst?.[0]}
-                                        className="form-control-lg border-0 shadow-sm"
-                                        placeholder="0.00"
-                                        required
-                                    />
-                                </div>
+                                <FormField
+                                    label="CGST (%)"
+                                    name="cgst"
+                                    type="number"
+                                    step="0.01"
+                                    value={form.cgst}
+                                    onChange={handleChange}
+                                    error={errors.cgst?.[0]}
+                                    placeholder="0.00"
+                                    required
+                                />
                             </div>
                         </div>
 
