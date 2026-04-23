@@ -98,7 +98,7 @@ export default function LoginPage() {
                         </button>
                     </form>
 
-                    <div className="text-center mt-4 pt-3 border-top">
+                    {/* <div className="text-center mt-4 pt-3 border-top">
                         <div className="p-2 rounded-3 bg-light">
                             <span className="d-block text-secondary fw-bold text-uppercase mb-1" style={{ fontSize: '0.6rem', letterSpacing: '0.05em' }}>
                                 Master Admin Access
@@ -107,7 +107,7 @@ export default function LoginPage() {
                                 admin@gmail.com / Admin@123
                             </code>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
             </div>
 

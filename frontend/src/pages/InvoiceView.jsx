@@ -388,19 +388,19 @@ export default function InvoiceView() {
       </div>
 
       {/* MOBILE VIEW (Below md - Hidden on Print) */}
-      <div className="d-md-none p-3 space-y-4 bg-light d-print-none">
+      <div className="d-md-none p-3 space-y-4 bg-light d-print-none" style={{ minHeight: '100vh', paddingBottom: '100px' }}>
         {/* ACTION BUTTONS (Top Static - 1 Row) */}
-        <div className="bg-white p-3 d-flex gap-3 gap-md-2 rounded-xl shadow-sm border no-print">
+        <div className="bg-white p-3 d-flex gap-2 rounded-xl shadow-sm border no-print align-items-center">
           <BackButton />
           <button
-            className="btn btn-outline-primary py-2 rounded-lg fw-semibold d-flex align-items-center justify-content-center text-sm"
+            className="btn btn-outline-primary py-2 rounded-lg fw-bold d-flex align-items-center justify-content-center text-xs"
             style={{ flex: 1 }}
             onClick={() => navigate(`/invoices/${invoice.id}/edit`)}
           >
             Edit
           </button>
           <a
-            className="btn btn-outline-success py-2 rounded-lg fw-semibold d-flex align-items-center justify-content-center text-sm"
+            className="btn btn-outline-primary py-2 rounded-lg fw-bold d-flex align-items-center justify-content-center text-xs"
             style={{ flex: 1 }}
             href={invoicePdfUrl(invoice.id, true)}
             target="_blank"
@@ -409,7 +409,8 @@ export default function InvoiceView() {
             PDF
           </a>
           <button
-            className="btn btn-primary flex-grow-1 py-2 rounded-lg fw-semibold shadow-sm text-sm"
+            className="btn btn-primary py-2 rounded-lg fw-bold shadow-sm text-xs"
+            style={{ flex: 1 }}
             onClick={() => window.print()}
           >
             Print
@@ -418,25 +419,36 @@ export default function InvoiceView() {
 
         {/* HEADER SECTION */}
         <div className="bg-white p-4 rounded-xl shadow-sm border">
-          <div className="d-flex justify-content-between text-sm">
-            <span className="text-secondary">Invoice #</span>
-            <span className="fw-bold">{invoice.invoice_number}</span>
+          <div className="d-flex justify-content-between text-sm mb-2">
+            <span className="text-secondary fw-semibold small">Invoice #</span>
+            <span className="fw-bold text-dark">{invoice.invoice_number}</span>
           </div>
-          <div className="d-flex justify-content-between text-sm mt-1">
-            <span className="text-secondary">Date</span>
+          <div className="d-flex justify-content-between text-sm">
+            <span className="text-secondary fw-semibold small">Date</span>
             <span className="fw-semibold text-dark">{invoice.invoice_date}</span>
           </div>
         </div>
 
         {/* CUSTOMER DETAILS */}
         <div className="bg-white p-4 rounded-xl shadow-sm border">
-          <p className="text-xs text-secondary text-uppercase mb-2 fw-semibold tracking-wider">
-            Bill To
-          </p>
-          <p className="fw-bold fs-5 mb-1 text-primary">{invoice.customer?.name}</p>
-          {invoice.customer?.email && <p className="text-sm text-secondary mb-1">{invoice.customer.email}</p>}
+          <div className="d-flex justify-content-between align-items-start mb-2">
+            <p className="text-secondary text-uppercase mb-0 fw-bold tracking-wider" style={{ fontSize: '10px' }}>
+              Bill To
+            </p>
+            <p className="fw-bold fs-4 mb-0 text-primary text-end">{invoice.customer?.name}</p>
+          </div>
+
+          {invoice.customer?.email && (
+            <div className="d-flex justify-content-between align-items-center mb-1">
+              <p className="text-secondary text-uppercase mb-0 fw-bold tracking-wider" style={{ fontSize: '10px' }}>
+                Email
+              </p>
+              <p className="text-sm text-secondary mb-0 text-end">{invoice.customer.email}</p>
+            </div>
+          )}
+
           {invoice.customer?.address && (
-            <p className="text-sm text-secondary mb-0 mt-2 border-top pt-2">
+            <p className="text-sm text-secondary mb-0 mt-3 border-top pt-3 opacity-75 text-end">
               {invoice.customer.address}
             </p>
           )}
@@ -444,34 +456,34 @@ export default function InvoiceView() {
 
         {/* ITEMS SECTION */}
         <div className="space-y-3">
-          <p className="text-sm font-semibold text-secondary text-uppercase tracking-wider">
+          <p className="text-secondary text-uppercase mb-2 fw-bold tracking-wider px-1" style={{ fontSize: '15px' }}>
             Items ({invoice.items.length})
           </p>
           {invoice.items.map((it, idx) => (
             <div key={idx} className="bg-white p-4 rounded-xl shadow-sm border">
               <div className="d-flex justify-content-between align-items-start mb-3">
-                <span className="fw-bold text-dark fs-6" style={{ flex: 1 }}>
+                <span className="fw-bold text-dark fs-6" style={{ flex: 1, lineHeight: 1.2 }}>
                   {it.item_name}
                 </span>
-                <span className="badge bg-primary-subtle text-primary border border-primary-subtle ms-2">
+                <span className="badge rounded-pill bg-primary px-3 py-2 ms-2 fw-bold" style={{ fontSize: '11px', boxShadow: '0 4px 6px -1px rgba(13, 110, 253, 0.2)' }}>
                   {money(it.line_total)}
                 </span>
               </div>
-              <div className="row g-2 text-center bg-light rounded-3 p-2 border border-light-subtle">
-                <div className="col-4 border-end">
-                  <p className="text-secondary mb-0" style={{ fontSize: '10px' }}>
+              <div className="row g-0 text-center bg-light rounded-3 p-3 border border-light-subtle">
+                <div className="col-4 border-end border-2 border-white">
+                  <p className="text-secondary mb-1 fw-bold" style={{ fontSize: '9px', letterSpacing: '0.05em' }}>
                     QTY
                   </p>
                   <p className="fw-bold text-dark mb-0 small">{it.quantity}</p>
                 </div>
-                <div className="col-4 border-end">
-                  <p className="text-secondary mb-0" style={{ fontSize: '10px' }}>
+                <div className="col-4 border-end border-2 border-white">
+                  <p className="text-secondary mb-1 fw-bold" style={{ fontSize: '9px', letterSpacing: '0.05em' }}>
                     PRICE
                   </p>
                   <p className="fw-bold text-dark mb-0 small">{money(it.price)}</p>
                 </div>
                 <div className="col-4">
-                  <p className="text-secondary mb-0" style={{ fontSize: '10px' }}>
+                  <p className="text-secondary mb-1 fw-bold" style={{ fontSize: '9px', letterSpacing: '0.05em' }}>
                     TAX
                   </p>
                   <p className="fw-bold text-dark mb-0 small">{combinedTax.toFixed(0)}%</p>
@@ -482,22 +494,22 @@ export default function InvoiceView() {
         </div>
 
         {/* TOTALS SECTION */}
-        <div className="bg-white p-4 rounded-xl shadow-sm border space-y-3">
-          <div className="d-flex justify-content-between text-secondary small">
+        <div className="bg-white p-4 rounded-xl shadow-sm border space-y-3 mb-5">
+          <div className="d-flex justify-content-between text-secondary small fw-medium">
             <span>Subtotal</span>
             <span>{money(invoice.subtotal)}</span>
           </div>
-          <div className="d-flex justify-content-between text-secondary small">
-            <span>SGST ({Number(invoice.sgst_percent || 0).toFixed(0)}%)</span>
+          <div className="d-flex justify-content-between text-secondary small fw-medium">
+            <span>SGST ({Number(invoice.sgst_percent || 0).toFixed(1)}%)</span>
             <span>{money(invoice.sgst_amount)}</span>
           </div>
-          <div className="d-flex justify-content-between text-secondary small">
-            <span>CGST ({Number(invoice.cgst_percent || 0).toFixed(0)}%)</span>
+          <div className="d-flex justify-content-between text-secondary small fw-medium">
+            <span>CGST ({Number(invoice.cgst_percent || 0).toFixed(1)}%)</span>
             <span>{money(invoice.cgst_amount)}</span>
           </div>
-          <div className="d-flex justify-content-between fw-bold pt-3 border-top mt-2">
+          <div className="d-flex justify-content-between fw-bold pt-3 border-top mt-3 align-items-center">
             <span className="text-dark">Grand Total</span>
-            <span className="text-primary fs-4">{money(invoice.grand_total)}</span>
+            <span className="text-primary fs-3">{money(invoice.grand_total)}</span>
           </div>
         </div>
 
