@@ -9,7 +9,6 @@ import {
   updateInvoice,
 } from '../api/endpoints';
 import Alert from '../components/Alert';
-import Loading from '../components/Loading';
 import BackButton from '../components/BackButton';
 import CreatableSelect from 'react-select/creatable';
 
@@ -207,7 +206,75 @@ export default function InvoiceForm() {
     }
   };
 
-  if (loading) return <Loading label="Loading form..." />;
+  if (loading) {
+    return (
+      <div className="container py-2">
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          <div className="skeleton" style={{ height: 32, width: 200 }}></div>
+          <div className="skeleton" style={{ height: 32, width: 80 }}></div>
+        </div>
+        <div className="card card-body shadow-sm border-0 p-4">
+          <div className="row g-3">
+            <div className="col-md-6">
+              <div className="skeleton skeleton-label"></div>
+              <div className="skeleton skeleton-input"></div>
+            </div>
+            <div className="col-md-3">
+              <div className="skeleton skeleton-label"></div>
+              <div className="skeleton skeleton-input"></div>
+            </div>
+            <div className="col-md-3">
+              <div className="skeleton skeleton-label"></div>
+              <div className="skeleton skeleton-input" style={{ height: 50 }}></div>
+            </div>
+          </div>
+
+          <hr className="my-4" />
+          
+          <div className="skeleton mb-3" style={{ height: 24, width: 100 }}></div>
+          <div className="table-responsive">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th style={{ width: '40%' }}><div className="skeleton" style={{ height: 20 }}></div></th>
+                  <th style={{ width: 80 }}><div className="skeleton" style={{ height: 20 }}></div></th>
+                  <th style={{ width: 120 }}><div className="skeleton" style={{ height: 20 }}></div></th>
+                  <th style={{ width: 120 }}><div className="skeleton" style={{ height: 20 }}></div></th>
+                  <th style={{ width: 40 }}></th>
+                </tr>
+              </thead>
+              <tbody>
+                {[1, 2, 3].map((i) => (
+                  <tr key={i}>
+                    <td><div className="skeleton skeleton-input" style={{ marginBottom: 0 }}></div></td>
+                    <td><div className="skeleton skeleton-input" style={{ marginBottom: 0 }}></div></td>
+                    <td><div className="skeleton skeleton-input" style={{ marginBottom: 0 }}></div></td>
+                    <td><div className="skeleton skeleton-text" style={{ width: '60%', margin: '12px auto' }}></div></td>
+                    <td></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="mt-4 row">
+            <div className="col-md-7">
+              <div className="skeleton skeleton-label"></div>
+              <div className="skeleton skeleton-textarea"></div>
+            </div>
+            <div className="col-md-5">
+              <div className="skeleton" style={{ height: 180, width: '100%' }}></div>
+            </div>
+          </div>
+          
+          <div className="d-flex gap-2 mt-4">
+            <div className="skeleton skeleton-button"></div>
+            <div className="skeleton skeleton-button" style={{ width: 100 }}></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
