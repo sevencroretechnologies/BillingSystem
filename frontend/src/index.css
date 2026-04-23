@@ -135,3 +135,234 @@ body {
     max-width: 100%;
   }
 }
+
+
+
+/* ---- Mobile Offcanvas Drawer ---- */
+.mobile-drawer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 1040;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.mobile-drawer-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.mobile-drawer {
+  position: fixed;
+  top: 0;
+  left: -280px;
+  width: 280px;
+  height: 100%;
+  background-color: #fff;
+  z-index: 1050;
+  box-shadow: 5px 0 25px rgba(0, 0, 0, 0.15);
+  transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-drawer.open {
+  left: 0;
+}
+
+.drawer-header {
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+  color: white;
+}
+
+.drawer-user-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 0.5rem;
+}
+
+.drawer-avatar {
+  width: 48px;
+  height: 48px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+}
+
+.drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem 0.75rem;
+}
+
+.drawer-footer {
+  padding: 1rem;
+  border-top: 1px solid #eee;
+  background-color: #f8f9fa;
+}
+
+.nav-link-custom {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  color: #495057;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  margin-bottom: 4px;
+}
+
+.nav-link-custom:hover {
+  background-color: #f1f3f5;
+  color: #0d6efd;
+}
+
+.nav-link-custom.active {
+  background-color: #e7f1ff;
+  color: #0d6efd;
+}
+
+.nav-link-icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  color: #6c757d;
+  transition: all 0.2s ease;
+}
+
+.nav-link-custom.active .nav-link-icon {
+  background-color: #0d6efd;
+  color: #fff;
+}
+
+.nav-link-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-link-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.nav-link-sub {
+  font-size: 0.75rem;
+  color: #adb5bd;
+}
+
+.nav-link-custom.active .nav-link-sub {
+  color: #6ea8fe;
+}
+
+/* ---- Bottom Navigation Bar (Mobile) ---- */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 65px;
+  background-color: #ffffff;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border-top: 1px solid #edf2f7;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+  z-index: 1030;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.bottom-nav-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #718096;
+  text-decoration: none;
+  font-size: 0.65rem;
+  font-weight: 500;
+  transition: color 0.2s ease;
+  width: 20%;
+}
+
+.bottom-nav-link.active {
+  color: #0d6efd;
+}
+
+.bottom-nav-icon {
+  margin-bottom: 4px;
+  transition: transform 0.2s ease;
+}
+
+.bottom-nav-link.active .bottom-nav-icon {
+  transform: translateY(-2px);
+}
+
+/* Floating Action Button (FAB) */
+.fab-container {
+  position: fixed;
+  bottom: 85px; /* Above bottom nav */
+  right: 20px;
+  z-index: 1020;
+}
+
+.fab-button {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: #0d6efd;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 15px rgba(13, 110, 253, 0.4);
+  border: none;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  text-decoration: none;
+}
+
+.fab-button:hover {
+  background-color: #0b5ed7;
+  color: #fff;
+  transform: scale(1.05);
+}
+
+.fab-button:active {
+  transform: scale(0.95);
+}
+
+/* Adjust main content padding for bottom nav */
+@media (max-width: 991.98px) {
+  main.container {
+    padding-bottom: 90px !important;
+  }
+}
+
+/* Ensure body doesn't scroll when drawer is open */
+body.drawer-open {
+  overflow: hidden;
+}
+
+/* Hide desktop navbar elements on mobile when necessary */
+@media (max-width: 991.98px) {
+  .navbar-collapse {
+    display: none !important;
+  }
+}
