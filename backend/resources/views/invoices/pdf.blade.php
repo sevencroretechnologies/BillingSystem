@@ -113,18 +113,16 @@
     </table>
 
     <!-- Company Branding -->
-    <table style="width: 100%; margin-bottom: 10px;">
+    <table style="margin: 0 auto; margin-bottom: 10px;">
         <tr>
-            <!-- Logo Section -->
-            <td width="120">
-                @if($company->logo && file_exists(public_path('storage/' . $company->logo)))
-                    <img src="{{ public_path('storage/' . $company->logo) }}" class="logo-img">
-                @endif
+            @if($company->logo && file_exists(public_path('storage/' . $company->logo)))
+            <td style="vertical-align: middle; padding-right: 15px;">
+                <img src="{{ public_path('storage/' . $company->logo) }}" class="logo-img">
             </td>
-            <!-- Company Details -->
+            @endif
             <td class="text-center" style="vertical-align: middle;">
-                <div class="bold" style="font-size: 20px; text-transform: uppercase;">{{ $company->company_name ?? 'Your Company' }}</div>
-                <div style="font-size: 11px; margin-top: 3px;">{{ $company->address ?? '' }}</div>
+                <div class="bold" style="font-size: 20px; text-transform: uppercase; line-height: 1.1;">{{ $company->company_name ?? 'Your Company' }}</div>
+                <div style="font-size: 11px; margin-top: 2px;">{{ $company->address ?? '' }}</div>
             </td>
         </tr>
     </table>

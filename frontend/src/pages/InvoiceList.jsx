@@ -172,13 +172,18 @@ export default function InvoiceList() {
                   </div>
 
                   {/* CUSTOMER */}
-                  <div>
-                    <p className="text-xs text-secondary text-uppercase mb-1 fw-semibold tracking-wider">
-                      Customer
-                    </p>
-                    <p className="text-sm fw-medium m-0 text-dark">
-                      {row.customer?.name || '—'}
-                    </p>
+                  <div className="row align-items-center">
+                    <div className="col-6">
+                      <p className="text-xs text-secondary text-uppercase mb-0 fw-semibold">
+                        Customer
+                      </p>
+                    </div>
+
+                    <div className="col-6 text-end">
+                      <p className="text-sm fw-bold mb-0 text-dark">
+                        {row.customer?.name || '—'}
+                      </p>
+                    </div>
                   </div>
 
                   {/* DATE + AMOUNT */}
