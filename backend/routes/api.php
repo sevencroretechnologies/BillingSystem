@@ -20,8 +20,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/health', fn () => response()->json(['ok' => true]));
 
-// Public Auth Routes
+// Public Routes
 Route::post('/login', [AuthController::class, 'login']);
+// Allow PDF access without Bearer token (since direct links <a> cannot send headers)
+Route::get('invoices/{invoice}/pdf', [InvoiceController::class, 'pdf']);
 
 // Protected Routes
 Route::middleware('auth:sanctum')->group(function () {
@@ -37,7 +39,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Invoices
     Route::apiResource('invoices', InvoiceController::class);
-    Route::get('invoices/{invoice}/pdf', [InvoiceController::class, 'pdf']);
+    // Route::get('invoices/{invoice}/pdf', [InvoiceController::class, 'pdf']); // Moved above
 
     // Tax settings (single-row resource)
     Route::get('tax', [TaxController::class, 'show']);

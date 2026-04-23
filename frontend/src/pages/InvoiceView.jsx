@@ -270,7 +270,7 @@ export default function InvoiceView() {
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '15px' }}>
                   {company?.logo_url && <img src={company.logo_url} alt="Logo" style={{ maxHeight: '60px', maxWidth: '150px' }} />}
                   <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: '22px', fontWeight: 'bold', textTransform: 'uppercase', lineHeight: 1.1 }}>{company?.company_name || 'Your Company'}</div>
+                    <div style={{ fontSize: '15px', fontWeight: 'bold', textTransform: 'uppercase', lineHeight: 1.1 }}>{company?.company_name || 'Your Company'}</div>
                     {company?.address && <div style={{ fontSize: '13px', marginTop: '2px' }}>{company.address}</div>}
                   </div>
                 </div>
