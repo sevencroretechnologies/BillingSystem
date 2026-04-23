@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { getCompany, getInvoice, invoicePdfUrl } from '../api/endpoints';
 import Alert from '../components/Alert';
-import Loading from '../components/Loading';
 import BackButton from '../components/BackButton';
 
 const CURRENCY_SYMBOL = process.env.REACT_APP_CURRENCY_SYMBOL || '₹';
@@ -32,7 +31,109 @@ export default function InvoiceView() {
     })();
   }, [id]);
 
-  if (loading) return <Loading label="Loading invoice..." />;
+  if (loading) {
+    return (
+      <div className="container py-2">
+        {/* Desktop Skeleton */}
+        <div className="d-none d-md-block">
+          <div className="d-flex justify-content-between align-items-center mb-3">
+            <div className="skeleton" style={{ height: 32, width: 200 }}></div>
+            <div className="d-flex gap-2">
+              <div className="skeleton skeleton-button" style={{ width: 80 }}></div>
+              <div className="skeleton skeleton-button" style={{ width: 80 }}></div>
+              <div className="skeleton skeleton-button" style={{ width: 80 }}></div>
+              <div className="skeleton skeleton-button" style={{ width: 120 }}></div>
+            </div>
+          </div>
+          <div className="card shadow-sm border-0">
+            <div className="card-body p-5">
+              <div className="d-flex justify-content-between mb-4">
+                <div className="skeleton" style={{ height: 60, width: 250 }}></div>
+                <div className="skeleton" style={{ height: 40, width: 150 }}></div>
+                <div className="skeleton" style={{ height: 60, width: 200 }}></div>
+              </div>
+              <div className="skeleton mx-auto mb-4" style={{ height: 80, width: '60%' }}></div>
+              <div className="d-flex justify-content-between mb-4">
+                <div className="skeleton" style={{ height: 24, width: 120 }}></div>
+                <div className="skeleton" style={{ height: 24, width: 150 }}></div>
+              </div>
+              <div className="skeleton mb-4" style={{ height: 40, width: '40%' }}></div>
+              <div className="table-responsive mb-4">
+                <table className="table border">
+                  <thead>
+                    <tr>
+                      <th style={{ width: 60 }}><div className="skeleton" style={{ height: 20 }}></div></th>
+                      <th><div className="skeleton" style={{ height: 20 }}></div></th>
+                      <th style={{ width: 100 }}><div className="skeleton" style={{ height: 20 }}></div></th>
+                      <th style={{ width: 120 }}><div className="skeleton" style={{ height: 20 }}></div></th>
+                      <th style={{ width: 140 }}><div className="skeleton" style={{ height: 20 }}></div></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <tr key={i}>
+                        <td><div className="skeleton skeleton-text" style={{ width: '50%', margin: '0 auto' }}></div></td>
+                        <td><div className="skeleton skeleton-text" style={{ width: '80%' }}></div></td>
+                        <td><div className="skeleton skeleton-text" style={{ width: '40%', margin: '0 auto' }}></div></td>
+                        <td><div className="skeleton skeleton-text" style={{ width: '60%', margin: '0 auto' }}></div></td>
+                        <td><div className="skeleton skeleton-text" style={{ width: '80%', margin: '0 0 0 auto' }}></div></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="d-flex justify-content-end mb-5">
+                <div className="skeleton" style={{ height: 160, width: 250 }}></div>
+              </div>
+              <div className="d-flex justify-content-between align-items-end mt-5">
+                <div className="skeleton" style={{ height: 60, width: '50%' }}></div>
+                <div className="skeleton" style={{ height: 100, width: 200 }}></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Skeleton */}
+        <div className="d-md-none space-y-4">
+          <div className="bg-white p-3 d-flex gap-2 rounded-xl shadow-sm border">
+            <div className="skeleton flex-fill" style={{ height: 36 }}></div>
+            <div className="skeleton flex-fill" style={{ height: 36 }}></div>
+            <div className="skeleton flex-fill" style={{ height: 36 }}></div>
+            <div className="skeleton flex-fill" style={{ height: 36 }}></div>
+          </div>
+          <div className="bg-white p-4 rounded-xl shadow-sm border">
+            <div className="d-flex justify-content-between mb-2">
+              <div className="skeleton" style={{ height: 16, width: '30%' }}></div>
+              <div className="skeleton" style={{ height: 16, width: '40%' }}></div>
+            </div>
+            <div className="d-flex justify-content-between">
+              <div className="skeleton" style={{ height: 16, width: '20%' }}></div>
+              <div className="skeleton" style={{ height: 16, width: '50%' }}></div>
+            </div>
+          </div>
+          <div className="bg-white p-4 rounded-xl shadow-sm border">
+            <div className="skeleton mb-2" style={{ height: 12, width: '20%' }}></div>
+            <div className="skeleton mb-3" style={{ height: 32, width: '70%' }}></div>
+            <div className="skeleton pt-2 border-top" style={{ height: 40, width: '100%' }}></div>
+          </div>
+          {[1, 2].map((i) => (
+            <div key={i} className="bg-white p-4 rounded-xl shadow-sm border">
+              <div className="d-flex justify-content-between mb-3">
+                <div className="skeleton" style={{ height: 20, width: '60%' }}></div>
+                <div className="skeleton" style={{ height: 20, width: '20%' }}></div>
+              </div>
+              <div className="skeleton" style={{ height: 50, width: '100%' }}></div>
+            </div>
+          ))}
+          <div className="bg-white p-4 rounded-xl shadow-sm border space-y-3">
+            <div className="d-flex justify-content-between"><div className="skeleton" style={{ height: 14, width: '40%' }}></div><div className="skeleton" style={{ height: 14, width: '30%' }}></div></div>
+            <div className="d-flex justify-content-between"><div className="skeleton" style={{ height: 14, width: '40%' }}></div><div className="skeleton" style={{ height: 14, width: '30%' }}></div></div>
+            <div className="d-flex justify-content-between pt-3 border-top"><div className="skeleton" style={{ height: 20, width: '40%' }}></div><div className="skeleton" style={{ height: 28, width: '40%' }}></div></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
   if (error) return <Alert message={error} />;
   if (!invoice) return null;
 
