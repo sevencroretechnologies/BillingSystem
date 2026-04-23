@@ -1,5 +1,11 @@
 import api, { backendUrl } from "./client";
 
+// -------- Auth --------
+export const login = (data) => api.post("/login", data);
+export const logout = () => api.post("/logout");
+export const changePassword = (data) => api.post("/change-password", data);
+
+
 // -------- Customers --------
 export const listCustomers = (params) => api.get("/customers", { params });
 export const getCustomer = (id) => api.get(`/customers/${id}`);

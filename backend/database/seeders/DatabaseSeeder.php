@@ -17,6 +17,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->call(AdminSeeder::class);
+
         if (Customer::count() === 0) {
             Customer::create([
                 'name' => 'Acme Corp',

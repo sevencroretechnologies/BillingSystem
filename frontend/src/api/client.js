@@ -13,6 +13,15 @@ const api = axios.create({
   },
 });
 
+// Add the token to every request
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('billing_token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 // Expose the raw backend base URL for things that aren't JSON (e.g. PDFs).
 export const backendUrl = baseURL.replace(/\/$/, '');
 
