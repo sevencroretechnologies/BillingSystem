@@ -3,6 +3,7 @@ import { getCompany, updateCompany } from "../api/endpoints";
 import Alert from "../components/Alert";
 import FormField from "../components/FormField";
 import Loading from "../components/Loading";
+import BackButton from "../components/BackButton";
 
 // Settings page for the single-row company record. All fields are
 // editable; the logo and signature are optional and uploaded as multipart/form-data.
@@ -111,7 +112,10 @@ export default function CompanySettings() {
 
     return (
         <div>
-            <h3 className='mb-3'>Company Settings</h3>
+            <div className="d-flex justify-content-between align-items-center mb-3">
+                <h3 className="m-0">Company Settings</h3>
+                <BackButton />
+            </div>
             <p className='text-muted'>
                 These details (logo and signature) appear on every invoice and
                 PDF.

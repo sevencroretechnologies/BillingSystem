@@ -5,6 +5,7 @@ import Alert from '../components/Alert';
 import DataTable from '../components/DataTable';
 import Loading from '../components/Loading';
 import Pagination from '../components/Pagination';
+import BackButton from '../components/BackButton';
 
 // Invoice list with search by invoice number/customer name and date range.
 export default function InvoiceList() {
@@ -64,7 +65,7 @@ export default function InvoiceList() {
       header: 'Actions',
       style: { width: 320 },
       render: (row) => (
-        <div className="d-flex gap-2 flex-wrap">
+        <div className="d-flex gap-3 gap-md-2 flex-wrap">
           <Link className="btn btn-sm btn-outline-primary" to={`/invoices/${row.id}`}>
             View
           </Link>
@@ -96,22 +97,20 @@ export default function InvoiceList() {
       {/* DESKTOP HEADER (md and above) */}
       <div className="d-none d-md-block">
         <div className="d-flex justify-content-between align-items-center mb-3">
-          <h3 className="m-0">Invoices</h3>
+          <BackButton />
           <Link className="btn btn-primary" to="/invoices/new">
             + New Invoice
           </Link>
         </div>
       </div>
 
-      {/* MOBILE HEADER (Below md) */}
       <div className="d-md-none mb-3">
-        <h3 className="m-0">Invoices</h3>
-      </div>
-       <div className="d-flex justify-content-between align-items-center mb-3">
-        {/* <h3 className="m-0">Items</h3> */}
-        <Link className="btn btn-primary" to="/invoices/new">
-          + Add Invoice
-        </Link>
+        <div className="d-flex justify-content-between align-items-center">
+          <BackButton />
+          <Link className="btn btn-primary btn-sm" to="/invoices/new">
+            + New Invoice
+          </Link>
+        </div>
       </div>
 
       <form className="row g-2 mb-3" onSubmit={handleSearch}>

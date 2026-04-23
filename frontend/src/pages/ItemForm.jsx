@@ -4,6 +4,7 @@ import { createItem, getItem, updateItem } from '../api/endpoints';
 import Alert from '../components/Alert';
 import FormField from '../components/FormField';
 import Loading from '../components/Loading';
+import BackButton from '../components/BackButton';
 
 // Form for creating/editing an item/product. Price is no longer stored
 // on the item — it is entered per line when creating an invoice.
@@ -70,7 +71,10 @@ export default function ItemForm() {
 
   return (
     <div>
-      <h3 className="mb-3">{isEdit ? 'Edit Item' : 'Add Item'}</h3>
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h3 className="m-0">{isEdit ? 'Edit Item' : 'Add Item'}</h3>
+        <BackButton />
+      </div>
       <Alert message={error} onClose={() => setError('')} />
       <form onSubmit={handleSubmit} className="card card-body shadow-sm">
         <FormField
@@ -94,7 +98,7 @@ export default function ItemForm() {
           Price is entered per line while creating an invoice so different
           customers can be billed at different rates.
         </p>
-        <div className="d-flex gap-2">
+        <div className="d-flex gap-3 gap-md-2">
           <button type="submit" className="btn btn-primary" disabled={saving}>
             {saving ? 'Saving...' : 'Save'}
           </button>

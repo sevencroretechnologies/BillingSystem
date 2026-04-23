@@ -5,6 +5,7 @@ import Alert from '../components/Alert';
 import DataTable from '../components/DataTable';
 import Loading from '../components/Loading';
 import Pagination from '../components/Pagination';
+import BackButton from '../components/BackButton';
 
 // Customer list page with search + pagination + delete action.
 export default function CustomerList() {
@@ -61,7 +62,7 @@ export default function CustomerList() {
       header: 'Actions',
       style: { width: 220 },
       render: (row) => (
-        <div className="d-flex gap-2">
+        <div className="d-flex gap-3 gap-md-2">
           <button
             type="button"
             className="btn btn-sm btn-outline-info"
@@ -87,7 +88,10 @@ export default function CustomerList() {
   return (
     <div>
       <div className="d-flex justify-content-between align-items-center mb-3">
-        <h3 className="m-0">Customers</h3>
+        <div className="d-flex align-items-center gap-3">
+          <BackButton />
+          {/* <h3 className="m-0">Customers</h3> */}
+        </div>
         <Link className="btn btn-primary" to="/customers/new">
           + Add Customer
         </Link>
@@ -135,7 +139,7 @@ export default function CustomerList() {
                       </div>
                       {row.address && <div><strong>Address:</strong> {row.address}</div>}
                     </div>
-                    <div className="d-flex gap-2">
+                    <div className="d-flex gap-3 gap-md-2">
                       <button
                         type="button"
                         className="btn btn-sm btn-outline-info flex-fill"

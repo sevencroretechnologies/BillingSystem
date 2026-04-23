@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import{createInvoice,
+import {
+  createInvoice,
   getInvoice,
   getTax,
   listCustomers,
@@ -9,6 +10,7 @@ import{createInvoice,
 } from '../api/endpoints';
 import Alert from '../components/Alert';
 import Loading from '../components/Loading';
+import BackButton from '../components/BackButton';
 import CreatableSelect from 'react-select/creatable';
 
 // Page to create or edit an invoice. Loads customers, items and the current
@@ -209,7 +211,10 @@ export default function InvoiceForm() {
 
   return (
     <div>
-      <h3 className="mb-3">{isEdit ? 'Edit Invoice' : 'New Invoice'}</h3>
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h3 className="m-0">{isEdit ? 'Edit Invoice' : 'New Invoice'}</h3>
+        <BackButton />
+      </div>
       <Alert message={error} onClose={() => setError('')} />
       <form onSubmit={handleSubmit} className="card card-body shadow-sm">
         <div className="row g-3">
@@ -294,46 +299,46 @@ export default function InvoiceForm() {
                       />
                     </td>
 
-                      <td>
-                        <input
-                          type="number"
-                          min="1"
-                          className="form-control form-control-sm"
-                          value={row.quantity}
-                          onChange={(e) => handleRowChange(idx, 'quantity', e.target.value)}
-                          onKeyDown={(e) => (e.key === '-' || e.key === 'e') && e.preventDefault()}
-                          required
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="number"
-                          step="0.01"
-                          min="0"
-                          className="form-control form-control-sm"
-                          value={row.price}
-                          onChange={(e) => handleRowChange(idx, 'price', e.target.value)}
-                          onKeyDown={(e) => (e.key === '-' || e.key === 'e') && e.preventDefault()}
-                          placeholder="0.00"
-                          required
-                        />
-                      </td>
-                      <td className="text-end align-middle">{lineTotal.toFixed(2)}</td>
-                      <td className="align-middle">
-                        {rows.length > 1 && (
-                          <button
-                            type="button"
-                            className="btn btn-sm btn-outline-danger"
-                            onClick={() => removeRow(idx)}
-                            aria-label="Remove row"
-                          >
-                            &times;
-                          </button>
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })}
+                    <td>
+                      <input
+                        type="number"
+                        min="1"
+                        className="form-control form-control-sm"
+                        value={row.quantity}
+                        onChange={(e) => handleRowChange(idx, 'quantity', e.target.value)}
+                        onKeyDown={(e) => (e.key === '-' || e.key === 'e') && e.preventDefault()}
+                        required
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        className="form-control form-control-sm"
+                        value={row.price}
+                        onChange={(e) => handleRowChange(idx, 'price', e.target.value)}
+                        onKeyDown={(e) => (e.key === '-' || e.key === 'e') && e.preventDefault()}
+                        placeholder="0.00"
+                        required
+                      />
+                    </td>
+                    <td className="text-end align-middle">{lineTotal.toFixed(2)}</td>
+                    <td className="align-middle">
+                      {rows.length > 1 && (
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-outline-danger"
+                          onClick={() => removeRow(idx)}
+                          aria-label="Remove row"
+                        >
+                          &times;
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
 
@@ -468,7 +473,7 @@ export default function InvoiceForm() {
           </div>
         </div>
 
-        <div className="d-flex gap-2">
+        <div className="d-flex gap-3 gap-md-2">
           <button type="submit" className="btn btn-primary" disabled={saving}>
             {saving ? 'Saving...' : isEdit ? 'Update Invoice' : 'Save Invoice'}
           </button>

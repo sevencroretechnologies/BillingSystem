@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { getCompany, getInvoice, invoicePdfUrl } from '../api/endpoints';
 import Alert from '../components/Alert';
 import Loading from '../components/Loading';
+import BackButton from '../components/BackButton';
 
 const CURRENCY_SYMBOL = process.env.REACT_APP_CURRENCY_SYMBOL || '₹';
 
@@ -111,10 +112,8 @@ export default function InvoiceView() {
       <div className="d-none d-md-block d-print-block">
         <div className="d-flex justify-content-between align-items-center mb-3 no-print">
           <h3 className="m-0">Invoice {invoice.invoice_number}</h3>
-          <div className="d-flex gap-2 flex-wrap">
-            <Link to="/invoices" className="btn btn-outline-secondary">
-              Back
-            </Link>
+          <div className="d-flex gap-3 gap-md-2 flex-wrap">
+            <BackButton />
             <button
               type="button"
               className="btn btn-outline-primary"
@@ -286,13 +285,8 @@ export default function InvoiceView() {
       {/* MOBILE VIEW (Below md - Hidden on Print) */}
       <div className="d-md-none p-3 space-y-4 bg-light d-print-none">
         {/* ACTION BUTTONS (Top Static - 1 Row) */}
-        <div className="bg-white p-3 d-flex gap-2 rounded-xl shadow-sm border no-print">
-          <button
-            className="btn btn-light flex-grow-1 py-2 rounded-lg fw-semibold border shadow-sm text-sm"
-            onClick={() => navigate('/invoices')}
-          >
-            Back
-          </button>
+        <div className="bg-white p-3 d-flex gap-3 gap-md-2 rounded-xl shadow-sm border no-print">
+          <BackButton />
           <button
             className="btn btn-outline-primary py-2 rounded-lg fw-semibold d-flex align-items-center justify-content-center text-sm"
             style={{ flex: 1 }}

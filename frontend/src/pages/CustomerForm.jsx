@@ -8,6 +8,7 @@ import {
 import Alert from '../components/Alert';
 import FormField from '../components/FormField';
 import Loading from '../components/Loading';
+import BackButton from '../components/BackButton';
 
 // Form for creating/editing a customer.
 export default function CustomerForm() {
@@ -65,7 +66,10 @@ export default function CustomerForm() {
 
   return (
     <div>
-      <h3 className="mb-3">{isEdit ? 'Edit Customer' : 'Add Customer'}</h3>
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h3 className="m-0">{isEdit ? 'Edit Customer' : 'Add Customer'}</h3>
+        <BackButton />
+      </div>
       <Alert message={error} onClose={() => setError('')} />
       <form onSubmit={handleSubmit} className="card card-body shadow-sm">
         <FormField
@@ -100,7 +104,7 @@ export default function CustomerForm() {
           onChange={handleChange}
           error={errors.address}
         />
-        <div className="d-flex gap-2">
+        <div className="d-flex gap-3 gap-md-2">
           <button type="submit" className="btn btn-primary" disabled={saving}>
             {saving ? 'Saving...' : 'Save'}
           </button>
