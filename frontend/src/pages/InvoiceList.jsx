@@ -107,7 +107,7 @@ export default function InvoiceList() {
       <div className="d-md-none mb-3">
         <h3 className="m-0">Invoices</h3>
       </div>
-       <div className="d-flex justify-content-between align-items-center mb-3">
+      <div className="d-flex justify-content-between align-items-center mb-3">
         {/* <h3 className="m-0">Items</h3> */}
         <Link className="btn btn-primary" to="/invoices/new">
           + Add Invoice
@@ -173,13 +173,18 @@ export default function InvoiceList() {
                   </div>
 
                   {/* CUSTOMER */}
-                  <div>
-                    <p className="text-xs text-secondary text-uppercase mb-1 fw-semibold tracking-wider">
-                      Customer
-                    </p>
-                    <p className="text-sm fw-medium m-0 text-dark">
-                      {row.customer?.name || '—'}
-                    </p>
+                  <div className="row align-items-center">
+                    <div className="col-6">
+                      <p className="text-xs text-secondary text-uppercase mb-0 fw-semibold">
+                        Customer
+                      </p>
+                    </div>
+
+                    <div className="col-6 text-end">
+                      <p className="text-sm fw-bold mb-0 text-dark">
+                        {row.customer?.name || '—'}
+                      </p>
+                    </div>
                   </div>
 
                   {/* DATE + AMOUNT */}
