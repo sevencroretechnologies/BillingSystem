@@ -37,25 +37,35 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="container d-flex justify-content-center align-items-center" style={{ minHeight: '80vh' }}>
-            <div className="card shadow-sm border-0" style={{ maxWidth: '400px', width: '100%' }}>
-                <div className="card-body p-4 p-md-5">
+        <div className="login-wrapper d-flex justify-content-center align-items-center" style={{
+            minHeight: '100vh',
+            background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+            padding: '20px'
+        }}>
+            <div className="card login-card border-0 shadow-lg" style={{
+                maxWidth: '380px',
+                width: '100%',
+                borderRadius: '16px',
+                overflow: 'hidden'
+            }}>
+                <div className="card-body p-4 bg-white">
                     <div className="text-center mb-4">
-                        <div className="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style={{ width: '60px', height: '60px' }}>
-                            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        <div className="login-icon-box shadow-sm mb-3">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                         </div>
-                        <h2 className="fw-bold h4">Admin Login</h2>
-                        <p className="text-muted small">Sign in to manage your billing system</p>
+                        <h2 className="fw-extra-bold h4 text-dark mb-1">Welcome Back</h2>
+                        <p className="text-muted small">Sign in to manage your system</p>
                     </div>
 
                     <Alert message={error} onClose={() => setError('')} />
 
                     <form onSubmit={handleSubmit}>
                         <div className="mb-3">
-                            <label className="form-label small fw-semibold text-secondary">Email Address</label>
+                            <label className="form-label small fw-bold text-uppercase tracking-wider text-secondary mb-1" style={{ fontSize: '0.7rem' }}>Email Address</label>
                             <input
                                 type="email"
-                                className="form-control form-control-lg fs-6"
+                                className="form-control bg-light border-0 px-3 py-2"
+                                style={{ borderRadius: '10px', fontSize: '0.9rem' }}
                                 placeholder="admin@gmail.com"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
@@ -63,10 +73,11 @@ export default function LoginPage() {
                             />
                         </div>
                         <div className="mb-4">
-                            <label className="form-label small fw-semibold text-secondary">Password</label>
+                            <label className="form-label small fw-bold text-uppercase tracking-wider text-secondary mb-1" style={{ fontSize: '0.7rem' }}>Password</label>
                             <input
                                 type="password"
-                                className="form-control form-control-lg fs-6"
+                                className="form-control bg-light border-0 px-3 py-2"
+                                style={{ borderRadius: '10px', fontSize: '0.9rem' }}
                                 placeholder="••••••••"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
@@ -75,7 +86,7 @@ export default function LoginPage() {
                         </div>
                         <button
                             type="submit"
-                            className="btn btn-primary btn-lg w-100 fw-bold shadow-sm"
+                            className="btn btn-primary w-100 fw-bold border-0 py-2 shadow-sm login-btn"
                             disabled={loading}
                         >
                             {loading ? (
@@ -87,14 +98,49 @@ export default function LoginPage() {
                         </button>
                     </form>
 
-                    <div className="text-center mt-4 border-top pt-3">
-                        <p className="text-muted x-small mb-0" style={{ fontSize: '0.75rem' }}>
-                            Default credentials: <br />
-                            <b>admin@gmail.com / Admin@123</b>
-                        </p>
+                    <div className="text-center mt-4 pt-3 border-top">
+                        <div className="p-2 rounded-3 bg-light">
+                            <span className="d-block text-secondary fw-bold text-uppercase mb-1" style={{ fontSize: '0.6rem', letterSpacing: '0.05em' }}>
+                                Master Admin Access
+                            </span>
+                            <code className="text-primary fw-medium" style={{ fontSize: '0.8rem' }}>
+                                admin@gmail.com / Admin@123
+                            </code>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <style dangerouslySetInnerHTML={{
+                __html: `
+                .login-icon-box {
+                    width: 52px;
+                    height: 52px;
+                    background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+                    border-radius: 12px;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin: 0 auto;
+                }
+                .fw-extra-bold { font-weight: 800; }
+                .login-btn {
+                    background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+                    border-radius: 10px;
+                    transition: transform 0.2s ease;
+                }
+                .login-btn:hover:not(:disabled) {
+                    transform: translateY(-1px);
+                    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+                }
+                .login-card {
+                    animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+                }
+                @keyframes slideUp {
+                    from { opacity: 0; transform: translateY(20px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+            `}} />
         </div>
     );
 }
