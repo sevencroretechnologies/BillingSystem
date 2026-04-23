@@ -511,6 +511,15 @@ export default function InvoiceView() {
             <span className="text-dark">Grand Total</span>
             <span className="text-primary fs-3">{money(invoice.grand_total)}</span>
           </div>
+
+          <div className="mt-3 pt-3 border-top">
+            <p className="text-secondary text-uppercase mb-1 fw-bold tracking-wider" style={{ fontSize: '10px' }}>
+              Amount in Words
+            </p>
+            <p className="fw-bold text-dark mb-0 small" style={{ lineHeight: 1.4 }}>
+              {numberToWords(invoice.grand_total)}
+            </p>
+          </div>
         </div>
 
       </div>
