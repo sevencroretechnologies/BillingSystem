@@ -144,11 +144,6 @@ export default function ItemForm() {
                             />
                         </div>
 
-                        {/* <p className="text-muted small mb-4 bg-light p-3 rounded border-start border-4 border-primary">
-                            Price is entered per line while creating an invoice. 
-                            This allows you to bill different customers at different rates.
-                        </p> */}
-
                         <div className="d-flex gap-2 mt-4 pt-3 border-top">
                             <button
                                 type="submit"

@@ -412,3 +412,9 @@ body.drawer-open {
   height: 34px;
   width: 140px;
 }
+
+.skeleton-text {
+  height: 14px;
+  width: 100%;
+  margin-bottom: 0;
+}

@@ -346,7 +346,7 @@ export default function CompanySettings() {
                             <input
                                 type='file'
                                 accept='image/*'
-                                className='form-control border-0 bg-light'
+                                className='form-control'
                                 onChange={handleLogoChange}
                             />
                             <div className='form-text'>
@@ -388,7 +388,7 @@ export default function CompanySettings() {
                             <input
                                 type='file'
                                 accept='image/*'
-                                className='form-control border-0 bg-light'
+                                className='form-control'
                                 onChange={handleSignatureChange}
                             />
                             <div className='form-text'>
