@@ -47,8 +47,8 @@ class CompanyController extends Controller
         $validated = $request->validate([
             'company_name' => 'required|string|max:255',
             'address' => 'nullable|string|max:500',
-            'phone' => 'nullable|string|max:50',
-            'whatsapp_no' => 'nullable|string|max:20',
+            'phone' => 'nullable|digits:10',
+            'whatsapp_no' => 'nullable|digits:10',
             'email' => 'nullable|email|max:255',
             'logo' => 'nullable|image|mimes:jpg,jpeg,png,gif,svg,webp|max:2048',
             'remove_logo' => 'nullable|boolean',
