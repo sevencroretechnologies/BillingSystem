@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { deleteCustomer, listCustomers } from '../api/endpoints';
 import Alert from '../components/Alert';
 import DataTable from '../components/DataTable';
-import Loading from '../components/Loading';
 import Pagination from '../components/Pagination';
 import BackButton from '../components/BackButton';
 
@@ -115,7 +114,54 @@ export default function CustomerList() {
       <Alert message={error} onClose={() => setError('')} />
 
       {loading ? (
-        <Loading label="Loading customers..." />
+        <>
+          {/* Desktop Skeleton */}
+          <div className="d-none d-md-block card shadow-sm border-0 p-3">
+            <div className="table-responsive">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th><div className="skeleton" style={{ height: 20, width: 80 }}></div></th>
+                    <th><div className="skeleton" style={{ height: 20, width: 100 }}></div></th>
+                    <th><div className="skeleton" style={{ height: 20, width: 150 }}></div></th>
+                    <th><div className="skeleton" style={{ height: 20, width: 200 }}></div></th>
+                    <th><div className="skeleton" style={{ height: 20, width: 120 }}></div></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <tr key={i}>
+                      <td><div className="skeleton skeleton-text" style={{ width: '70%' }}></div></td>
+                      <td><div className="skeleton skeleton-text" style={{ width: '60%' }}></div></td>
+                      <td><div className="skeleton skeleton-text" style={{ width: '90%' }}></div></td>
+                      <td><div className="skeleton skeleton-text" style={{ width: '80%' }}></div></td>
+                      <td><div className="skeleton skeleton-button" style={{ width: 180, height: 28 }}></div></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Mobile Skeleton */}
+          <div className="d-md-none">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="card shadow-sm mb-3 border-0">
+                <div className="card-body">
+                  <div className="skeleton mb-2" style={{ height: 24, width: '60%' }}></div>
+                  <div className="skeleton mb-1" style={{ height: 14, width: '40%' }}></div>
+                  <div className="skeleton mb-1" style={{ height: 14, width: '50%' }}></div>
+                  <div className="skeleton mb-3" style={{ height: 14, width: '80%' }}></div>
+                  <div className="d-flex gap-2">
+                    <div className="skeleton flex-fill" style={{ height: 32 }}></div>
+                    <div className="skeleton flex-fill" style={{ height: 32 }}></div>
+                    <div className="skeleton flex-fill" style={{ height: 32 }}></div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
       ) : (
         <>
           {/* Desktop/Tablet View */}

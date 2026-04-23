@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { deleteInvoice, invoicePdfUrl, listInvoices } from '../api/endpoints';
 import Alert from '../components/Alert';
 import DataTable from '../components/DataTable';
-import Loading from '../components/Loading';
 import Pagination from '../components/Pagination';
 import BackButton from '../components/BackButton';
 
@@ -149,7 +148,65 @@ export default function InvoiceList() {
       <Alert message={error} onClose={() => setError('')} />
 
       {loading ? (
-        <Loading label="Loading invoices..." />
+        <>
+          {/* Desktop Skeleton */}
+          <div className="d-none d-md-block card shadow-sm border-0 p-3">
+            <div className="table-responsive">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th><div className="skeleton" style={{ height: 20, width: 80 }}></div></th>
+                    <th><div className="skeleton" style={{ height: 20, width: 100 }}></div></th>
+                    <th><div className="skeleton" style={{ height: 20, width: 150 }}></div></th>
+                    <th><div className="skeleton" style={{ height: 20, width: 80 }}></div></th>
+                    <th><div className="skeleton" style={{ height: 20, width: 250 }}></div></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <tr key={i}>
+                      <td><div className="skeleton skeleton-text" style={{ width: '50%' }}></div></td>
+                      <td><div className="skeleton skeleton-text" style={{ width: '70%' }}></div></td>
+                      <td><div className="skeleton skeleton-text" style={{ width: '80%' }}></div></td>
+                      <td><div className="skeleton skeleton-text" style={{ width: '60%' }}></div></td>
+                      <td><div className="skeleton skeleton-button" style={{ width: 240, height: 28 }}></div></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Mobile Skeleton */}
+          <div className="d-md-none space-y-3 mt-3 pb-5">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-white rounded-xl shadow-sm border p-4 space-y-3">
+                <div className="d-flex justify-content-between align-items-center">
+                  <div className="skeleton" style={{ height: 16, width: '30%' }}></div>
+                </div>
+                <div className="row align-items-center">
+                  <div className="col-6"><div className="skeleton" style={{ height: 12, width: '60%' }}></div></div>
+                  <div className="col-6 text-end"><div className="skeleton" style={{ height: 14, width: '80%' }}></div></div>
+                </div>
+                <div className="d-flex justify-content-between align-items-end">
+                  <div>
+                    <div className="skeleton mb-1" style={{ height: 12, width: '40%' }}></div>
+                    <div className="skeleton" style={{ height: 14, width: '60%' }}></div>
+                  </div>
+                  <div className="text-end">
+                    <div className="skeleton mb-1" style={{ height: 12, width: '40%' }}></div>
+                    <div className="skeleton" style={{ height: 24, width: '80%' }}></div>
+                  </div>
+                </div>
+                <div className="d-flex justify-content-between pt-3 border-top mt-2">
+                  <div className="skeleton" style={{ height: 16, width: '20%' }}></div>
+                  <div className="skeleton" style={{ height: 16, width: '20%' }}></div>
+                  <div className="skeleton" style={{ height: 16, width: '20%' }}></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
       ) : (
         <>
           {/* DESKTOP TABLE */}
