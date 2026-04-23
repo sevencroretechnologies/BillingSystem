@@ -13,7 +13,7 @@ export default function Home() {
 
   return (
     <div>
-      <h2 className="mb-4">Welcome to the Billing System</h2>
+      <h2 className="mb-4">Dashboard</h2>
       <div className="row g-3">
         {cards.map((c) => (
           <div className="col-md-6 col-lg-3" key={c.to}>

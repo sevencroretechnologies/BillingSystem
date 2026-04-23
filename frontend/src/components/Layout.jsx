@@ -1,9 +1,24 @@
 import { useEffect, useState } from 'react';
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { logout as apiLogout } from '../api/endpoints';
 
 // Top-level layout with a Bootstrap navbar and routed page content.
 export default function Layout() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const { user, logoutUser } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await apiLogout();
+    } catch (e) {
+      console.error('Logout failed on server', e);
+    } finally {
+      logoutUser();
+      navigate('/login');
+    }
+  };
 
   const linkClass = ({ isActive }) =>
     `nav-link${isActive ? ' active fw-bold' : ''}`;
@@ -29,7 +44,12 @@ export default function Layout() {
 
           {/* Desktop Navbar (Hidden on Mobile) */}
           <div className="collapse navbar-collapse" id="desktopNav">
-            <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
+            <ul className="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
+              <li className="nav-item">
+                <NavLink to="/" className={linkClass} end>
+                  Dashboard
+                </NavLink>
+              </li>
               <li className="nav-item">
                 <NavLink to="/customers" className={linkClass}>
                   Customers
@@ -47,7 +67,7 @@ export default function Layout() {
               </li>
               <li className="nav-item">
                 <NavLink to="/invoices/new" className={linkClass}>
-                  New Invoice
+                  New
                 </NavLink>
               </li>
               <li className="nav-item">
@@ -59,6 +79,16 @@ export default function Layout() {
                 <NavLink to="/settings/company" className={linkClass}>
                   Company
                 </NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink to="/settings/password" className={linkClass}>
+                  Change Password
+                </NavLink>
+              </li>
+              <li className="nav-item ms-lg-2">
+                <button className="btn btn-sm btn-outline-light fw-bold" onClick={handleLogout}>
+                  Logout
+                </button>
               </li>
             </ul>
           </div>
@@ -107,26 +137,37 @@ export default function Layout() {
       </div>
 
       {/* Mobile Offcanvas Drawer (Now for Settings) */}
-      <div 
-        className={`mobile-drawer-overlay ${isDrawerOpen ? 'show' : ''}`} 
+      <div
+        className={`mobile-drawer-overlay ${isDrawerOpen ? 'show' : ''}`}
         onClick={closeDrawer}
       ></div>
       <div className={`mobile-drawer ${isDrawerOpen ? 'open' : ''}`}>
         <div className="drawer-header border-bottom">
           <div className="drawer-user-card">
-            <div className="drawer-avatar">A</div>
+            <div className="drawer-avatar">{(user?.name || 'A')[0]}</div>
             <div>
-              <div className="fw-bold fs-6">Admin User</div>
-              <div className="small opacity-75">admin@example.com</div>
+              <div className="fw-bold fs-6">{user?.name || 'Admin User'}</div>
+              <div className="small opacity-75">{user?.email || 'admin@example.com'}</div>
             </div>
           </div>
         </div>
-        
+
         <div className="drawer-body">
           <div className="text-uppercase text-secondary x-small fw-bold mb-3 px-2" style={{ fontSize: '0.65rem', letterSpacing: '0.05em' }}>
             System & Settings
           </div>
           <ul className="nav flex-column">
+            <li className="nav-item">
+              <NavLink to="/settings/password" className="nav-link-custom py-2" onClick={closeDrawer}>
+                <div className="nav-link-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                </div>
+                <div className="nav-link-text">
+                  <span className="nav-link-title">Change Password</span>
+                  <span className="nav-link-sub">Secure your account</span>
+                </div>
+              </NavLink>
+            </li>
             <li className="nav-item">
               <NavLink to="/settings/tax" className="nav-link-custom py-2" onClick={closeDrawer}>
                 <div className="nav-link-icon">
@@ -153,10 +194,10 @@ export default function Layout() {
         </div>
 
         <div className="drawer-footer border-top p-3 bg-light text-center">
-          <button className="btn btn-outline-danger btn-sm w-100 mb-2">Logout</button>
-          <div className="text-muted x-small" style={{ fontSize: '0.65rem' }}>
-            Billing System v1.0.4
-          </div>
+          <button className="btn btn-outline-danger btn-sm w-100 mb-2" onClick={handleLogout}>Logout</button>
+          {/* <div className="text-muted x-small" style={{ fontSize: '0.65rem' }}>
+            Billing System v1.1.0
+          </div> */}
         </div>
       </div>
 

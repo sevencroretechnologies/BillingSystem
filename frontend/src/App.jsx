@@ -10,12 +10,24 @@ import InvoiceView from './pages/InvoiceView';
 import ItemForm from './pages/ItemForm';
 import ItemList from './pages/ItemList';
 import TaxSettings from './pages/TaxSettings';
+import ChangePassword from './pages/ChangePassword';
+
+import LoginPage from './pages/LoginPage';
+import ProtectedRoute from './components/ProtectedRoute';
 
 // Root component: declares every route nested under the Layout.
 export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<Layout />}>
+      <Route path="/login" element={<LoginPage />} />
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <Layout />
+          </ProtectedRoute>
+        }
+      >
         <Route index element={<Home />} />
 
         <Route path="customers" element={<CustomerList />} />
@@ -33,6 +45,7 @@ export default function App() {
 
         <Route path="settings/tax" element={<TaxSettings />} />
         <Route path="settings/company" element={<CompanySettings />} />
+        <Route path="settings/password" element={<ChangePassword />} />
       </Route>
     </Routes>
   );
