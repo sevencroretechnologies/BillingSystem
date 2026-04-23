@@ -420,7 +420,7 @@ export default function InvoiceView() {
         {/* HEADER SECTION */}
         <div className="bg-white p-4 rounded-xl shadow-sm border">
           <div className="d-flex justify-content-between text-sm mb-2">
-            <span className="text-secondary fw-semibold small">Invoice #</span>
+            <span className="text-secondary fw-semibold small">Invoice</span>
             <span className="fw-bold text-dark">{invoice.invoice_number}</span>
           </div>
           <div className="d-flex justify-content-between text-sm">

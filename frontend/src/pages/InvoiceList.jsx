@@ -51,7 +51,7 @@ export default function InvoiceList() {
   };
 
   const columns = [
-    { key: 'invoice_number', header: 'Invoice #' },
+    { key: 'invoice_number', header: 'Invoice' },
     { key: 'invoice_date', header: 'Date' },
     { key: 'customer', header: 'Customer', render: (r) => r.customer?.name || '—' },
     {
