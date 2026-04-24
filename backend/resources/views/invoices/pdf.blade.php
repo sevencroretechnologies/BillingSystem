@@ -224,7 +224,6 @@
         @endif
         <div style="border-top: 1px solid #000; display: inline-block; padding-top: 5px; text-align: left;">
             <div class="bold" style="font-size: 12px;">Authorized Signatory</div>
-            <div style="font-size: 10px;">{{ $company->company_name ?? '' }}</div>
         </div>
     </div>
     <div style="clear: both;"></div>

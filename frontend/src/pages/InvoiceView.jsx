@@ -269,7 +269,7 @@ export default function InvoiceView() {
 
               <div style={{ borderBottom: '2px solid #000', paddingBottom: '10px', marginBottom: '10px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '15px' }}>
-                  {company?.logo && <img src={`${baseURL}/storage/${company.logo}`} alt="Logo" style={{ maxHeight: '80px', maxWidth: '150px' }} />}
+                  {company?.logo && <img src={`${baseURL}/storage/${company.logo}`} alt="Logo" style={{ maxHeight: '60px', maxWidth: '150px' }} />}
                   <div style={{ textAlign: 'center' }}>
                     <div style={{ fontSize: '15px', fontWeight: 'bold', textTransform: 'uppercase', lineHeight: 1.1 }}>{company?.company_name || 'Your Company'}</div>
                     {company?.address && <div style={{ fontSize: '13px', marginTop: '2px' }}>{company.address}</div>}
@@ -377,7 +377,6 @@ export default function InvoiceView() {
                   )}
                   <div style={{ borderTop: '1px solid #000', display: 'inline-block', paddingTop: '5px' }}>
                     <div style={{ fontWeight: 'bold' }}>Authorized Signatory</div>
-                    <div style={{ fontSize: '11px' }}>{company?.company_name}</div>
                   </div>
                 </div>
               </div>
