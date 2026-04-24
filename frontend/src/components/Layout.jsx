@@ -98,7 +98,7 @@ export default function Layout() {
 
 
       {/* Bottom Navigation Bar (Mobile Only) */}
-      <div className="bottom-nav d-lg-none">
+      <div className="bottom-nav d-lg-none d-print-none">
         <NavLink to="/" className="bottom-nav-link" end>
           <div className="bottom-nav-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>

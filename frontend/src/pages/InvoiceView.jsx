@@ -206,6 +206,7 @@ export default function InvoiceView() {
           @media print {
             @page { margin: 0; }
             body { margin: 1cm; }
+            .bottom-nav, .navbar, .fab-container, .no-print { display: none !important; }
             .print-col-sl { width: 30px !important; }
             .print-col-qty { width: 40px !important; }
             .print-col-rate { width: 70px !important; }
@@ -268,7 +269,7 @@ export default function InvoiceView() {
 
               <div style={{ borderBottom: '2px solid #000', paddingBottom: '10px', marginBottom: '10px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '15px' }}>
-                  {company?.logo && <img src={`${baseURL}/storage/${company.logo}`} alt="Logo" style={{ maxHeight: '60px', maxWidth: '150px' }} />}
+                  {company?.logo && <img src={`${baseURL}/storage/${company.logo}`} alt="Logo" style={{ maxHeight: '80px', maxWidth: '150px' }} />}
                   <div style={{ textAlign: 'center' }}>
                     <div style={{ fontSize: '15px', fontWeight: 'bold', textTransform: 'uppercase', lineHeight: 1.1 }}>{company?.company_name || 'Your Company'}</div>
                     {company?.address && <div style={{ fontSize: '13px', marginTop: '2px' }}>{company.address}</div>}

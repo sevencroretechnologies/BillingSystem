@@ -8,6 +8,10 @@ body {
 
   .no-print,
   .navbar,
+  .bottom-nav,
+  .fab-container,
+  .mobile-drawer,
+  .mobile-drawer-overlay,
   .d-print-none {
     display: none !important;
   }
