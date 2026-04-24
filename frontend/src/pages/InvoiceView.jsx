@@ -429,9 +429,49 @@ export default function InvoiceView() {
         </div>
 
         <div className="p-3">
+          {/* COMPANY DETAILS CARD */}
+          <div className="bg-white rounded-3 shadow-sm border mb-3 overflow-hidden">
+            <div className="p-3 border-bottom bg-light d-flex justify-content-between align-items-center">
+              <span style={{ fontSize: '10px', fontWeight: 'bold', color: '#666' }}>|| Shri Banashankari Devi Prasanna ||</span>
+              <span className="badge bg-dark text-uppercase" style={{ fontSize: '9px' }}>Cash / Credit Bill</span>
+            </div>
+            <div className="p-3">
+              <div className="d-flex align-items-center gap-3 mb-3">
+                {company?.logo && (
+                  <div className="border rounded p-1">
+                    <img src={`${baseURL}/storage/${company.logo}`} alt="Logo" style={{ maxHeight: '50px', maxWidth: '80px', objectFit: 'contain' }} />
+                  </div>
+                )}
+                <div>
+                  <h6 className="fw-bold text-dark mb-1" style={{ fontSize: '14px', lineHeight: 1.2 }}>{company?.company_name}</h6>
+                  <p className="text-secondary mb-0" style={{ fontSize: '11px' }}>{company?.address}</p>
+                </div>
+              </div>
+
+              <div className="row g-3 pt-2 border-top">
+                <div className="col-6">
+                  <p className="text-uppercase text-secondary fw-bold mb-1" style={{ fontSize: '9px' }}>Registration</p>
+                  <div className="small" style={{ fontSize: '11px', lineHeight: 1.4 }}>
+                    {company?.gstin && <div><span className="text-muted">GST:</span> {company.gstin}</div>}
+                    {company?.pan && <div><span className="text-muted">PAN:</span> {company.pan}</div>}
+                    {company?.k2_recipient_code && <div><span className="text-muted">K-2:</span> {company.k2_recipient_code}</div>}
+                  </div>
+                </div>
+                <div className="col-6">
+                  <p className="text-uppercase text-secondary fw-bold mb-1" style={{ fontSize: '9px' }}>Contact</p>
+                  <div className="small" style={{ fontSize: '11px', lineHeight: 1.4 }}>
+                    {company?.phone && <div>{company.phone}</div>}
+                    {company?.whatsapp_no && <div>{company.whatsapp_no}</div>}
+                    <div className="text-truncate" style={{ maxWidth: '100%' }}>{company?.email}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* HEADER SECTION (Invoice # and Date) */}
           <div className="bg-white rounded-3 shadow-sm border mb-3 overflow-hidden">
-            <div className="bg-primary p-2"></div>
+            <div className="bg-primary p-1"></div>
             <div className="p-3">
               <div className="row g-0">
                 <div className="col-6 border-end pe-3">
