@@ -224,7 +224,7 @@ export default function InvoiceView() {
             <button
               type="button"
               className="btn btn-outline-primary"
-              onClick={() => navigate(`/invoices/${invoice.id}/edit`)}
+              onClick={() => navigate(`/invoices`)}
             >
               Edit
             </button>
@@ -392,7 +392,13 @@ export default function InvoiceView() {
       <div className="d-md-none p-3 space-y-4 bg-light d-print-none" style={{ minHeight: '100vh', paddingBottom: '100px' }}>
         {/* ACTION BUTTONS (Top Static - 1 Row) */}
         <div className="bg-white p-3 d-flex gap-2 rounded-xl shadow-sm border no-print align-items-center">
-          <BackButton />
+          <button
+            className="btn btn-outline-secondary py-2 rounded-lg fw-bold d-flex align-items-center justify-content-center text-xs"
+            style={{ flex: 1 }}
+            onClick={() => navigate('/invoices')}
+          >
+            Back
+          </button>
           <button
             className="btn btn-outline-primary py-2 rounded-lg fw-bold d-flex align-items-center justify-content-center text-xs"
             style={{ flex: 1 }}
@@ -401,7 +407,7 @@ export default function InvoiceView() {
             Edit
           </button>
           <a
-            className="btn btn-outline-primary py-2 rounded-lg fw-bold d-flex align-items-center justify-content-center text-xs"
+            className="btn btn-outline-success py-2 rounded-lg fw-bold d-flex align-items-center justify-content-center text-xs"
             style={{ flex: 1 }}
             href={invoicePdfUrl(invoice.id, true)}
             target="_blank"
