@@ -18,7 +18,7 @@ export default function CompanySettings() {
         gstin: "",
         pan: "",
     });
-
+const baseURL = process.env.REACT_APP_API_URL;
     // Logo state
     const [logoFile, setLogoFile] = useState(null);
     const [logoUrl, setLogoUrl] = useState(null);
@@ -49,12 +49,12 @@ export default function CompanySettings() {
                 gstin: data.gstin ?? "",
                 pan: data.pan ?? "",
             });
-            setLogoUrl(data.logo_url || null);
-            setLogoFile(null);
-            setRemoveLogo(false);
-            setSignatureUrl(data.signature_url || null);
-            setSignatureFile(null);
-            setRemoveSignature(false);
+        setLogoUrl(data.logo ? `${baseURL}/storage/${data.logo}` : null);
+        setLogoFile(null);
+        setRemoveLogo(false);
+        setSignatureUrl(data.signature ? `${baseURL}/storage/${data.signature}` : null);
+        setSignatureFile(null);
+        setRemoveSignature(false);
         } catch (e) {
             setError(
                 e?.response?.data?.message || "Failed to load company details.",

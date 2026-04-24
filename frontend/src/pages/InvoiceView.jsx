@@ -16,7 +16,7 @@ export default function InvoiceView() {
   const [company, setCompany] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-
+  const baseURL = process.env.REACT_APP_API_URL;
   useEffect(() => {
     (async () => {
       try {
@@ -254,8 +254,8 @@ export default function InvoiceView() {
                   {company?.pan ? <>Pan No : {company.pan}</> : null}
                 </div>
                 <div style={{ flex: '0 0 30%', textAlign: 'center' }}>
-                  {/* <span style={{ fontSize: '14px', fontWeight: 'bold' }}>|| Shri ||</span><br /> */}
-                  <div style={{ border: '1px solid #000', display: 'inline-block', padding: '2px 10px', marginTop: '5px', fontWeight: 'bold', fontSize: '13px' }}>
+                  <span style={{ fontSize: '10px', fontWeight: 'bold' }}>|| Shri Banashankari Devi Prasanna ||</span><br />
+                  <div style={{ border: '1px solid #000', display: 'inline-block', padding: '2px 10px', marginTop: '5px', fontWeight: 'bold', fontSize: '10px' }}>
                     CASH / CREDIT BILL
                   </div>
                 </div>
@@ -268,7 +268,7 @@ export default function InvoiceView() {
 
               <div style={{ borderBottom: '2px solid #000', paddingBottom: '10px', marginBottom: '10px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '15px' }}>
-                  {company?.logo_url && <img src={company.logo_url} alt="Logo" style={{ maxHeight: '60px', maxWidth: '150px' }} />}
+                  {company?.logo && <img src={`${baseURL}/storage/${company.logo}`} alt="Logo" style={{ maxHeight: '60px', maxWidth: '150px' }} />}
                   <div style={{ textAlign: 'center' }}>
                     <div style={{ fontSize: '15px', fontWeight: 'bold', textTransform: 'uppercase', lineHeight: 1.1 }}>{company?.company_name || 'Your Company'}</div>
                     {company?.address && <div style={{ fontSize: '13px', marginTop: '2px' }}>{company.address}</div>}
@@ -364,10 +364,9 @@ export default function InvoiceView() {
                   </span>
                 </div>
                 <div style={{ flex: '0 0 40%', textAlign: 'right', fontSize: '13px', alignSelf: 'flex-end' }}>
-                  {company?.signature_url ? (
+                  {company?.signature ? (
                     <div style={{ marginBottom: '4px' }}>
-                      <img
-                        src={company.signature_url}
+                      <img src={`${baseURL}/storage/${company.signature}`}
                         alt='Authorised Signatory'
                         style={{ maxHeight: '70px', maxWidth: '180px' }}
                       />

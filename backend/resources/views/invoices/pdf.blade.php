@@ -100,6 +100,7 @@
                 @if($company->pan) PAN: {{ $company->pan }} @endif
             </td>
             <td width="30%" class="text-center">
+                <span style="font-size: 14px; font-weight: bold;">|| Shri Banashankari Devi Prasanna ||</span><br />
                 <div class="bold" style="border: 1px solid #000; display: inline-block; padding: 2px 12px; font-size: 11px; margin-top: 5px;">
                     CASH / CREDIT BILL
                 </div>
