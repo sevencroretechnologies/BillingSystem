@@ -199,6 +199,19 @@ export default function InvoiceView() {
     return `${monthNames[date.getMonth()]}-${date.getFullYear()}`;
   };
 
+  const formatDate = (dateStr) => {
+    if (!dateStr) return '';
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+      if (parts[0].length === 4) {
+        return `${parts[2]}/${parts[1]}/${parts[0]}`;
+      } else if (parts[2].length === 4) {
+        return `${parts[0]}/${parts[1]}/${parts[2]}`;
+      }
+    }
+    return dateStr;
+  };
+
   return (
     <div>
       <style>
@@ -249,7 +262,7 @@ export default function InvoiceView() {
           <div className="card-body invoice-print" style={{ color: '#000', fontSize: '13px', lineHeight: 1.4, padding: 0 }}>
             <div style={{ border: '1px solid #000', padding: '15px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginBottom: '10px' }}>
-                <div style={{ flex: '0 0 35%', textAlign: 'left', whiteSpace: 'nowrap' }}>
+                <div style={{ flex: '0 0 35%', textAlign: 'left', whiteSpace: 'nowrap', fontWeight: 'bold' }}>
                   {company?.k2_recipient_code ? <>K-2 Recipient Code : {company.k2_recipient_code}<br /></> : null}
                   {company?.gstin ? <>GSTIN : {company.gstin}<br /></> : null}
                   {company?.pan ? <>Pan No : {company.pan}</> : null}
@@ -269,7 +282,7 @@ export default function InvoiceView() {
 
               <div style={{ borderBottom: '2px solid #000', paddingBottom: '10px', marginBottom: '10px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '15px' }}>
-                  {company?.logo && <img src={`${baseURL}/storage/${company.logo}`} alt="Logo" style={{ maxHeight: '80px', maxWidth: '150px' }} />}
+                  {company?.logo && <img src={`${baseURL}/storage/${company.logo}`} alt="Logo" style={{ maxHeight: '60px', maxWidth: '150px' }} />}
                   <div style={{ textAlign: 'center' }}>
                     <div style={{ fontSize: '15px', fontWeight: 'bold', textTransform: 'uppercase', lineHeight: 1.1 }}>{company?.company_name || 'Your Company'}</div>
                     {company?.address && <div style={{ fontSize: '13px', marginTop: '2px' }}>{company.address}</div>}
@@ -279,7 +292,7 @@ export default function InvoiceView() {
 
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px', fontSize: '15px', fontWeight: 'bold' }}>
                 <div>No: <span style={{ color: '#d00' }}>{invoice.invoice_number}</span></div>
-                <div>Date: {invoice.invoice_date}</div>
+                <div>Date: {formatDate(invoice.invoice_date)}</div>
               </div>
 
               <div style={{ textAlign: 'right', marginBottom: '10px', fontSize: '13px', fontWeight: 'bold' }}>
@@ -334,7 +347,15 @@ export default function InvoiceView() {
                 </tbody>
               </table>
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 0 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 0 }}>
+                <div style={{ flex: '1', padding: '25px 15px', fontSize: '16px' }}>
+                  {invoice.notes && (
+                    <div>
+                      {/* <strong>Note:</strong><br /> */}
+                      <span style={{ whiteSpace: 'pre-wrap', fontWeight: 'bold' }}>{invoice.notes}</span>
+                    </div>
+                  )}
+                </div>
                 <table style={{ borderCollapse: 'collapse', border: '1px solid #000', borderTop: 'none' }}>
                   <tbody>
                     <tr>
@@ -425,7 +446,7 @@ export default function InvoiceView() {
           </div>
           <div className="d-flex justify-content-between text-sm">
             <span className="text-secondary fw-semibold small">Date</span>
-            <span className="fw-semibold text-dark">{invoice.invoice_date}</span>
+            <span className="fw-semibold text-dark">{formatDate(invoice.invoice_date)}</span>
           </div>
         </div>
 
@@ -513,6 +534,16 @@ export default function InvoiceView() {
           </div>
 
           <div className="mt-3 pt-3 border-top">
+            {invoice.notes && (
+              <div className="mb-3">
+                <p className="text-secondary text-uppercase mb-1 fw-bold tracking-wider" style={{ fontSize: '10px' }}>
+                  Note
+                </p>
+                <p className="fw-bold text-dark mb-0 small" style={{ lineHeight: 1.4, whiteSpace: 'pre-wrap' }}>
+                  {invoice.notes}
+                </p>
+              </div>
+            )}
             <p className="text-secondary text-uppercase mb-1 fw-bold tracking-wider" style={{ fontSize: '10px' }}>
               Amount in Words
             </p>

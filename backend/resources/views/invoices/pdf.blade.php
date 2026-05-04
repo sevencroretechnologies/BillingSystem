@@ -95,9 +95,9 @@
     <table class="small" style="margin-bottom: 10px; width: 100%;">
         <tr>
             <td width="35%">
-                @if($company->k2_recipient_code) K-2 Recipient Code: {{ $company->k2_recipient_code }}<br> @endif
-                @if($company->gstin) GSTIN: {{ $company->gstin }}<br> @endif
-                @if($company->pan) PAN: {{ $company->pan }} @endif
+                @if($company->k2_recipient_code) <strong>K-2 Recipient Code:</strong> {{ $company->k2_recipient_code }}<br> @endif
+                @if($company->gstin) <strong>GSTIN:</strong> {{ $company->gstin }}<br> @endif
+                @if($company->pan) <strong>PAN:</strong> {{ $company->pan }} @endif
             </td>
             <td width="30%" class="text-center">
                 <span style="font-size: 14px; font-weight: bold;">|| Shri Banashankari Devi Prasanna ||</span><br />
@@ -187,6 +187,11 @@
     </table>
 
     <div class="clearfix">
+        @if($invoice->notes)
+        <div style="float: left; width: 50%; padding: 10px 15px; font-size: 13px;">
+            <span style="font-weight: bold;">{!! nl2br(e($invoice->notes)) !!}</span>
+        </div>
+        @endif
         <!-- Totals Box -->
         <table class="totals-box">
             <tr>
