@@ -284,7 +284,6 @@ export default function InvoiceView() {
               <div style={{ borderBottom: '2px solid #000', paddingBottom: '5px', marginBottom: '5px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '15px' }}>
                   {company?.logo && <img src={`${baseURL}/storage/${company.logo}`} alt="Logo" style={{ maxHeight: '60px', maxWidth: '150px' }} />}
-                  {company?.logo && <img src={`${baseURL}/storage/${company.logo}`} alt="Logo" style={{ maxHeight: '60px', maxWidth: '150px' }} />}
                   <div style={{ textAlign: 'center' }}>
                     <div style={{ fontSize: '15px', fontWeight: 'bold', textTransform: 'uppercase', lineHeight: 1.1 }}>{company?.company_name || 'Your Company'}</div>
                     {company?.address && <div style={{ fontSize: '13px', marginTop: '2px' }}>{company.address}</div>}
@@ -350,28 +349,6 @@ export default function InvoiceView() {
               </table>
 
               <div className="invoice-footer-block" style={{ marginTop: '5px' }}>
-                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                  <table style={{ borderCollapse: 'collapse', border: '1px solid #000', borderTop: 'none' }}>
-                    <tbody>
-                      <tr>
-                        <th style={{ border: '1px solid #000', padding: '4px 10px', fontSize: '13px', textAlign: 'left', fontWeight: 'bold', borderLeft: 'none' }}>Total</th>
-                        <td style={{ border: '1px solid #000', padding: '4px 10px', fontSize: '13px', textAlign: 'right', fontWeight: 'bold', width: '140px' }}>{Number(invoice.subtotal).toFixed(2)}</td>
-                      </tr>
-                      <tr>
-                        <th style={{ border: '1px solid #000', padding: '4px 10px', fontSize: '13px', textAlign: 'left', fontWeight: 'bold', borderLeft: 'none' }}>CGST ({Number(invoice.cgst_percent || 0).toFixed(1)}%)</th>
-                        <td style={{ border: '1px solid #000', padding: '4px 10px', fontSize: '13px', textAlign: 'right', fontWeight: 'bold' }}>{Number(invoice.cgst_amount).toFixed(2)}</td>
-                      </tr>
-                      <tr>
-                        <th style={{ border: '1px solid #000', padding: '4px 10px', fontSize: '13px', textAlign: 'left', fontWeight: 'bold', borderLeft: 'none' }}>SGST ({Number(invoice.sgst_percent || 0).toFixed(1)}%)</th>
-                        <td style={{ border: '1px solid #000', padding: '4px 10px', fontSize: '13px', textAlign: 'right', fontWeight: 'bold' }}>{Number(invoice.sgst_amount).toFixed(2)}</td>
-                      </tr>
-                      <tr>
-                        <th style={{ border: '1px solid #000', padding: '4px 10px', fontSize: '13px', textAlign: 'left', fontWeight: 'bold', borderLeft: 'none', borderBottom: 'none' }}>Grand Total</th>
-                        <td style={{ border: '1px solid #000', padding: '4px 10px', fontSize: '13px', textAlign: 'right', fontWeight: 'bold', borderBottom: 'none' }}>{Number(invoice.grand_total).toFixed(2)}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 0 }}>
                 <div style={{ flex: '1', padding: '25px 15px', fontSize: '16px' }}>
                   {invoice.notes && (
