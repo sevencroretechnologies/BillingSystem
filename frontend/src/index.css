@@ -422,3 +422,9 @@ body.drawer-open {
   width: 100%;
   margin-bottom: 0;
 }
+
+/* Hide default browser eye icon in password fields */
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}

@@ -199,11 +199,11 @@
                 <td width="45%" class="text-right bold">{{ number_format(round($subtotal), 0) }}</td>
             </tr>
             <tr>
-                <td class="label-cell">CGST ({{ number_format($invoice->cgst_percent, 1) }}%)</td>
+                <td class="label-cell">CGST ({{ (float)$invoice->cgst_percent }}%)</td>
                 <td class="text-right bold">{{ number_format(round($cgst), 0) }}</td>
             </tr>
             <tr>
-                <td class="label-cell">SGST ({{ number_format($invoice->sgst_percent, 1) }}%)</td>
+                <td class="label-cell">SGST ({{ (float)$invoice->sgst_percent }}%)</td>
                 <td class="text-right bold">{{ number_format(round($sgst), 0) }}</td>
             </tr>
             <tr>

@@ -578,11 +578,11 @@ export default function InvoiceForm() {
                   <td className="text-end">{totals.subtotal}</td>
                 </tr>
                 <tr>
-                  <th>SGST ({Number(tax.sgst).toFixed(2)}%)</th>
+                  <th>SGST ({Number(tax.sgst)}%)</th>
                   <td className="text-end">{totals.sgstAmount}</td>
                 </tr>
                 <tr>
-                  <th>CGST ({Number(tax.cgst).toFixed(2)}%)</th>
+                  <th>CGST ({Number(tax.cgst)}%)</th>
                   <td className="text-end">{totals.cgstAmount}</td>
                 </tr>
                 <tr>

@@ -365,11 +365,11 @@ export default function InvoiceView() {
                       <td style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold', width: '140px' }}>{Math.round(Number(invoice.subtotal))}</td>
                     </tr>
                     <tr>
-                      <th style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'left', fontWeight: 'bold', borderLeft: 'none' }}>CGST ({Number(invoice.cgst_percent || 0).toFixed(1)}%)</th>
+                      <th style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'left', fontWeight: 'bold', borderLeft: 'none' }}>CGST ({Number(invoice.cgst_percent || 0)}%)</th>
                       <td style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold' }}>{Math.round(Number(invoice.cgst_amount))}</td>
                     </tr>
                     <tr>
-                      <th style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'left', fontWeight: 'bold', borderLeft: 'none' }}>SGST ({Number(invoice.sgst_percent || 0).toFixed(1)}%)</th>
+                      <th style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'left', fontWeight: 'bold', borderLeft: 'none' }}>SGST ({Number(invoice.sgst_percent || 0)}%)</th>
                       <td style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold' }}>{Math.round(Number(invoice.sgst_amount))}</td>
                     </tr>
                     <tr>
@@ -618,11 +618,11 @@ export default function InvoiceView() {
                 <span className="fw-semibold">{money(invoice.subtotal)}</span>
               </div>
               <div className="d-flex justify-content-between mb-2 small text-secondary">
-                <span>SGST ({Number(invoice.sgst_percent || 0).toFixed(1)}%)</span>
+                <span>SGST ({Number(invoice.sgst_percent || 0)}%)</span>
                 <span>{money(invoice.sgst_amount)}</span>
               </div>
               <div className="d-flex justify-content-between mb-3 small text-secondary">
-                <span>CGST ({Number(invoice.cgst_percent || 0).toFixed(1)}%)</span>
+                <span>CGST ({Number(invoice.cgst_percent || 0)}%)</span>
                 <span>{money(invoice.cgst_amount)}</span>
               </div>
               <div className="pt-3 border-top">
