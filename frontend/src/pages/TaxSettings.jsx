@@ -3,6 +3,7 @@ import { getTax, updateTax } from "../api/endpoints";
 import Alert from "../components/Alert";
 import FormField from "../components/FormField";
 import BackButton from "../components/BackButton";
+import Swal from "sweetalert2";
 
 /**
  * Settings page for the single-row tax configuration used on every
@@ -13,8 +14,6 @@ export default function TaxSettings() {
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
-    const [error, setError] = useState("");
-    const [success, setSuccess] = useState("");
 
     const load = async () => {
         try {
@@ -24,9 +23,11 @@ export default function TaxSettings() {
                 cgst: res.data.data.cgst,
             });
         } catch (e) {
-            setError(
-                e?.response?.data?.message || "Failed to load tax settings.",
-            );
+            Swal.fire({
+                icon: 'error',
+                title: 'Load Error',
+                text: e?.response?.data?.message || "Failed to load tax settings.",
+            });
         } finally {
             setLoading(false);
         }
@@ -46,20 +47,24 @@ export default function TaxSettings() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSaving(true);
-        setError("");
-        setSuccess("");
-        setErrors({});
-
         try {
             await updateTax(form);
-            setSuccess("Tax settings updated successfully.");
+            Swal.fire({
+                icon: 'success',
+                title: 'Updated!',
+                text: 'Tax settings updated successfully.',
+                timer: 1500,
+                showConfirmButton: false,
+            });
         } catch (err) {
             if (err.response?.status === 422) {
                 setErrors(err.response.data.errors);
             } else {
-                setError(
-                    err?.response?.data?.message || "Failed to save tax settings.",
-                );
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: err?.response?.data?.message || "Failed to save tax settings.",
+                });
             }
         } finally {
             setSaving(false);
@@ -116,14 +121,6 @@ export default function TaxSettings() {
                     <p className="text-muted mb-4">
                         These rates are applied on every new invoice. Total tax = SGST + CGST.
                     </p>
-
-                    <Alert message={error} onClose={() => setError("")} />
-                    
-                    {success && (
-                        <div className="alert alert-success border-0 shadow-sm mb-4" role="alert">
-                            {success}
-                        </div>
-                    )}
 
                     <form onSubmit={handleSubmit} className="card card-body shadow-sm border-0 p-4">
                         <div className="row g-4 mb-4">

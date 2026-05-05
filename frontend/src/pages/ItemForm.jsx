@@ -4,6 +4,7 @@ import { createItem, getItem, updateItem } from "../api/endpoints";
 import Alert from "../components/Alert";
 import FormField from "../components/FormField";
 import BackButton from "../components/BackButton";
+import Swal from "sweetalert2";
 
 /**
  * Form for creating/editing an item/product.
@@ -17,7 +18,6 @@ export default function ItemForm() {
         description: "",
     });
     const [errors, setErrors] = useState({});
-    const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
 
@@ -32,7 +32,11 @@ export default function ItemForm() {
                 }),
             )
             .catch((e) =>
-                setError(e?.response?.data?.message || "Failed to load item."),
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Load Error',
+                    text: e?.response?.data?.message || "Failed to load item.",
+                }),
             )
             .finally(() => setLoading(false));
     }, [id, isEdit]);
@@ -48,13 +52,19 @@ export default function ItemForm() {
         e.preventDefault();
         setSaving(true);
         setErrors({});
-        setError("");
         try {
             if (isEdit) {
                 await updateItem(id, form);
             } else {
                 await createItem(form);
             }
+            Swal.fire({
+                icon: 'success',
+                title: 'Saved!',
+                text: `Item ${isEdit ? 'updated' : 'created'} successfully.`,
+                timer: 1500,
+                showConfirmButton: false,
+            });
             navigate("/items");
         } catch (err) {
             if (err?.response?.status === 422) {
@@ -65,7 +75,11 @@ export default function ItemForm() {
                 });
                 setErrors(flat);
             } else {
-                setError(err?.response?.data?.message || "Failed to save item.");
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: err?.response?.data?.message || "Failed to save item.",
+                });
             }
         } finally {
             setSaving(false);
@@ -112,8 +126,6 @@ export default function ItemForm() {
                         </h3>
                         <BackButton />
                     </div>
-
-                    <Alert message={error} onClose={() => setError("")} />
 
                     <form
                         onSubmit={handleSubmit}

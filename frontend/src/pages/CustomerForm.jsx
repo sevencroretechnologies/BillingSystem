@@ -8,6 +8,7 @@ import {
 import Alert from "../components/Alert";
 import FormField from "../components/FormField";
 import BackButton from "../components/BackButton";
+import Swal from "sweetalert2";
 
 /**
  * Form for creating/editing a customer.
@@ -23,7 +24,6 @@ export default function CustomerForm() {
         address: "",
     });
     const [errors, setErrors] = useState({});
-    const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
 
@@ -33,9 +33,11 @@ export default function CustomerForm() {
         getCustomer(id)
             .then((res) => setForm(res.data.data))
             .catch((e) =>
-                setError(
-                    e?.response?.data?.message || "Failed to load customer.",
-                ),
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Load Error',
+                    text: e?.response?.data?.message || "Failed to load customer.",
+                }),
             )
             .finally(() => setLoading(false));
     }, [id, isEdit]);
@@ -51,13 +53,19 @@ export default function CustomerForm() {
         e.preventDefault();
         setSaving(true);
         setErrors({});
-        setError("");
         try {
             if (isEdit) {
                 await updateCustomer(id, form);
             } else {
                 await createCustomer(form);
             }
+            Swal.fire({
+                icon: 'success',
+                title: 'Saved!',
+                text: `Customer ${isEdit ? 'updated' : 'created'} successfully.`,
+                timer: 1500,
+                showConfirmButton: false,
+            });
             navigate("/customers");
         } catch (err) {
             if (err?.response?.status === 422) {
@@ -68,9 +76,11 @@ export default function CustomerForm() {
                 });
                 setErrors(flat);
             } else {
-                setError(
-                    err?.response?.data?.message || "Failed to save customer.",
-                );
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: err?.response?.data?.message || "Failed to save customer.",
+                });
             }
         } finally {
             setSaving(false);
@@ -133,8 +143,6 @@ export default function CustomerForm() {
                         </h3>
                         <BackButton />
                     </div>
-
-                    <Alert message={error} onClose={() => setError("")} />
 
                     <form
                         onSubmit={handleSubmit}

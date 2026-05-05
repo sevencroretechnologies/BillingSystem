@@ -67,7 +67,7 @@ export default function Layout() {
               </li>
               <li className="nav-item">
                 <NavLink to="/invoices/new" className={linkClass}>
-                  New
+                  New Invoice
                 </NavLink>
               </li>
               <li className="nav-item">

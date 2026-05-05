@@ -11,6 +11,7 @@ import {
 import Alert from '../components/Alert';
 import BackButton from '../components/BackButton';
 import CreatableSelect from 'react-select/creatable';
+import Swal from 'sweetalert2';
 
 // Page to create or edit an invoice. Loads customers, items and the current
 // SGST/CGST configuration, lets the user enter a custom price per line,
@@ -23,7 +24,6 @@ export default function InvoiceForm() {
   const [items, setItems] = useState([]);
   const [tax, setTax] = useState({ sgst: 0, cgst: 0 });
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
   const [isTaxExclusive, setIsTaxExclusive] = useState(true);
 
@@ -87,7 +87,11 @@ export default function InvoiceForm() {
           }
         }
       } catch (e) {
-        setError(e?.response?.data?.message || 'Failed to load form data.');
+        Swal.fire({
+          icon: 'error',
+          title: 'Load Error',
+          text: e?.response?.data?.message || 'Failed to load form data.',
+        });
       } finally {
         setLoading(false);
       }
@@ -199,7 +203,6 @@ export default function InvoiceForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
-    setError('');
     try {
       const payload = {
         customer_id: Number(form.customer_id),
@@ -215,19 +218,36 @@ export default function InvoiceForm() {
       };
       if (isEdit) {
         await updateInvoice(id, payload);
+        Swal.fire({
+          icon: 'success',
+          title: 'Updated!',
+          text: 'Invoice updated successfully.',
+          timer: 1500,
+          showConfirmButton: false,
+        });
         navigate(`/invoices/${id}`);
       } else {
         const res = await createInvoice(payload);
+        Swal.fire({
+          icon: 'success',
+          title: 'Created!',
+          text: 'Invoice created successfully.',
+          timer: 1500,
+          showConfirmButton: false,
+        });
         navigate(`/invoices/${res.data.data.id}`);
       }
     } catch (err) {
+      let msg = err?.response?.data?.message || `Failed to ${isEdit ? 'update' : 'create'} invoice.`;
       if (err?.response?.status === 422) {
         const errs = err.response.data.errors || {};
-        const first = Object.values(errs)[0]?.[0];
-        setError(first || 'Please check the form values.');
-      } else {
-        setError(err?.response?.data?.message || `Failed to ${isEdit ? 'update' : 'create'} invoice.`);
+        msg = Object.values(errs)[0]?.[0] || 'Please check the form values.';
       }
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: msg,
+      });
     } finally {
       setSaving(false);
     }
@@ -309,7 +329,6 @@ export default function InvoiceForm() {
         <h3 className="m-0">{isEdit ? 'Edit Invoice' : 'New Invoice'}</h3>
         <BackButton />
       </div>
-      <Alert message={error} onClose={() => setError('')} />
       <form onSubmit={handleSubmit} className="card card-body shadow-sm">
         <div className="row g-3">
           <div className="col-md-6">
