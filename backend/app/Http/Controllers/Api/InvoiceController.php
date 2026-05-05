@@ -359,23 +359,18 @@ class InvoiceController extends Controller
      */
     private function applyTotals(Invoice $invoice, float $subtotal, Tax $tax): void
     {
-        if ($invoice->inclusive_tax) {
+        if ($invoice->inclusive_tax == 0) {
             // Inclusive: subtotal provided is actually the grand total
             $grandTotal = $subtotal;
-            $totalTaxRate = (float) $tax->sgst + (float) $tax->cgst;
             
-            // SubtotalNet = GrandTotal / (1 + Rate/100)
-            $subtotalNet = round($grandTotal / (1 + ($totalTaxRate / 100)), 2);
-            $totalTax = round($grandTotal - $subtotalNet, 2);
-            
-            // Split tax between SGST and CGST proportionally
-            if ($totalTaxRate > 0) {
-                 $sgstAmount = round($totalTax * ((float) $tax->sgst / $totalTaxRate), 2);
-                 $cgstAmount = round($totalTax - $sgstAmount, 2);
-            } else {
-                $sgstAmount = 0;
-                $cgstAmount = 0;
-            }
+            $sgstMultiplier = (float) $tax->sgst / 100;
+            $cgstMultiplier = (float) $tax->cgst / 100;
+
+            $sgstAmount = round($sgstMultiplier * $grandTotal, 2);
+            $cgstAmount = round($cgstMultiplier * $grandTotal, 2);
+
+            $totalTax = round($sgstAmount + $cgstAmount, 2);
+            $subtotalNet = round($grandTotal - $totalTax, 2);
 
             $invoice->update([
                 'subtotal' => $subtotalNet,

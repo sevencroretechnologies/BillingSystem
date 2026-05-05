@@ -25,6 +25,7 @@ export default function InvoiceForm() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
+  const [isTaxExclusive, setIsTaxExclusive] = useState(true);
 
   const [form, setForm] = useState({
     customer_id: '',
@@ -71,6 +72,9 @@ export default function InvoiceForm() {
             invoice_date: inv.invoice_date || '',
             notes: inv.notes || '',
           });
+          if (inv.inclusive_tax !== undefined) {
+            setIsTaxExclusive(inv.inclusive_tax == 1);
+          }
           if (inv.items && inv.items.length > 0) {
             setRows(
               inv.items.map((it) => ({
@@ -153,22 +157,44 @@ export default function InvoiceForm() {
   // SGST + CGST rates fetched from the backend — matching server-side
   // logic so the displayed grand total is what gets saved.
   const totals = useMemo(() => {
-    const subtotal = rows.reduce((sum, r) => {
+    const baseSum = rows.reduce((sum, r) => {
       const qty = Number(r.quantity) || 0;
       const price = Number(r.price) || 0;
       return sum + qty * price;
     }, 0);
-    const sgstAmount = subtotal * (tax.sgst / 100);
-    const cgstAmount = subtotal * (tax.cgst / 100);
-    const taxTotal = sgstAmount + cgstAmount;
-    return {
-      subtotal: round(subtotal),
-      sgstAmount: round(sgstAmount),
-      cgstAmount: round(cgstAmount),
-      taxTotal: round(taxTotal),
-      total: round(subtotal + taxTotal),
-    };
-  }, [rows, tax]);
+
+    if (isTaxExclusive) {
+      const sgstAmount = baseSum * (tax.sgst / 100);
+      const cgstAmount = baseSum * (tax.cgst / 100);
+      const taxTotal = sgstAmount + cgstAmount;
+      return {
+        subtotal: round(baseSum),
+        sgstAmount: round(sgstAmount),
+        cgstAmount: round(cgstAmount),
+        taxTotal: round(taxTotal),
+        total: round(baseSum + taxTotal),
+      };
+    } else {
+      const grand_total = baseSum;
+      
+      const sgst_multiplier = (Number(tax.sgst) || 0) / 100;
+      const cgst_multiplier = (Number(tax.cgst) || 0) / 100;
+
+      const sgst_value = sgst_multiplier * grand_total;
+      const cgst_value = cgst_multiplier * grand_total;
+      
+      const total_gst = sgst_value + cgst_value;
+      const subtotal = grand_total - total_gst;
+      
+      return {
+        subtotal: round(subtotal),
+        sgstAmount: round(sgst_value),
+        cgstAmount: round(cgst_value),
+        taxTotal: round(total_gst),
+        total: round(grand_total),
+      };
+    }
+  }, [rows, tax, isTaxExclusive]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -178,6 +204,7 @@ export default function InvoiceForm() {
       const payload = {
         customer_id: Number(form.customer_id),
         invoice_date: form.invoice_date,
+        inclusive_tax: isTaxExclusive ? 1 : 0,
         notes: form.notes,
         items: rows.map((r) => ({
           item_id: r.item_id ? Number(r.item_id) : null,
@@ -317,11 +344,23 @@ export default function InvoiceForm() {
           </div>
           <div className="col-md-3">
             <label className="form-label">Tax Rates</label>
-            <div className="form-control-plaintext small">
+            <div className="form-control-plaintext small pb-0">
               SGST {Number(tax.sgst).toFixed(2)}% + CGST {Number(tax.cgst).toFixed(2)}%
               <div className="text-muted">
                 Manage in <a href="/settings/tax">Settings &rarr; Tax</a>
               </div>
+            </div>
+            <div className="form-check mt-2">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                id="exclusiveTaxCheck"
+                checked={isTaxExclusive}
+                onChange={(e) => setIsTaxExclusive(e.target.checked)}
+              />
+              <label className="form-check-label small user-select-none" htmlFor="exclusiveTaxCheck">
+                Calculate Tax Exclusively
+              </label>
             </div>
           </div>
         </div>
