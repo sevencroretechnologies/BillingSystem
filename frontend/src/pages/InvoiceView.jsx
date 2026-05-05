@@ -137,7 +137,7 @@ export default function InvoiceView() {
   if (error) return <Alert message={error} />;
   if (!invoice) return null;
 
-  const money = (n) => `${CURRENCY_SYMBOL}${Number(n || 0).toFixed(2)}`;
+  const money = (n) => `${CURRENCY_SYMBOL}${Math.round(Number(n || 0))}`;
 
   // Combined tax calculation for total reference
   const combinedTax = Number(invoice.sgst_percent || 0) + Number(invoice.cgst_percent || 0);
@@ -362,19 +362,19 @@ export default function InvoiceView() {
                   <tbody>
                     <tr>
                       <th style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'left', fontWeight: 'bold', borderLeft: 'none' }}>Total</th>
-                      <td style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold', width: '140px' }}>{Number(invoice.subtotal).toFixed(2)}</td>
+                      <td style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold', width: '140px' }}>{Math.round(Number(invoice.subtotal))}</td>
                     </tr>
                     <tr>
                       <th style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'left', fontWeight: 'bold', borderLeft: 'none' }}>CGST ({Number(invoice.cgst_percent || 0).toFixed(1)}%)</th>
-                      <td style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold' }}>{Number(invoice.cgst_amount).toFixed(2)}</td>
+                      <td style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold' }}>{Math.round(Number(invoice.cgst_amount))}</td>
                     </tr>
                     <tr>
                       <th style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'left', fontWeight: 'bold', borderLeft: 'none' }}>SGST ({Number(invoice.sgst_percent || 0).toFixed(1)}%)</th>
-                      <td style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold' }}>{Number(invoice.sgst_amount).toFixed(2)}</td>
+                      <td style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold' }}>{Math.round(Number(invoice.sgst_amount))}</td>
                     </tr>
                     <tr>
                       <th style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'left', fontWeight: 'bold', borderLeft: 'none', borderBottom: 'none' }}>Grand Total</th>
-                      <td style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold', borderBottom: 'none' }}>{Number(invoice.grand_total).toFixed(2)}</td>
+                      <td style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold', borderBottom: 'none' }}>{Math.round(Number(invoice.grand_total))}</td>
                     </tr>
                   </tbody>
                 </table>
