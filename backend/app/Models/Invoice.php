@@ -24,6 +24,7 @@ class Invoice extends Model
         'tax_total',
         'total_tax',
         'grand_total',
+        'inclusive_tax',
         'notes',
     ];
 
@@ -37,6 +38,7 @@ class Invoice extends Model
         'tax_total' => 'decimal:2',
         'total_tax' => 'decimal:2',
         'grand_total' => 'decimal:2',
+        'inclusive_tax' => 'boolean',
     ];
 
     public function customer(): BelongsTo

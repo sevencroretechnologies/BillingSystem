@@ -74,6 +74,7 @@ class InvoiceController extends Controller
         $validated = $request->validate([
             'customer_id' => 'required|integer|exists:customers,id',
             'invoice_date' => 'required|date',
+            'inclusive_tax' => 'nullable|boolean',
             'notes' => 'nullable|string',
             'items' => 'required|array|min:1',
             'items.*.item_id' => 'nullable|integer|exists:items,id',
@@ -90,6 +91,7 @@ class InvoiceController extends Controller
                     'invoice_number' => Invoice::generateInvoiceNumber(),
                     'customer_id' => $validated['customer_id'],
                     'invoice_date' => $validated['invoice_date'],
+                    'inclusive_tax' => $validated['inclusive_tax'] ?? 1,
                     'notes' => $validated['notes'] ?? null,
                     'subtotal' => 0,
                     'sgst_percent' => $tax->sgst,
@@ -151,6 +153,7 @@ class InvoiceController extends Controller
         $validated = $request->validate([
             'customer_id' => 'sometimes|required|integer|exists:customers,id',
             'invoice_date' => 'sometimes|required|date',
+            'inclusive_tax' => 'sometimes|boolean',
             'notes' => 'nullable|string',
             'items' => 'sometimes|required|array|min:1',
             'items.*.item_id' => 'nullable|integer|exists:items,id',
@@ -166,6 +169,7 @@ class InvoiceController extends Controller
                 $invoice->update(array_filter([
                     'customer_id' => $validated['customer_id'] ?? null,
                     'invoice_date' => $validated['invoice_date'] ?? null,
+                    'inclusive_tax' => $validated['inclusive_tax'] ?? null,
                     'notes' => $validated['notes'] ?? $invoice->notes,
                 ], fn ($v) => $v !== null));
 
@@ -355,17 +359,46 @@ class InvoiceController extends Controller
      */
     private function applyTotals(Invoice $invoice, float $subtotal, Tax $tax): void
     {
-        $sgstAmount = round($subtotal * ((float) $tax->sgst / 100), 2);
-        $cgstAmount = round($subtotal * ((float) $tax->cgst / 100), 2);
-        $taxTotal = round($sgstAmount + $cgstAmount, 2);
+        if ($invoice->inclusive_tax) {
+            // Inclusive: subtotal provided is actually the grand total
+            $grandTotal = $subtotal;
+            $totalTaxRate = (float) $tax->sgst + (float) $tax->cgst;
+            
+            // SubtotalNet = GrandTotal / (1 + Rate/100)
+            $subtotalNet = round($grandTotal / (1 + ($totalTaxRate / 100)), 2);
+            $totalTax = round($grandTotal - $subtotalNet, 2);
+            
+            // Split tax between SGST and CGST proportionally
+            if ($totalTaxRate > 0) {
+                 $sgstAmount = round($totalTax * ((float) $tax->sgst / $totalTaxRate), 2);
+                 $cgstAmount = round($totalTax - $sgstAmount, 2);
+            } else {
+                $sgstAmount = 0;
+                $cgstAmount = 0;
+            }
 
-        $invoice->update([
-            'subtotal' => $subtotal,
-            'sgst_amount' => $sgstAmount,
-            'cgst_amount' => $cgstAmount,
-            'tax_total' => $taxTotal,
-            'total_tax' => $taxTotal,
-            'grand_total' => round($subtotal + $taxTotal, 2),
-        ]);
+            $invoice->update([
+                'subtotal' => $subtotalNet,
+                'sgst_amount' => $sgstAmount,
+                'cgst_amount' => $cgstAmount,
+                'tax_total' => $totalTax,
+                'total_tax' => $totalTax,
+                'grand_total' => $grandTotal,
+            ]);
+        } else {
+            // Exclusive: subtotal is tax-exclusive
+            $sgstAmount = round($subtotal * ((float) $tax->sgst / 100), 2);
+            $cgstAmount = round($subtotal * ((float) $tax->cgst / 100), 2);
+            $taxTotal = round($sgstAmount + $cgstAmount, 2);
+
+            $invoice->update([
+                'subtotal' => $subtotal,
+                'sgst_amount' => $sgstAmount,
+                'cgst_amount' => $cgstAmount,
+                'tax_total' => $taxTotal,
+                'total_tax' => $taxTotal,
+                'grand_total' => round($subtotal + $taxTotal, 2),
+            ]);
+        }
     }
 }
