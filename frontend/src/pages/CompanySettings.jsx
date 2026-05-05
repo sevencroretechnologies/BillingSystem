@@ -4,6 +4,7 @@ import Alert from "../components/Alert";
 import FormField from "../components/FormField";
 import Loading from "../components/Loading";
 import BackButton from "../components/BackButton";
+import Swal from "sweetalert2";
 
 // Settings page for the single-row company record. All fields are
 // editable; the logo and signature are optional and uploaded as multipart/form-data.
@@ -32,8 +33,6 @@ const baseURL = process.env.REACT_APP_API_URL;
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
-    const [error, setError] = useState("");
-    const [success, setSuccess] = useState("");
 
     const load = async () => {
         try {
@@ -56,9 +55,11 @@ const baseURL = process.env.REACT_APP_API_URL;
         setSignatureFile(null);
         setRemoveSignature(false);
         } catch (e) {
-            setError(
-                e?.response?.data?.message || "Failed to load company details.",
-            );
+            Swal.fire({
+                icon: 'error',
+                title: 'Load Error',
+                text: e?.response?.data?.message || "Failed to load company details.",
+            });
         } finally {
             setLoading(false);
         }
@@ -98,8 +99,6 @@ const baseURL = process.env.REACT_APP_API_URL;
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSaving(true);
-        setError("");
-        setSuccess("");
         setErrors({});
         try {
             await updateCompany({
@@ -109,15 +108,23 @@ const baseURL = process.env.REACT_APP_API_URL;
                 signature: signatureFile,
                 removeSignature,
             });
-            setSuccess("Company details saved.");
+            Swal.fire({
+                icon: 'success',
+                title: 'Saved!',
+                text: 'Company details saved successfully.',
+                timer: 1500,
+                showConfirmButton: false,
+            });
             await load();
         } catch (err) {
             if (err.response?.status === 422) {
                 setErrors(err.response.data.errors);
             } else {
-                setError(
-                    err?.response?.data?.message || "Failed to update company.",
-                );
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: err?.response?.data?.message || "Failed to update company.",
+                });
             }
         } finally {
             setSaving(false);
@@ -199,13 +206,6 @@ const baseURL = process.env.REACT_APP_API_URL;
                 <p className='text-muted mb-4'>
                     These details (logo and signature) appear on every invoice and PDF document.
                 </p>
-
-                <Alert message={error} onClose={() => setError("")} />
-                {success && (
-                    <div className='alert alert-success border-0 shadow-sm mb-4' role='alert'>
-                        {success}
-                    </div>
-                )}
 
                 <form
                     onSubmit={handleSubmit}
