@@ -1,18 +1,17 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { changePassword } from '../api/endpoints';
-import Alert from '../components/Alert';
 import BackButton from '../components/BackButton';
 import Swal from 'sweetalert2';
 
 export default function ChangePassword() {
+    const navigate = useNavigate();
     const [form, setForm] = useState({
         old_password: '',
         new_password: '',
         new_password_confirmation: '',
     });
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
     
     const [showOldPassword, setShowOldPassword] = useState(false);
     const [showNewPassword, setShowNewPassword] = useState(false);
@@ -25,41 +24,32 @@ export default function ChangePassword() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        setError('');
-        setSuccess('');
 
         try {
             const res = await changePassword(form);
             if (res.data.status) {
-                setSuccess('Password changed successfully.');
-                setForm({
-                    old_password: '',
-                    new_password: '',
-                    new_password_confirmation: '',
-                });
                 Swal.fire({
-                    title: 'Success!',
-                    text: 'Password changed successfully.',
                     icon: 'success',
-                    timer: 2000,
+                    title: 'Updated!',
+                    text: 'Password changed successfully.',
+                    timer: 1500,
                     showConfirmButton: false
                 });
+                navigate('/');
             } else {
-                setError(res.data.message || 'Failed to change password.');
                 Swal.fire({
-                    title: 'Error!',
-                    text: res.data.message || 'Failed to change password.',
                     icon: 'error',
+                    title: 'Oops...',
+                    text: res.data.message || 'Failed to change password.',
                     confirmButtonColor: '#0d6efd'
                 });
             }
         } catch (err) {
             const msg = err.response?.data?.message || 'Error updating password. Check your old password.';
-            setError(msg);
             Swal.fire({
+                icon: 'error',
                 title: 'Error!',
                 text: msg,
-                icon: 'error',
                 confirmButtonColor: '#0d6efd'
             });
         } finally {
@@ -73,13 +63,6 @@ export default function ChangePassword() {
                 <h3 className="m-0">Change Password</h3>
                 <BackButton />
             </div>
-
-            <Alert message={error} onClose={() => setError('')} />
-            {success && (
-                <div className="alert alert-success" role="alert">
-                    {success}
-                </div>
-            )}
 
             <form onSubmit={handleSubmit} className="card card-body shadow-sm" style={{ maxWidth: '500px' }}>
                 <div className="mb-3">
