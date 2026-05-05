@@ -26,6 +26,7 @@ class InvoiceResource extends JsonResource
             'tax_total' => (float) $this->tax_total,
             'total_tax' => (float) $this->total_tax,
             'grand_total' => (float) $this->grand_total,
+            'inclusive_tax' => (bool) $this->inclusive_tax,
             'notes' => $this->notes,
             'items' => InvoiceItemResource::collection($this->whenLoaded('items')),
             'created_at' => $this->created_at?->toDateTimeString(),
