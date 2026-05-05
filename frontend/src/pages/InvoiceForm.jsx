@@ -172,11 +172,11 @@ export default function InvoiceForm() {
       const cgstAmount = baseSum * (tax.cgst / 100);
       const taxTotal = sgstAmount + cgstAmount;
       return {
-        subtotal: round(baseSum),
+        subtotal: Math.round(baseSum),
         sgstAmount: round(sgstAmount),
         cgstAmount: round(cgstAmount),
         taxTotal: round(taxTotal),
-        total: round(baseSum + taxTotal),
+        total: Math.round(baseSum + taxTotal),
       };
     } else {
       const grand_total = baseSum;
@@ -191,11 +191,11 @@ export default function InvoiceForm() {
       const subtotal = grand_total - total_gst;
       
       return {
-        subtotal: round(subtotal),
+        subtotal: Math.round(subtotal),
         sgstAmount: round(sgst_value),
         cgstAmount: round(cgst_value),
         taxTotal: round(total_gst),
-        total: round(grand_total),
+        total: Math.round(grand_total),
       };
     }
   }, [rows, tax, isTaxExclusive]);

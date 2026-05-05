@@ -370,7 +370,7 @@ class InvoiceController extends Controller
             $cgstAmount = round($cgstMultiplier * $grandTotal, 2);
 
             $totalTax = round($sgstAmount + $cgstAmount, 2);
-            $subtotalNet = round($grandTotal - $totalTax, 2);
+            $subtotalNet = round($grandTotal - $totalTax);
 
             $invoice->update([
                 'subtotal' => $subtotalNet,
@@ -378,7 +378,7 @@ class InvoiceController extends Controller
                 'cgst_amount' => $cgstAmount,
                 'tax_total' => $totalTax,
                 'total_tax' => $totalTax,
-                'grand_total' => $grandTotal,
+                'grand_total' => round($grandTotal),
             ]);
         } else {
             // Exclusive: subtotal is tax-exclusive
@@ -387,12 +387,12 @@ class InvoiceController extends Controller
             $taxTotal = round($sgstAmount + $cgstAmount, 2);
 
             $invoice->update([
-                'subtotal' => $subtotal,
+                'subtotal' => round($subtotal),
                 'sgst_amount' => $sgstAmount,
                 'cgst_amount' => $cgstAmount,
                 'tax_total' => $taxTotal,
                 'total_tax' => $taxTotal,
-                'grand_total' => round($subtotal + $taxTotal, 2),
+                'grand_total' => round($subtotal + $taxTotal),
             ]);
         }
     }
