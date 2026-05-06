@@ -3,10 +3,12 @@ import { useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { login } from '../api/endpoints';
 import { useAuth } from '../context/AuthContext';
 import Alert from '../components/Alert';
+import Swal from 'sweetalert2';
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
@@ -29,13 +31,35 @@ export default function LoginPage() {
         try {
             const res = await login({ email, password });
             if (res.data.status) {
-                loginUser(res.data.data.user, res.data.data.token);
-                navigate(from, { replace: true });
+                Swal.fire({
+                    title: 'Welcome Back!',
+                    text: 'Login successful.',
+                    icon: 'success',
+                    timer: 1500,
+                    showConfirmButton: false
+                }).then(() => {
+                    loginUser(res.data.data.user, res.data.data.token);
+                    navigate('/', { replace: true });
+                });
             } else {
-                setError(res.data.message || 'Login failed');
+                const msg = res.data.message || 'Login failed';
+                setError(msg);
+                Swal.fire({
+                    title: 'Login Failed',
+                    text: msg,
+                    icon: 'error',
+                    confirmButtonColor: '#0d6efd'
+                });
             }
         } catch (err) {
-            setError(err.response?.data?.message || 'Invalid credentials or server error.');
+            const msg = err.response?.data?.message || 'Invalid credentials or server error.';
+            setError(msg);
+            Swal.fire({
+                title: 'Error',
+                text: msg,
+                icon: 'error',
+                confirmButtonColor: '#0d6efd'
+            });
         } finally {
             setLoading(false);
         }
@@ -79,15 +103,28 @@ export default function LoginPage() {
                         </div>
                         <div className="mb-4">
                             <label className="form-label small fw-bold text-uppercase tracking-wider text-secondary mb-1" style={{ fontSize: '0.7rem' }}>Password</label>
-                            <input
-                                type="password"
-                                className="form-control bg-light border-0 px-3 py-2"
-                                style={{ borderRadius: '10px', fontSize: '0.9rem' }}
-                                placeholder="••••••••"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                            />
+                            <div className="position-relative">
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    className="form-control bg-light border-0 px-3 py-2"
+                                    style={{ borderRadius: '10px', fontSize: '0.9rem', paddingRight: '2.5rem' }}
+                                    placeholder="••••••••"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                />
+                                <button
+                                    type="button"
+                                    className="btn btn-link position-absolute top-50 end-0 translate-middle-y text-secondary text-decoration-none"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    style={{ zIndex: 10, padding: '0.375rem 0.75rem' }}
+                                >
+                                    {showPassword ?
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg> :
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                    }
+                                </button>
+                            </div>
                         </div>
                         <button
                             type="submit"

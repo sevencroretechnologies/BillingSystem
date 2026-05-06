@@ -196,19 +196,19 @@
         <table class="totals-box">
             <tr>
                 <td width="55%" class="label-cell">Total</td>
-                <td width="45%" class="text-right bold">{{ number_format($subtotal, 2) }}</td>
+                <td width="45%" class="text-right bold">{{ number_format(round($subtotal), 0) }}</td>
             </tr>
             <tr>
-                <td class="label-cell">CGST ({{ number_format($invoice->cgst_percent, 1) }}%)</td>
-                <td class="text-right bold">{{ number_format($cgst, 2) }}</td>
+                <td class="label-cell">CGST ({{ (float)$invoice->cgst_percent }}%)</td>
+                <td class="text-right bold">{{ number_format(round($cgst), 0) }}</td>
             </tr>
             <tr>
-                <td class="label-cell">SGST ({{ number_format($invoice->sgst_percent, 1) }}%)</td>
-                <td class="text-right bold">{{ number_format($sgst, 2) }}</td>
+                <td class="label-cell">SGST ({{ (float)$invoice->sgst_percent }}%)</td>
+                <td class="text-right bold">{{ number_format(round($sgst), 0) }}</td>
             </tr>
             <tr>
                 <td class="label-cell" style="border-bottom: none;">Grand Total</td>
-                <td class="text-right bold" style="border-bottom: none; font-size: 14px;">{{ number_format($grand_total, 2) }}</td>
+                <td class="text-right bold" style="border-bottom: none; font-size: 14px;">{{ number_format(round($grand_total), 0) }}</td>
             </tr>
         </table>
     </div>

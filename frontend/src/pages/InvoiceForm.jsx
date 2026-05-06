@@ -172,11 +172,11 @@ export default function InvoiceForm() {
       const cgstAmount = baseSum * (tax.cgst / 100);
       const taxTotal = sgstAmount + cgstAmount;
       return {
-        subtotal: round(baseSum),
-        sgstAmount: round(sgstAmount),
-        cgstAmount: round(cgstAmount),
-        taxTotal: round(taxTotal),
-        total: round(baseSum + taxTotal),
+        subtotal: Math.round(baseSum),
+        sgstAmount: Math.round(sgstAmount),
+        cgstAmount: Math.round(cgstAmount),
+        taxTotal: Math.round(taxTotal),
+        total: Math.round(baseSum + taxTotal),
       };
     } else {
       const grand_total = baseSum;
@@ -191,11 +191,11 @@ export default function InvoiceForm() {
       const subtotal = grand_total - total_gst;
       
       return {
-        subtotal: round(subtotal),
-        sgstAmount: round(sgst_value),
-        cgstAmount: round(cgst_value),
-        taxTotal: round(total_gst),
-        total: round(grand_total),
+        subtotal: Math.round(subtotal),
+        sgstAmount: Math.round(sgst_value),
+        cgstAmount: Math.round(cgst_value),
+        taxTotal: Math.round(total_gst),
+        total: Math.round(grand_total),
       };
     }
   }, [rows, tax, isTaxExclusive]);
@@ -575,23 +575,23 @@ export default function InvoiceForm() {
               <tbody>
                 <tr>
                   <th>Subtotal</th>
-                  <td className="text-end">{totals.subtotal.toFixed(2)}</td>
+                  <td className="text-end">{totals.subtotal}</td>
                 </tr>
                 <tr>
-                  <th>SGST ({Number(tax.sgst).toFixed(2)}%)</th>
-                  <td className="text-end">{totals.sgstAmount.toFixed(2)}</td>
+                  <th>SGST ({Number(tax.sgst)}%)</th>
+                  <td className="text-end">{totals.sgstAmount}</td>
                 </tr>
                 <tr>
-                  <th>CGST ({Number(tax.cgst).toFixed(2)}%)</th>
-                  <td className="text-end">{totals.cgstAmount.toFixed(2)}</td>
+                  <th>CGST ({Number(tax.cgst)}%)</th>
+                  <td className="text-end">{totals.cgstAmount}</td>
                 </tr>
                 <tr>
                   <th>Total Tax</th>
-                  <td className="text-end">{totals.taxTotal.toFixed(2)}</td>
+                  <td className="text-end">{totals.taxTotal}</td>
                 </tr>
                 <tr>
                   <th className="fs-5">Grand Total</th>
-                  <td className="text-end fs-5 fw-bold">{totals.total.toFixed(2)}</td>
+                  <td className="text-end fs-5 fw-bold">{totals.total}</td>
                 </tr>
               </tbody>
             </table>

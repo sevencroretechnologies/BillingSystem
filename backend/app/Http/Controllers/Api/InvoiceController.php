@@ -366,11 +366,11 @@ class InvoiceController extends Controller
             $sgstMultiplier = (float) $tax->sgst / 100;
             $cgstMultiplier = (float) $tax->cgst / 100;
 
-            $sgstAmount = round($sgstMultiplier * $grandTotal, 2);
-            $cgstAmount = round($cgstMultiplier * $grandTotal, 2);
+            $sgstAmount = round($sgstMultiplier * $grandTotal);
+            $cgstAmount = round($cgstMultiplier * $grandTotal);
 
-            $totalTax = round($sgstAmount + $cgstAmount, 2);
-            $subtotalNet = round($grandTotal - $totalTax, 2);
+            $totalTax = round($sgstAmount + $cgstAmount);
+            $subtotalNet = round($grandTotal - $totalTax);
 
             $invoice->update([
                 'subtotal' => $subtotalNet,
@@ -378,21 +378,21 @@ class InvoiceController extends Controller
                 'cgst_amount' => $cgstAmount,
                 'tax_total' => $totalTax,
                 'total_tax' => $totalTax,
-                'grand_total' => $grandTotal,
+                'grand_total' => round($grandTotal),
             ]);
         } else {
             // Exclusive: subtotal is tax-exclusive
-            $sgstAmount = round($subtotal * ((float) $tax->sgst / 100), 2);
-            $cgstAmount = round($subtotal * ((float) $tax->cgst / 100), 2);
-            $taxTotal = round($sgstAmount + $cgstAmount, 2);
+            $sgstAmount = round($subtotal * ((float) $tax->sgst / 100));
+            $cgstAmount = round($subtotal * ((float) $tax->cgst / 100));
+            $taxTotal = round($sgstAmount + $cgstAmount);
 
             $invoice->update([
-                'subtotal' => $subtotal,
+                'subtotal' => round($subtotal),
                 'sgst_amount' => $sgstAmount,
                 'cgst_amount' => $cgstAmount,
                 'tax_total' => $taxTotal,
                 'total_tax' => $taxTotal,
-                'grand_total' => round($subtotal + $taxTotal, 2),
+                'grand_total' => round($subtotal + $taxTotal),
             ]);
         }
     }
