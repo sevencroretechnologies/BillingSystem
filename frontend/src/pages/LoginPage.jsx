@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { login } from '../api/endpoints';
 import { useAuth } from '../context/AuthContext';
 import Alert from '../components/Alert';
@@ -10,9 +10,14 @@ export default function LoginPage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-    const { loginUser } = useAuth();
+    const { loginUser, token } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
+
+    // If already logged in, redirect to home
+    if (token) {
+        return <Navigate to="/" replace />;
+    }
 
     const from = location.state?.from?.pathname || '/';
 

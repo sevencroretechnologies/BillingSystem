@@ -3,8 +3,13 @@ import { createContext, useContext, useState, useEffect } from 'react';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+  const getInitialToken = () => {
+    const t = localStorage.getItem('billing_token');
+    return (t === 'null' || t === 'undefined') ? null : t;
+  };
+
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem('billing_token'));
+  const [token, setToken] = useState(getInitialToken());
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

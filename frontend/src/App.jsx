@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
 import CompanySettings from './pages/CompanySettings';
 import CustomerForm from './pages/CustomerForm';
@@ -47,6 +47,7 @@ export default function App() {
         <Route path="settings/company" element={<CompanySettings />} />
         <Route path="settings/password" element={<ChangePassword />} />
       </Route>
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }

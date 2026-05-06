@@ -22,6 +22,19 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Handle 401 responses
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      localStorage.removeItem('billing_token');
+      localStorage.removeItem('billing_user');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
 // Expose the raw backend base URL for things that aren't JSON (e.g. PDFs).
 export const backendUrl = baseURL.replace(/\/$/, '');
 
