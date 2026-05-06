@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\CustomerController;
 use App\Http\Controllers\Api\InvoiceController;
 use App\Http\Controllers\Api\ItemController;
 use App\Http\Controllers\Api\TaxController;
+use App\Http\Controllers\Api\InvoiceCounterController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -50,4 +51,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // frontend uses POST with a hidden _method=PUT field for logo uploads.
     Route::get('company', [CompanyController::class, 'show']);
     Route::match(['put', 'post'], 'company', [CompanyController::class, 'update']);
+
+    // Invoice counter
+    Route::get('invoice-counter', [InvoiceCounterController::class, 'show']);
+    Route::put('invoice-counter', [InvoiceCounterController::class, 'update']);
 });

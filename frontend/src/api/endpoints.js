@@ -83,3 +83,7 @@ export const updateCompany = ({
         headers: { "Content-Type": "multipart/form-data" },
     });
 };
+
+// -------- Invoice Counter --------
+export const getInvoiceCounter = () => api.get("/invoice-counter");
+export const updateInvoiceCounter = (data) => api.put("/invoice-counter", data);

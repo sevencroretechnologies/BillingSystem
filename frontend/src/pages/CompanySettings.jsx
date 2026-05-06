@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getCompany, updateCompany } from "../api/endpoints";
+import { getCompany, updateCompany, getInvoiceCounter, updateInvoiceCounter } from "../api/endpoints";
 import Alert from "../components/Alert";
 import FormField from "../components/FormField";
 import Loading from "../components/Loading";
@@ -19,7 +19,7 @@ export default function CompanySettings() {
         gstin: "",
         pan: "",
     });
-const baseURL = process.env.REACT_APP_API_URL;
+    const baseURL = process.env.REACT_APP_API_URL;
     // Logo state
     const [logoFile, setLogoFile] = useState(null);
     const [logoUrl, setLogoUrl] = useState(null);
@@ -29,6 +29,11 @@ const baseURL = process.env.REACT_APP_API_URL;
     const [signatureFile, setSignatureFile] = useState(null);
     const [signatureUrl, setSignatureUrl] = useState(null);
     const [removeSignature, setRemoveSignature] = useState(false);
+
+    // Invoice counter state
+    const [invoiceCounter, setInvoiceCounter] = useState(1);
+    const [nextInvoiceValue, setNextInvoiceValue] = useState(1);
+    const [updatingCounter, setUpdatingCounter] = useState(false);
 
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(true);
@@ -48,12 +53,12 @@ const baseURL = process.env.REACT_APP_API_URL;
                 gstin: data.gstin ?? "",
                 pan: data.pan ?? "",
             });
-        setLogoUrl(data.logo ? `${baseURL}/storage/${data.logo}` : null);
-        setLogoFile(null);
-        setRemoveLogo(false);
-        setSignatureUrl(data.signature ? `${baseURL}/storage/${data.signature}` : null);
-        setSignatureFile(null);
-        setRemoveSignature(false);
+            setLogoUrl(data.logo ? `${baseURL}/storage/${data.logo}` : null);
+            setLogoFile(null);
+            setRemoveLogo(false);
+            setSignatureUrl(data.signature ? `${baseURL}/storage/${data.signature}` : null);
+            setSignatureFile(null);
+            setRemoveSignature(false);
         } catch (e) {
             Swal.fire({
                 icon: 'error',
@@ -65,8 +70,19 @@ const baseURL = process.env.REACT_APP_API_URL;
         }
     };
 
+    const loadCounter = async () => {
+        try {
+            const res = await getInvoiceCounter();
+            setInvoiceCounter(res.data.data.invoice_counter);
+            setNextInvoiceValue(res.data.data.invoice_counter);
+        } catch (e) {
+            console.error("Failed to load counter", e);
+        }
+    };
+
     useEffect(() => {
         load();
+        loadCounter();
     }, []);
 
     const handleChange = (e) => {
@@ -128,6 +144,42 @@ const baseURL = process.env.REACT_APP_API_URL;
             }
         } finally {
             setSaving(false);
+        }
+    };
+
+    const handleUpdateCounter = async (e) => {
+        e.preventDefault();
+        const confirmed = await Swal.fire({
+            title: 'Are you sure?',
+            text: `The next invoice will be #${nextInvoiceValue.toString().padStart(6, '0')}. Change this sequence?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#0d6efd',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Yes, update it'
+        });
+
+        if (confirmed.isConfirmed) {
+            setUpdatingCounter(true);
+            try {
+                await updateInvoiceCounter({ invoice_counter: nextInvoiceValue });
+                setInvoiceCounter(nextInvoiceValue);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Reset Successful',
+                    text: 'The invoice sequence has been updated.',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+            } catch (err) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Update Failed',
+                    text: err?.response?.data?.message || "Failed to update counter.",
+                });
+            } finally {
+                setUpdatingCounter(false);
+            }
         }
     };
 
@@ -195,226 +247,267 @@ const baseURL = process.env.REACT_APP_API_URL;
     }
 
     return (
-    <div className="container py-5">
-        <div className="row justify-content-center">
-            <div className="col-lg-10 col-xl-8">
-                <div className="d-flex justify-content-between align-items-center mb-4">
-                    <h3 className="m-0 fw-bold">Company Settings</h3>
-                    <BackButton />
+        <div className="container py-5">
+            <div className="row justify-content-center">
+                <div className="col-lg-10 col-xl-8">
+                    <div className="d-flex justify-content-between align-items-center mb-4">
+                        <h3 className="m-0 fw-bold">Company Settings</h3>
+                        <BackButton />
+                    </div>
+
+                    <p className='text-muted mb-4'>
+                        These details (logo and signature) appear on every invoice and PDF document.
+                    </p>
+
+                    <form
+                        onSubmit={handleSubmit}
+                        className='card card-body shadow-sm border-0 p-4'
+                    >
+                        <div className="row">
+                            <div className="col-12 mb-3">
+                                <FormField
+                                    label='Company Name'
+                                    name='company_name'
+                                    value={form.company_name}
+                                    onChange={handleChange}
+                                    error={errors.company_name?.[0]}
+                                    required
+                                />
+                            </div>
+                            <div className="col-12 mb-3">
+                                <FormField
+                                    label='Address'
+                                    name='address'
+                                    as='textarea'
+                                    rows={4}
+                                    value={form.address}
+                                    onChange={handleChange}
+                                    error={errors.address?.[0]}
+                                />
+                            </div>
+                        </div>
+                        <div className='row'>
+                            <div className='col-md-4 mb-3'>
+                                <FormField
+                                    label='Phone'
+                                    name='phone'
+                                    value={form.phone}
+                                    onChange={handleChange}
+                                    error={errors.phone?.[0]}
+                                    maxLength={10}
+                                    placeholder="Phone number"
+                                />
+                            </div>
+                            <div className='col-md-4 mb-3'>
+                                <FormField
+                                    label='Email'
+                                    name='email'
+                                    type='email'
+                                    value={form.email}
+                                    onChange={handleChange}
+                                    error={errors.email?.[0]}
+                                />
+                            </div>
+                            <div className='col-md-4 mb-3'>
+                                <FormField
+                                    label='WhatsApp No'
+                                    name='whatsapp_no'
+                                    value={form.whatsapp_no}
+                                    onChange={handleChange}
+                                    error={errors.whatsapp_no?.[0]}
+                                    maxLength={10}
+                                    placeholder='WhatsApp number'
+                                />
+                            </div>
+                        </div>
+
+                        {/* ── Tax & Compliance ── */}
+                        <div className="mt-4 mb-3 pb-2 border-bottom">
+                            <h6 className='fw-bold text-secondary text-uppercase small m-0'>Tax &amp; Compliance</h6>
+                        </div>
+                        <div className='row'>
+                            <div className='col-md-4 mb-3'>
+                                <FormField
+                                    label='GSTIN'
+                                    name='gstin'
+                                    value={form.gstin}
+                                    onChange={handleChange}
+                                    error={errors.gstin?.[0]}
+                                    placeholder='29AAGAS0338G1ZH'
+                                />
+                            </div>
+                            <div className='col-md-4 mb-3'>
+                                <FormField
+                                    label='PAN'
+                                    name='pan'
+                                    value={form.pan}
+                                    onChange={handleChange}
+                                    error={errors.pan?.[0]}
+                                    placeholder='AAGAS0338G'
+                                />
+                            </div>
+                            <div className='col-md-4 mb-3'>
+                                <FormField
+                                    label='K-2 Recipient Code'
+                                    name='k2_recipient_code'
+                                    value={form.k2_recipient_code}
+                                    onChange={handleChange}
+                                    error={errors.k2_recipient_code?.[0]}
+                                    placeholder='2900834547'
+                                />
+                            </div>
+                        </div>
+
+                        {/* ── Branding Assets ── */}
+                        <div className="mt-4 mb-3 pb-2 border-bottom">
+                            <h6 className='fw-bold text-secondary text-uppercase small m-0'>Branding</h6>
+                        </div>
+
+                        <div className="row">
+                            {/* ── Logo ── */}
+                            <div className='col-md-6 mb-4'>
+                                <label className='form-label fw-medium'>Company Logo</label>
+                                <div className="bg-light p-3 rounded border text-center mb-3" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    {logoUrl && !removeLogo ? (
+                                        <div className='position-relative d-inline-block'>
+                                            <img
+                                                src={logoUrl}
+                                                alt='Current logo'
+                                                style={{
+                                                    maxHeight: 80,
+                                                    maxWidth: '100%',
+                                                    objectFit: 'contain'
+                                                }}
+                                            />
+                                            <button
+                                                type='button'
+                                                className='btn btn-sm btn-danger position-absolute top-0 end-0 m-0 shadow-sm rounded-circle p-1'
+                                                style={{ width: 22, height: 22, lineHeight: 1, transform: 'translate(50%, -50%)' }}
+                                                onClick={() => {
+                                                    setRemoveLogo(true);
+                                                    setLogoFile(null);
+                                                }}
+                                            >
+                                                &times;
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <span className="text-muted small">No logo selected</span>
+                                    )}
+                                </div>
+                                <input
+                                    type='file'
+                                    accept='image/*'
+                                    className='form-control'
+                                    onChange={handleLogoChange}
+                                />
+                                <div className='form-text'>
+                                    PNG, JPG, SVG or WebP up to 2 MB.
+                                </div>
+                            </div>
+
+                            {/* ── Signature Image ── */}
+                            <div className='col-md-6 mb-4'>
+                                <label className='form-label fw-medium'>Authorized Signature</label>
+                                <div className="bg-light p-3 rounded border text-center mb-3" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    {signatureUrl && !removeSignature ? (
+                                        <div className='position-relative d-inline-block'>
+                                            <img
+                                                src={signatureUrl}
+                                                alt='Current signature'
+                                                style={{
+                                                    maxHeight: 80,
+                                                    maxWidth: '100%',
+                                                    objectFit: 'contain'
+                                                }}
+                                            />
+                                            <button
+                                                type='button'
+                                                className='btn btn-sm btn-danger position-absolute top-0 end-0 m-0 shadow-sm rounded-circle p-1'
+                                                style={{ width: 22, height: 22, lineHeight: 1, transform: 'translate(50%, -50%)' }}
+                                                onClick={() => {
+                                                    setRemoveSignature(true);
+                                                    setSignatureFile(null);
+                                                }}
+                                            >
+                                                &times;
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <span className="text-muted small">No signature selected</span>
+                                    )}
+                                </div>
+                                <input
+                                    type='file'
+                                    accept='image/*'
+                                    className='form-control'
+                                    onChange={handleSignatureChange}
+                                />
+                                <div className='form-text'>
+                                    Authorized signatory image up to 2 MB.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="mt-4">
+                            <button
+                                type='submit'
+                                className='btn btn-primary btn-sm fw-bold shadow-sm px-4'
+                                disabled={saving}
+                            >
+                                {saving ? (
+                                    <>
+                                        <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                        Saving...
+                                    </>
+                                ) : "Save Changes"}
+                            </button>
+                        </div>
+                    </form>
+
+                    {/* ── Invoice sequence control ── */}
+                    <div className="card card-body shadow-sm border-0 p-4 mt-4">
+                        <div className="mb-3">
+                            <h6 className='fw-bold text-secondary text-uppercase small m-0'>Invoice Sequence Control</h6>
+                        </div>
+                        <p className="text-muted small mb-4">
+                            Manage the current invoice counter. Changing this will affect the number of the **next** invoice you create.
+                        </p>
+
+                        <form onSubmit={handleUpdateCounter}>
+                            <div className="row align-items-end g-3">
+                                <div className="col-md-7">
+                                    <label className="form-label small fw-bold">Next Invoice Number</label>
+                                    <div className="input-group">
+                                        <span className="input-group-text bg-light text-secondary border-end-0">INV-</span>
+                                        <input
+                                            type="number"
+                                            className="form-control border-start-0 ps-0"
+                                            style={{ fontWeight: '500' }}
+                                            value={nextInvoiceValue}
+                                            onChange={(e) => setNextInvoiceValue(parseInt(e.target.value) || 1)}
+                                            min="1"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="col-md-5">
+                                    <button
+                                        type="submit"
+                                        className="btn btn-primary shadow-sm fw-bold w-100"
+                                        disabled={updatingCounter}
+                                        style={{ height: '38px' }}
+                                    >
+                                        {updatingCounter ? 'Updating...' : 'Update Counter / Reset'}
+                                    </button>
+                                </div>
+                            </div>
+                            <div className="form-text mt-2" style={{ fontSize: '0.75rem' }}>
+                                Current value: <span className="fw-bold">#{invoiceCounter.toString().padStart(6, '0')}</span>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                
-                <p className='text-muted mb-4'>
-                    These details (logo and signature) appear on every invoice and PDF document.
-                </p>
-
-                <form
-                    onSubmit={handleSubmit}
-                    className='card card-body shadow-sm border-0 p-4'
-                >
-                    <div className="row">
-                        <div className="col-12 mb-3">
-                            <FormField
-                                label='Company Name'
-                                name='company_name'
-                                value={form.company_name}
-                                onChange={handleChange}
-                                error={errors.company_name?.[0]}
-                                required
-                            />
-                        </div>
-                        <div className="col-12 mb-3">
-                            <FormField
-                                label='Address'
-                                name='address'
-                                as='textarea'
-                                rows={4}
-                                value={form.address}
-                                onChange={handleChange}
-                                error={errors.address?.[0]}
-                            />
-                        </div>
-                    </div>
-                    <div className='row'>
-                        <div className='col-md-4 mb-3'>
-                            <FormField
-                                label='Phone'
-                                name='phone'
-                                value={form.phone}
-                                onChange={handleChange}
-                                error={errors.phone?.[0]}
-                                maxLength={10}
-                                placeholder="Phone number"
-                            />
-                        </div>
-                        <div className='col-md-4 mb-3'>
-                            <FormField
-                                label='Email'
-                                name='email'
-                                type='email'
-                                value={form.email}
-                                onChange={handleChange}
-                                error={errors.email?.[0]}
-                            />
-                        </div>
-                        <div className='col-md-4 mb-3'>
-                            <FormField
-                                label='WhatsApp No'
-                                name='whatsapp_no'
-                                value={form.whatsapp_no}
-                                onChange={handleChange}
-                                error={errors.whatsapp_no?.[0]}
-                                maxLength={10}
-                                placeholder='WhatsApp number'
-                            />
-                        </div>
-                    </div>
-
-                    {/* ── Tax & Compliance ── */}
-                    <div className="mt-4 mb-3 pb-2 border-bottom">
-                        <h6 className='fw-bold text-secondary text-uppercase small m-0'>Tax &amp; Compliance</h6>
-                    </div>
-                    <div className='row'>
-                        <div className='col-md-4 mb-3'>
-                            <FormField
-                                label='GSTIN'
-                                name='gstin'
-                                value={form.gstin}
-                                onChange={handleChange}
-                                error={errors.gstin?.[0]}
-                                placeholder='29AAGAS0338G1ZH'
-                            />
-                        </div>
-                        <div className='col-md-4 mb-3'>
-                            <FormField
-                                label='PAN'
-                                name='pan'
-                                value={form.pan}
-                                onChange={handleChange}
-                                error={errors.pan?.[0]}
-                                placeholder='AAGAS0338G'
-                            />
-                        </div>
-                        <div className='col-md-4 mb-3'>
-                            <FormField
-                                label='K-2 Recipient Code'
-                                name='k2_recipient_code'
-                                value={form.k2_recipient_code}
-                                onChange={handleChange}
-                                error={errors.k2_recipient_code?.[0]}
-                                placeholder='2900834547'
-                            />
-                        </div>
-                    </div>
-
-                    {/* ── Branding Assets ── */}
-                    <div className="mt-4 mb-3 pb-2 border-bottom">
-                        <h6 className='fw-bold text-secondary text-uppercase small m-0'>Branding</h6>
-                    </div>
-                    
-                    <div className="row">
-                        {/* ── Logo ── */}
-                        <div className='col-md-6 mb-4'>
-                            <label className='form-label fw-medium'>Company Logo</label>
-                            <div className="bg-light p-3 rounded border text-center mb-3" style={{display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                {logoUrl && !removeLogo ? (
-                                    <div className='position-relative d-inline-block'>
-                                        <img
-                                            src={logoUrl}
-                                            alt='Current logo'
-                                            style={{
-                                                maxHeight: 80,
-                                                maxWidth: '100%',
-                                                objectFit: 'contain'
-                                            }}
-                                        />
-                                        <button
-                                            type='button'
-                                            className='btn btn-sm btn-danger position-absolute top-0 end-0 m-0 shadow-sm rounded-circle p-1'
-                                            style={{ width: 22, height: 22, lineHeight: 1, transform: 'translate(50%, -50%)' }}
-                                            onClick={() => {
-                                                setRemoveLogo(true);
-                                                setLogoFile(null);
-                                            }}
-                                        >
-                                            &times;
-                                        </button>
-                                    </div>
-                                ) : (
-                                    <span className="text-muted small">No logo selected</span>
-                                )}
-                            </div>
-                            <input
-                                type='file'
-                                accept='image/*'
-                                className='form-control'
-                                onChange={handleLogoChange}
-                            />
-                            <div className='form-text'>
-                                PNG, JPG, SVG or WebP up to 2 MB.
-                            </div>
-                        </div>
-
-                        {/* ── Signature Image ── */}
-                        <div className='col-md-6 mb-4'>
-                            <label className='form-label fw-medium'>Authorized Signature</label>
-                            <div className="bg-light p-3 rounded border text-center mb-3" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                {signatureUrl && !removeSignature ? (
-                                    <div className='position-relative d-inline-block'>
-                                        <img
-                                            src={signatureUrl}
-                                            alt='Current signature'
-                                            style={{
-                                                maxHeight: 80,
-                                                maxWidth: '100%',
-                                                objectFit: 'contain'
-                                            }}
-                                        />
-                                        <button
-                                            type='button'
-                                            className='btn btn-sm btn-danger position-absolute top-0 end-0 m-0 shadow-sm rounded-circle p-1'
-                                            style={{ width: 22, height: 22, lineHeight: 1, transform: 'translate(50%, -50%)' }}
-                                            onClick={() => {
-                                                setRemoveSignature(true);
-                                                setSignatureFile(null);
-                                            }}
-                                        >
-                                            &times;
-                                        </button>
-                                    </div>
-                                ) : (
-                                    <span className="text-muted small">No signature selected</span>
-                                )}
-                            </div>
-                            <input
-                                type='file'
-                                accept='image/*'
-                                className='form-control'
-                                onChange={handleSignatureChange}
-                            />
-                            <div className='form-text'>
-                                Authorized signatory image up to 2 MB.
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="mt-4">
-                        <button
-                            type='submit'
-                            className='btn btn-primary btn-sm fw-bold shadow-sm px-4'
-                            disabled={saving}
-                        >
-                            {saving ? (
-                                <>
-                                    <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                                    Saving...
-                                </>
-                            ) : "Save Changes"}
-                        </button>
-                    </div>
-                </form>
             </div>
         </div>
-    </div>
-          
     );
 }

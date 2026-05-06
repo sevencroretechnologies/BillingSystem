@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\InvoiceCounter;
 
 class Invoice extends Model
 {
@@ -52,13 +53,17 @@ class Invoice extends Model
     }
 
     /**
-     * Generate the next sequential invoice number like INV-000001.
+     * Generate the next sequential invoice number from the dedicated counter table.
      */
     public static function generateInvoiceNumber(): string
     {
-        $lastId = static::withTrashed()->max('id');
-        $next = (int) $lastId + 1;
+        $counter = InvoiceCounter::firstOrCreate([], ['invoice_counter' => 1]);
+        
+        $currentValue = $counter->invoice_counter;
+        
+        // Increment for the next one
+        $counter->increment('invoice_counter');
 
-        return 'INV-'.str_pad((string) $next, 6, '0', STR_PAD_LEFT);
+        return 'INV-'.str_pad((string) $currentValue, 6, '0', STR_PAD_LEFT);
     }
 }
