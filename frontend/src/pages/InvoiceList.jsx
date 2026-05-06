@@ -5,6 +5,8 @@ import Alert from '../components/Alert';
 import DataTable from '../components/DataTable';
 import Pagination from '../components/Pagination';
 import BackButton from '../components/BackButton';
+import * as XLSX from 'xlsx';
+import Swal from 'sweetalert2';
 
 // Invoice list with search by invoice number/customer name and date range.
 export default function InvoiceList() {
@@ -38,6 +40,76 @@ export default function InvoiceList() {
     e.preventDefault();
     setPage(1);
     fetchData();
+  };
+
+  const handleExport = async () => {
+    setLoading(true);
+    try {
+      // Fetch matching invoices (maximum 5000 for safety, adjust if needed)
+      const res = await listInvoices({ ...filters, per_page: 5000 });
+      const allInvoices = res.data.data;
+
+      if (!allInvoices || allInvoices.length === 0) {
+        Swal.fire({
+          title: 'No Data',
+          text: 'There are no invoices matching your filters to export.',
+          icon: 'info',
+          confirmButtonColor: '#0d6efd'
+        });
+        return;
+      }
+
+      // Format data for Excel
+      const excelData = allInvoices.map(inv => ({
+        'Invoice Number': inv.invoice_number,
+        'Date': inv.invoice_date,
+        'Customer Name': inv.customer?.name || 'N/A',
+        'Customer Email': inv.customer?.email || '',
+        'Customer Phone': inv.customer?.phone || '',
+        'Subtotal': Number(inv.subtotal),
+        'SGST (%)': Number(inv.sgst_percent),
+        'SGST Amount': Number(inv.sgst_amount),
+        'CGST (%)': Number(inv.cgst_percent),
+        'CGST Amount': Number(inv.cgst_amount),
+        'Tax Total': Number(inv.tax_total),
+        'Grand Total': Number(inv.grand_total),
+        'Notes': inv.notes || ''
+      }));
+
+      // Create Worksheet
+      const ws = XLSX.utils.json_to_sheet(excelData);
+
+      // Auto-size columns
+      const colWidths = Object.keys(excelData[0]).map(key => ({
+        wch: Math.max(key.length, ...excelData.map(row => row[key]?.toString().length || 0)) + 2
+      }));
+      ws['!cols'] = colWidths;
+
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Invoices');
+
+      // Export file
+      const fileName = `Invoices_${new Date().toISOString().split('T')[0]}.xlsx`;
+      XLSX.writeFile(wb, fileName);
+
+      Swal.fire({
+        title: 'Exported!',
+        text: 'Your invoices have been exported to Excel.',
+        icon: 'success',
+        timer: 2000,
+        showConfirmButton: false
+      });
+    } catch (e) {
+      console.error('Export error:', e);
+      Swal.fire({
+        title: 'Export Failed',
+        text: 'An error occurred while generating the Excel file.',
+        icon: 'error',
+        confirmButtonColor: '#0d6efd'
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleDelete = async (id) => {
@@ -97,18 +169,37 @@ export default function InvoiceList() {
       <div className="d-none d-md-block">
         <div className="d-flex justify-content-between align-items-center mb-3">
           <BackButton />
-          <Link className="btn btn-primary" to="/invoices/new">
-            + New Invoice
-          </Link>
+          <div className="d-flex gap-2">
+            <button
+              className="btn btn-outline-success d-flex align-items-center gap-2"
+              onClick={handleExport}
+              disabled={loading}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              Export Excel
+            </button>
+            <Link className="btn btn-primary" to="/invoices/new">
+              + New Invoice
+            </Link>
+          </div>
         </div>
       </div>
 
       <div className="d-md-none mb-3">
         <div className="d-flex justify-content-between align-items-center">
           <BackButton />
-          <Link className="btn btn-primary btn-sm" to="/invoices/new">
-            + New Invoice
-          </Link>
+          <div className="d-flex gap-2">
+            <button
+              className="btn btn-outline-success btn-sm"
+              onClick={handleExport}
+              disabled={loading}
+            >
+              Export
+            </button>
+            <Link className="btn btn-primary btn-sm" to="/invoices/new">
+              + New
+            </Link>
+          </div>
         </div>
       </div>
 
