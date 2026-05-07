@@ -277,7 +277,7 @@ export default function InvoiceView() {
                 <div style={{ flex: '0 0 35%', textAlign: 'right', fontWeight: 'bold', fontSize: '12px' }}>
                   {company?.phone && <span>Phone : {company.phone}<br /></span>}
                   {company?.whatsapp_no && <span> {company.whatsapp_no}<br /></span>}
-                  {company?.email}
+                  <span> Email: {company?.email}<br /> </span>
                 </div>
               </div>
 
@@ -296,9 +296,9 @@ export default function InvoiceView() {
                 <div>Date: {formatDate(invoice.invoice_date)}</div>
               </div>
 
-              <div style={{ textAlign: 'right', marginBottom: '10px', fontSize: '13px', fontWeight: 'bold' }}>
+              {/* <div style={{ textAlign: 'right', marginBottom: '10px', fontSize: '13px', fontWeight: 'bold' }}>
                 Month: {getMonthYear(invoice.invoice_date)}
-              </div>
+              </div> */}
 
               <div style={{ marginBottom: '15px', fontSize: '15px' }}>
                 <div style={{ display: 'flex', alignItems: 'flex-end', marginBottom: '8px' }}>
@@ -349,36 +349,36 @@ export default function InvoiceView() {
               </table>
 
               <div className="invoice-footer-block" style={{ marginTop: '5px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 0 }}>
-                <div style={{ flex: '1', padding: '25px 15px', fontSize: '16px' }}>
-                  {invoice.notes && (
-                    <div>
-                      {/* <strong>Note:</strong><br /> */}
-                      <span style={{ whiteSpace: 'pre-wrap', fontWeight: 'bold' }}>{invoice.notes}</span>
-                    </div>
-                  )}
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 0 }}>
+                  <div style={{ flex: '1', padding: '25px 15px', fontSize: '16px' }}>
+                    {invoice.notes && (
+                      <div>
+                        {/* <strong>Note:</strong><br /> */}
+                        <span style={{ whiteSpace: 'pre-wrap', fontWeight: 'bold' }}>{invoice.notes}</span>
+                      </div>
+                    )}
+                  </div>
+                  <table style={{ borderCollapse: 'collapse', border: '1px solid #000', borderTop: 'none' }}>
+                    <tbody>
+                      <tr>
+                        <th style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'left', fontWeight: 'bold', borderLeft: 'none' }}>Total</th>
+                        <td style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold', width: '140px' }}>{Math.round(Number(invoice.subtotal))}</td>
+                      </tr>
+                      <tr>
+                        <th style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'left', fontWeight: 'bold', borderLeft: 'none' }}>CGST ({Number(invoice.cgst_percent || 0)}%)</th>
+                        <td style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold' }}>{Math.round(Number(invoice.cgst_amount))}</td>
+                      </tr>
+                      <tr>
+                        <th style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'left', fontWeight: 'bold', borderLeft: 'none' }}>SGST ({Number(invoice.sgst_percent || 0)}%)</th>
+                        <td style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold' }}>{Math.round(Number(invoice.sgst_amount))}</td>
+                      </tr>
+                      <tr>
+                        <th style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'left', fontWeight: 'bold', borderLeft: 'none', borderBottom: 'none' }}>Grand Total</th>
+                        <td style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold', borderBottom: 'none' }}>{Math.round(Number(invoice.grand_total))}</td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
-                <table style={{ borderCollapse: 'collapse', border: '1px solid #000', borderTop: 'none' }}>
-                  <tbody>
-                    <tr>
-                      <th style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'left', fontWeight: 'bold', borderLeft: 'none' }}>Total</th>
-                      <td style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold', width: '140px' }}>{Math.round(Number(invoice.subtotal))}</td>
-                    </tr>
-                    <tr>
-                      <th style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'left', fontWeight: 'bold', borderLeft: 'none' }}>CGST ({Number(invoice.cgst_percent || 0)}%)</th>
-                      <td style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold' }}>{Math.round(Number(invoice.cgst_amount))}</td>
-                    </tr>
-                    <tr>
-                      <th style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'left', fontWeight: 'bold', borderLeft: 'none' }}>SGST ({Number(invoice.sgst_percent || 0)}%)</th>
-                      <td style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold' }}>{Math.round(Number(invoice.sgst_amount))}</td>
-                    </tr>
-                    <tr>
-                      <th style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'left', fontWeight: 'bold', borderLeft: 'none', borderBottom: 'none' }}>Grand Total</th>
-                      <td style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold', borderBottom: 'none' }}>{Math.round(Number(invoice.grand_total))}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
 
                 <div style={{ marginTop: '10px', fontSize: '13px', lineHeight: 1.2 }}>
                   Rupees in words:<br />
@@ -447,234 +447,234 @@ export default function InvoiceView() {
             </div>
           </div>
         </div>
-      <div className="d-md-none p-3 space-y-4 bg-light d-print-none" style={{ minHeight: '100vh', paddingBottom: '100px' }}>
-        {/* ACTION BUTTONS (Top Static - 1 Row) */}
-        <div className="bg-white p-3 d-flex gap-2 rounded-xl shadow-sm border no-print align-items-center">
-          <BackButton />
-          <button
-            className="btn btn-outline-primary py-2 rounded-lg fw-bold d-flex align-items-center justify-content-center text-xs"
-            style={{ flex: 1 }}
-            onClick={() => navigate(`/invoices/${invoice.id}/edit`)}
-          >
-            Edit
-          </button>
-          <a
-            className="btn btn-outline-primary py-2 rounded-lg fw-bold d-flex align-items-center justify-content-center text-xs"
-            style={{ flex: 1 }}
-            href={invoicePdfUrl(invoice.id, true)}
-            target="_blank"
-            rel="noreferrer"
-          >
-            PDF
-          </a>
-          <button
-            className="btn btn-primary py-2 rounded-lg fw-bold shadow-sm text-xs"
-            style={{ flex: 1 }}
-            onClick={() => window.print()}
-          >
-            Print
-          </button>
-        </div>
-
-        {/* HEADER SECTION */}
-        <div className="bg-white p-4 rounded-xl shadow-sm border">
-          <div className="d-flex justify-content-between text-sm mb-2">
-            <span className="text-secondary fw-semibold small">Invoice</span>
-            <span className="fw-bold text-dark">{invoice.invoice_number}</span>
+        <div className="d-md-none p-3 space-y-4 bg-light d-print-none" style={{ minHeight: '100vh', paddingBottom: '100px' }}>
+          {/* ACTION BUTTONS (Top Static - 1 Row) */}
+          <div className="bg-white p-3 d-flex gap-2 rounded-xl shadow-sm border no-print align-items-center">
+            <BackButton />
+            <button
+              className="btn btn-outline-primary py-2 rounded-lg fw-bold d-flex align-items-center justify-content-center text-xs"
+              style={{ flex: 1 }}
+              onClick={() => navigate(`/invoices/${invoice.id}/edit`)}
+            >
+              Edit
+            </button>
+            <a
+              className="btn btn-outline-primary py-2 rounded-lg fw-bold d-flex align-items-center justify-content-center text-xs"
+              style={{ flex: 1 }}
+              href={invoicePdfUrl(invoice.id, true)}
+              target="_blank"
+              rel="noreferrer"
+            >
+              PDF
+            </a>
+            <button
+              className="btn btn-primary py-2 rounded-lg fw-bold shadow-sm text-xs"
+              style={{ flex: 1 }}
+              onClick={() => window.print()}
+            >
+              Print
+            </button>
           </div>
-          <div className="d-flex justify-content-between text-sm">
-            <span className="text-secondary fw-semibold small">Date</span>
-            <span className="fw-semibold text-dark">{formatDate(invoice.invoice_date)}</span>
-          </div>
-        </div>
 
-        <div className="p-3">
-          {/* COMPANY DETAILS CARD */}
-          <div className="bg-white rounded-3 shadow-sm border mb-3 overflow-hidden">
-            <div className="p-3 border-bottom bg-light d-flex justify-content-between align-items-center">
-              <span style={{ fontSize: '10px', fontWeight: 'bold', color: '#666' }}>|| Shri Banashankari Devi Prasanna ||</span>
-              <span className="badge bg-dark text-uppercase" style={{ fontSize: '9px' }}>Cash / Credit Bill</span>
+          {/* HEADER SECTION */}
+          <div className="bg-white p-4 rounded-xl shadow-sm border">
+            <div className="d-flex justify-content-between text-sm mb-2">
+              <span className="text-secondary fw-semibold small">Invoice</span>
+              <span className="fw-bold text-dark">{invoice.invoice_number}</span>
             </div>
-            <div className="p-3">
-              <div className="d-flex align-items-center gap-3 mb-3">
-                {company?.logo && (
-                  <div className="border rounded p-1">
-                    <img src={`${baseURL}/storage/${company.logo}`} alt="Logo" style={{ maxHeight: '50px', maxWidth: '80px', objectFit: 'contain' }} />
-                  </div>
-                )}
-                <div>
-                  <h6 className="fw-bold text-dark mb-1" style={{ fontSize: '14px', lineHeight: 1.2 }}>{company?.company_name}</h6>
-                  <p className="text-secondary mb-0" style={{ fontSize: '11px' }}>{company?.address}</p>
-                </div>
-              </div>
-
-              <div className="row g-3 pt-2 border-top">
-                <div className="col-6">
-                  <p className="text-uppercase text-secondary fw-bold mb-1" style={{ fontSize: '9px' }}>Registration</p>
-                  <div className="small" style={{ fontSize: '11px', lineHeight: 1.4 }}>
-                    {company?.gstin && <div><span className="text-muted">GST:</span> {company.gstin}</div>}
-                    {company?.pan && <div><span className="text-muted">PAN:</span> {company.pan}</div>}
-                    {company?.k2_recipient_code && <div><span className="text-muted">K-2:</span> {company.k2_recipient_code}</div>}
-                  </div>
-                </div>
-                <div className="col-6">
-                  <p className="text-uppercase text-secondary fw-bold mb-1" style={{ fontSize: '9px' }}>Contact</p>
-                  <div className="small" style={{ fontSize: '11px', lineHeight: 1.4 }}>
-                    {company?.phone && <div>{company.phone}</div>}
-                    {company?.whatsapp_no && <div>{company.whatsapp_no}</div>}
-                    <div className="text-truncate" style={{ maxWidth: '100%' }}>{company?.email}</div>
-                  </div>
-                </div>
-              </div>
+            <div className="d-flex justify-content-between text-sm">
+              <span className="text-secondary fw-semibold small">Date</span>
+              <span className="fw-semibold text-dark">{formatDate(invoice.invoice_date)}</span>
             </div>
           </div>
 
-          {/* HEADER SECTION (Invoice # and Date) */}
-          <div className="bg-white rounded-3 shadow-sm border mb-3 overflow-hidden">
-            <div className="bg-primary p-1"></div>
-            <div className="p-3">
-              <div className="row g-0">
-                <div className="col-6 border-end pe-3">
-                  <p className="text-uppercase text-secondary fw-bold mb-1" style={{ fontSize: '10px', letterSpacing: '0.5px' }}>Invoice Number</p>
-                  <p className="fw-bold text-dark mb-0 fs-5">{invoice.invoice_number}</p>
-                </div>
-                <div className="col-6 ps-3">
-                  <p className="text-uppercase text-secondary fw-bold mb-1" style={{ fontSize: '10px', letterSpacing: '0.5px' }}>Invoice Date</p>
-                  <p className="fw-bold text-dark mb-0 fs-6">{invoice.invoice_date}</p>
-                </div>
+          <div className="p-3">
+            {/* COMPANY DETAILS CARD */}
+            <div className="bg-white rounded-3 shadow-sm border mb-3 overflow-hidden">
+              <div className="p-3 border-bottom bg-light d-flex justify-content-between align-items-center">
+                <span style={{ fontSize: '10px', fontWeight: 'bold', color: '#666' }}>|| Shri Banashankari Devi Prasanna ||</span>
+                <span className="badge bg-dark text-uppercase" style={{ fontSize: '9px' }}>Cash / Credit Bill</span>
               </div>
-            </div>
-          </div>
-
-          {/* CUSTOMER SECTION */}
-          <div className="bg-white rounded-3 shadow-sm border mb-4 p-3">
-            <div className="d-flex justify-content-between align-items-start mb-3">
-              <div className="d-flex align-items-center gap-2">
-                <div className="bg-primary bg-opacity-10 p-2 rounded-circle">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="text-primary bi bi-person-fill" viewBox="0 0 16 16">
-                    <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
-                  </svg>
-                </div>
-                <p className="text-uppercase text-secondary fw-bold mb-0" style={{ fontSize: '11px', letterSpacing: '0.5px' }}>Billing To</p>
-              </div>
-              <p className="fw-bold text-primary fs-5 mb-0 text-end">{invoice.customer?.name}</p>
-            </div>
-
-            {invoice.customer?.email && (
-              <div className="d-flex justify-content-between align-items-center mb-2">
-                <p className="text-secondary small mb-0 fw-bold text-uppercase opacity-75" style={{ fontSize: '10px' }}>Email</p>
-                <p className="text-dark small mb-0 fw-semibold text-end">{invoice.customer.email}</p>
-              </div>
-            )}
-
-            {invoice.customer?.address && (
-              <div className="mt-2 pt-2 border-top d-flex justify-content-between align-items-start">
-                <p className="text-secondary small mb-0 fw-bold text-uppercase opacity-75" style={{ fontSize: '10px' }}>Address</p>
-                <p className="text-secondary mb-0 small opacity-75 text-end" style={{ maxWidth: '70%' }}>{invoice.customer.address}</p>
-              </div>
-            )}
-          </div>
-
-          {/* ITEMS SECTION */}
-          <div className="mb-4">
-            <div className="d-flex justify-content-between align-items-center mb-2 px-1">
-              <p className="text-uppercase text-secondary fw-bold mb-0" style={{ fontSize: '11px', letterSpacing: '0.5px' }}>Items ({invoice.items.length})</p>
-            </div>
-            <div className="d-flex flex-column gap-3">
-              {invoice.items.map((it, idx) => (
-                <div key={idx} className="bg-white rounded-3 shadow-sm border overflow-hidden">
-                  <div className="p-3">
-                    <div className="d-flex justify-content-between align-items-start mb-3">
-                      <p className="fw-bold text-dark fs-6 mb-0" style={{ lineHeight: 1.3 }}>{it.item_name}</p>
-                      <span className="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2 py-1">
-                        {money(it.line_total)}
-                      </span>
+              <div className="p-3">
+                <div className="d-flex align-items-center gap-3 mb-3">
+                  {company?.logo && (
+                    <div className="border rounded p-1">
+                      <img src={`${baseURL}/storage/${company.logo}`} alt="Logo" style={{ maxHeight: '50px', maxWidth: '80px', objectFit: 'contain' }} />
                     </div>
-                    <div className="row g-2 text-center bg-light rounded-2 p-2">
-                      <div className="col-4">
-                        <p className="text-secondary mb-0 fw-bold" style={{ fontSize: '9px' }}>QTY</p>
-                        <p className="fw-bold text-dark mb-0 small">{it.quantity}</p>
-                      </div>
-                      <div className="col-4 border-start border-end">
-                        <p className="text-secondary mb-0 fw-bold" style={{ fontSize: '9px' }}>RATE</p>
-                        <p className="fw-bold text-dark mb-0 small">{money(it.price)}</p>
-                      </div>
-                      <div className="col-4">
-                        <p className="text-secondary mb-0 fw-bold" style={{ fontSize: '9px' }}>TAX</p>
-                        <p className="fw-bold text-dark mb-0 small">{combinedTax.toFixed(0)}%</p>
-                      </div>
+                  )}
+                  <div>
+                    <h6 className="fw-bold text-dark mb-1" style={{ fontSize: '14px', lineHeight: 1.2 }}>{company?.company_name}</h6>
+                    <p className="text-secondary mb-0" style={{ fontSize: '11px' }}>{company?.address}</p>
+                  </div>
+                </div>
+
+                <div className="row g-3 pt-2 border-top">
+                  <div className="col-6">
+                    <p className="text-uppercase text-secondary fw-bold mb-1" style={{ fontSize: '9px' }}>Registration</p>
+                    <div className="small" style={{ fontSize: '11px', lineHeight: 1.4 }}>
+                      {company?.gstin && <div><span className="text-muted">GST:</span> {company.gstin}</div>}
+                      {company?.pan && <div><span className="text-muted">PAN:</span> {company.pan}</div>}
+                      {company?.k2_recipient_code && <div><span className="text-muted">K-2:</span> {company.k2_recipient_code}</div>}
+                    </div>
+                  </div>
+                  <div className="col-6">
+                    <p className="text-uppercase text-secondary fw-bold mb-1" style={{ fontSize: '9px' }}>Contact</p>
+                    <div className="small" style={{ fontSize: '11px', lineHeight: 1.4 }}>
+                      {company?.phone && <div>{company.phone}</div>}
+                      {company?.whatsapp_no && <div>{company.whatsapp_no}</div>}
+                      <div className="text-truncate" style={{ maxWidth: '100%' }}>{company?.email}</div>
                     </div>
                   </div>
                 </div>
-              ))}
+              </div>
             </div>
-          </div>
 
-          {/* TOTALS & WORDS SECTION */}
-          <div className="bg-white rounded-4 shadow-lg border-0 mb-4 overflow-hidden">
-            <div className="p-4">
-              <div className="d-flex justify-content-between mb-2">
-                <span className="text-secondary">Subtotal</span>
-                <span className="fw-semibold">{money(invoice.subtotal)}</span>
-              </div>
-              <div className="d-flex justify-content-between mb-2 small text-secondary">
-                <span>SGST ({Number(invoice.sgst_percent || 0)}%)</span>
-                <span>{money(invoice.sgst_amount)}</span>
-              </div>
-              <div className="d-flex justify-content-between mb-3 small text-secondary">
-                <span>CGST ({Number(invoice.cgst_percent || 0)}%)</span>
-                <span>{money(invoice.cgst_amount)}</span>
-              </div>
-              <div className="pt-3 border-top">
-                <div className="d-flex justify-content-between align-items-center mb-1">
-                  <span className="fw-bold text-dark fs-5">Grand Total</span>
-                  <span className="fw-bold text-primary fs-3">{money(invoice.grand_total)}</span>
+            {/* HEADER SECTION (Invoice # and Date) */}
+            <div className="bg-white rounded-3 shadow-sm border mb-3 overflow-hidden">
+              <div className="bg-primary p-1"></div>
+              <div className="p-3">
+                <div className="row g-0">
+                  <div className="col-6 border-end pe-3">
+                    <p className="text-uppercase text-secondary fw-bold mb-1" style={{ fontSize: '10px', letterSpacing: '0.5px' }}>Invoice Number</p>
+                    <p className="fw-bold text-dark mb-0 fs-5">{invoice.invoice_number}</p>
+                  </div>
+                  <div className="col-6 ps-3">
+                    <p className="text-uppercase text-secondary fw-bold mb-1" style={{ fontSize: '10px', letterSpacing: '0.5px' }}>Invoice Date</p>
+                    <p className="fw-bold text-dark mb-0 fs-6">{invoice.invoice_date}</p>
+                  </div>
                 </div>
               </div>
             </div>
-            <div className="bg-light p-4 border-top">
-              <p className="text-uppercase text-secondary fw-bold mb-2" style={{ fontSize: '10px', letterSpacing: '0.5px' }}>Amount in Words</p>
-              <p className="fw-bold text-dark mb-0 small" style={{ lineHeight: 1.5 }}>{numberToWords(invoice.grand_total)}</p>
-            </div>
-          </div>
 
-          {/* SIGNATORY SECTION */}
-          <div className="bg-white rounded-3 shadow-sm border p-4 mb-2 text-center">
-            {company?.signature ? (
-              <div className="mb-3">
-                <img src={`${baseURL}/storage/${company.signature}`}
-                  alt='Authorised Signatory'
-                  style={{ maxHeight: '80px', maxWidth: '100%' }}
-                />
+            {/* CUSTOMER SECTION */}
+            <div className="bg-white rounded-3 shadow-sm border mb-4 p-3">
+              <div className="d-flex justify-content-between align-items-start mb-3">
+                <div className="d-flex align-items-center gap-2">
+                  <div className="bg-primary bg-opacity-10 p-2 rounded-circle">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="text-primary bi bi-person-fill" viewBox="0 0 16 16">
+                      <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                    </svg>
+                  </div>
+                  <p className="text-uppercase text-secondary fw-bold mb-0" style={{ fontSize: '11px', letterSpacing: '0.5px' }}>Billing To</p>
+                </div>
+                <p className="fw-bold text-primary fs-5 mb-0 text-end">{invoice.customer?.name}</p>
               </div>
-            ) : (
-              <div style={{ height: '60px', border: '1px dashed #dee2e6', borderRadius: '8px', marginBottom: '15px' }} className="d-flex align-items-center justify-content-center text-secondary small opacity-50">Signature Placeholder</div>
-            )}
-            <div className="pt-2 border-top">
-              <p className="fw-bold text-dark mb-0">Authorized Signatory</p>
-              {/* <p className="text-secondary small mb-0">{company?.company_name}</p> */}
+
+              {invoice.customer?.email && (
+                <div className="d-flex justify-content-between align-items-center mb-2">
+                  <p className="text-secondary small mb-0 fw-bold text-uppercase opacity-75" style={{ fontSize: '10px' }}>Email</p>
+                  <p className="text-dark small mb-0 fw-semibold text-end">{invoice.customer.email}</p>
+                </div>
+              )}
+
+              {invoice.customer?.address && (
+                <div className="mt-2 pt-2 border-top d-flex justify-content-between align-items-start">
+                  <p className="text-secondary small mb-0 fw-bold text-uppercase opacity-75" style={{ fontSize: '10px' }}>Address</p>
+                  <p className="text-secondary mb-0 small opacity-75 text-end" style={{ maxWidth: '70%' }}>{invoice.customer.address}</p>
+                </div>
+              )}
             </div>
-          </div>
-          <div className="mt-3 pt-3 border-top">
-            {invoice.notes && (
-              <div className="mb-3">
-                <p className="text-secondary text-uppercase mb-1 fw-bold tracking-wider" style={{ fontSize: '10px' }}>
-                  Note
-                </p>
-                <p className="fw-bold text-dark mb-0 small" style={{ lineHeight: 1.4, whiteSpace: 'pre-wrap' }}>
-                  {invoice.notes}
-                </p>
+
+            {/* ITEMS SECTION */}
+            <div className="mb-4">
+              <div className="d-flex justify-content-between align-items-center mb-2 px-1">
+                <p className="text-uppercase text-secondary fw-bold mb-0" style={{ fontSize: '11px', letterSpacing: '0.5px' }}>Items ({invoice.items.length})</p>
               </div>
-            )}
-            <p className="text-secondary text-uppercase mb-1 fw-bold tracking-wider" style={{ fontSize: '10px' }}>
-              Amount in Words
-            </p>
-            <p className="fw-bold text-dark mb-0 small" style={{ lineHeight: 1.4 }}>
-            </p>
+              <div className="d-flex flex-column gap-3">
+                {invoice.items.map((it, idx) => (
+                  <div key={idx} className="bg-white rounded-3 shadow-sm border overflow-hidden">
+                    <div className="p-3">
+                      <div className="d-flex justify-content-between align-items-start mb-3">
+                        <p className="fw-bold text-dark fs-6 mb-0" style={{ lineHeight: 1.3 }}>{it.item_name}</p>
+                        <span className="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2 py-1">
+                          {money(it.line_total)}
+                        </span>
+                      </div>
+                      <div className="row g-2 text-center bg-light rounded-2 p-2">
+                        <div className="col-4">
+                          <p className="text-secondary mb-0 fw-bold" style={{ fontSize: '9px' }}>QTY</p>
+                          <p className="fw-bold text-dark mb-0 small">{it.quantity}</p>
+                        </div>
+                        <div className="col-4 border-start border-end">
+                          <p className="text-secondary mb-0 fw-bold" style={{ fontSize: '9px' }}>RATE</p>
+                          <p className="fw-bold text-dark mb-0 small">{money(it.price)}</p>
+                        </div>
+                        <div className="col-4">
+                          <p className="text-secondary mb-0 fw-bold" style={{ fontSize: '9px' }}>TAX</p>
+                          <p className="fw-bold text-dark mb-0 small">{combinedTax.toFixed(0)}%</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* TOTALS & WORDS SECTION */}
+            <div className="bg-white rounded-4 shadow-lg border-0 mb-4 overflow-hidden">
+              <div className="p-4">
+                <div className="d-flex justify-content-between mb-2">
+                  <span className="text-secondary">Subtotal</span>
+                  <span className="fw-semibold">{money(invoice.subtotal)}</span>
+                </div>
+                <div className="d-flex justify-content-between mb-2 small text-secondary">
+                  <span>SGST ({Number(invoice.sgst_percent || 0)}%)</span>
+                  <span>{money(invoice.sgst_amount)}</span>
+                </div>
+                <div className="d-flex justify-content-between mb-3 small text-secondary">
+                  <span>CGST ({Number(invoice.cgst_percent || 0)}%)</span>
+                  <span>{money(invoice.cgst_amount)}</span>
+                </div>
+                <div className="pt-3 border-top">
+                  <div className="d-flex justify-content-between align-items-center mb-1">
+                    <span className="fw-bold text-dark fs-5">Grand Total</span>
+                    <span className="fw-bold text-primary fs-3">{money(invoice.grand_total)}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-light p-4 border-top">
+                <p className="text-uppercase text-secondary fw-bold mb-2" style={{ fontSize: '10px', letterSpacing: '0.5px' }}>Amount in Words</p>
+                <p className="fw-bold text-dark mb-0 small" style={{ lineHeight: 1.5 }}>{numberToWords(invoice.grand_total)}</p>
+              </div>
+            </div>
+
+            {/* SIGNATORY SECTION */}
+            <div className="bg-white rounded-3 shadow-sm border p-4 mb-2 text-center">
+              {company?.signature ? (
+                <div className="mb-3">
+                  <img src={`${baseURL}/storage/${company.signature}`}
+                    alt='Authorised Signatory'
+                    style={{ maxHeight: '80px', maxWidth: '100%' }}
+                  />
+                </div>
+              ) : (
+                <div style={{ height: '60px', border: '1px dashed #dee2e6', borderRadius: '8px', marginBottom: '15px' }} className="d-flex align-items-center justify-content-center text-secondary small opacity-50">Signature Placeholder</div>
+              )}
+              <div className="pt-2 border-top">
+                <p className="fw-bold text-dark mb-0">Authorized Signatory</p>
+                {/* <p className="text-secondary small mb-0">{company?.company_name}</p> */}
+              </div>
+            </div>
+            <div className="mt-3 pt-3 border-top">
+              {invoice.notes && (
+                <div className="mb-3">
+                  <p className="text-secondary text-uppercase mb-1 fw-bold tracking-wider" style={{ fontSize: '10px' }}>
+                    Note
+                  </p>
+                  <p className="fw-bold text-dark mb-0 small" style={{ lineHeight: 1.4, whiteSpace: 'pre-wrap' }}>
+                    {invoice.notes}
+                  </p>
+                </div>
+              )}
+              <p className="text-secondary text-uppercase mb-1 fw-bold tracking-wider" style={{ fontSize: '10px' }}>
+                Amount in Words
+              </p>
+              <p className="fw-bold text-dark mb-0 small" style={{ lineHeight: 1.4 }}>
+              </p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
     </div>
   );
 }
