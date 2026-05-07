@@ -217,8 +217,8 @@ export default function InvoiceView() {
       <style>
         {`
           @media print {
-            @page { margin: 0; }
-            body { margin: 0.5cm; }
+            @page { size: A4 portrait; margin: 2mm; }
+            body { margin: 0; }
             .bottom-nav, .navbar, .fab-container, .no-print { display: none !important; }
             .invoice-footer-block { break-inside: avoid; page-break-inside: avoid; }
             .print-col-sl { width: 30px !important; }
@@ -262,22 +262,22 @@ export default function InvoiceView() {
         <div className="card shadow-sm border-0">
           <div className="card-body invoice-print" style={{ color: '#000', fontSize: '13px', lineHeight: 1.4, padding: 0 }}>
             <div style={{ border: '1px solid #000', padding: '10px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginBottom: '10px' }}>
-                <div style={{ flex: '0 0 35%', textAlign: 'left', whiteSpace: 'nowrap', fontWeight: 'bold' }}>
-                  {company?.k2_recipient_code ? <>K-2 Recipient Code : {company.k2_recipient_code}<br /></> : null}
-                  {company?.gstin ? <>GSTIN : {company.gstin}<br /></> : null}
-                  {company?.pan ? <>Pan No : {company.pan}</> : null}
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginBottom: '10px', width: '100%' }}>
+                <div style={{ flex: '0 0 35%', textAlign: 'left', fontWeight: 'bold' }}>
+                  {company?.k2_recipient_code && <div style={{ whiteSpace: 'nowrap' }}>K-2 Recipient Code : {company.k2_recipient_code}</div>}
+                  {company?.gstin && <div style={{ whiteSpace: 'nowrap' }}>GSTIN : {company.gstin}</div>}
+                  {company?.pan && <div style={{ whiteSpace: 'nowrap' }}>Pan No : {company.pan}</div>}
                 </div>
-                <div style={{ flex: '0 0 30%', textAlign: 'center' }}>
+                <div style={{ flex: '0 0 20%', textAlign: 'center' }}>
                   <span style={{ fontSize: '10px', fontWeight: 'bold' }}>|| Shri Banashankari Devi Prasanna ||</span><br />
                   <div style={{ border: '1px solid #000', display: 'inline-block', padding: '2px 10px', marginTop: '5px', fontWeight: 'bold', fontSize: '10px' }}>
                     CASH / CREDIT BILL
                   </div>
                 </div>
-                <div style={{ flex: '0 0 35%', textAlign: 'right', fontWeight: 'bold', fontSize: '12px' }}>
-                  {company?.phone && <span>Phone : {company.phone}<br /></span>}
-                  {company?.whatsapp_no && <span> {company.whatsapp_no}<br /></span>}
-                  <span> Email: {company?.email}<br /> </span>
+                <div style={{ flex: '0 0 45%', textAlign: 'right', fontWeight: 'bold', fontSize: '11px' }}>
+                  {company?.phone && <div style={{ whiteSpace: 'nowrap' }}>Phone : {company.phone}</div>}
+                  {company?.whatsapp_no && <div style={{ whiteSpace: 'nowrap' }}>{company.whatsapp_no}</div>}
+                  {company?.email && <div style={{ whiteSpace: 'nowrap' }}>Email: {company.email}</div>}
                 </div>
               </div>
 

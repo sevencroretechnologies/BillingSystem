@@ -5,7 +5,7 @@
     <title>Invoice - {{ $invoice->invoice_number }}</title>
     <style>
         @page {
-            margin: 8mm;
+            margin: 5mm;
         }
         body {
             font-family: 'Helvetica', 'Arial', sans-serif;
@@ -108,7 +108,7 @@
             <td width="35%" class="text-right bold">
                 @if($company->phone) Phone: {{ $company->phone }}<br> @endif
                 @if($company->whatsapp_no) WhatsApp: {{ $company->whatsapp_no }}<br> @endif
-                {{ $company->email }}
+               Email: {{ $company->email }}
             </td>
         </tr>
     </table>
@@ -139,9 +139,9 @@
     </table>
 
     <!-- Month & Customer -->
-    <div class="text-right bold" style="font-size: 12px; margin-bottom: 10px;">
+    <!-- <div class="text-right bold" style="font-size: 12px; margin-bottom: 10px;">
         Month: {{ $invoice->invoice_date->format('F-Y') }}
-    </div>
+    </div> -->
 
     <div style="margin-bottom: 15px;">
         <span style="font-weight: bold; font-size: 14px; margin-right: 5px;">To,</span>
@@ -173,7 +173,7 @@
             </tr>
             @endforeach
 
-            @php $emptyCount = max(5 - $count, 0); @endphp
+            @php $emptyCount = max(10 - $count, 0); @endphp
             @for($i = 0; $i < $emptyCount; $i++)
             <tr class="empty-row {{ ($i == $emptyCount - 1) ? 'last-item-row' : '' }}">
                 <td class="text-center"><br></td>
