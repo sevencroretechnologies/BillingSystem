@@ -264,7 +264,7 @@ export default function InvoiceView() {
             <div style={{ border: '1px solid #000', padding: '10px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginBottom: '10px', width: '100%' }}>
                 <div style={{ flex: '0 0 35%', textAlign: 'left', fontWeight: 'bold' }}>
-                  {company?.k2_recipient_code && <div style={{ whiteSpace: 'nowrap' }}>K-2 Recipient Code : {company.k2_recipient_code}</div>}
+                  {company?.k2_recipient_code && <div style={{ whiteSpace: 'nowrap',marginRight:'12px' }}>K-2 Recipient Code : {company.k2_recipient_code}</div>}
                   {company?.gstin && <div style={{ whiteSpace: 'nowrap' }}>GSTIN : {company.gstin}</div>}
                   {company?.pan && <div style={{ whiteSpace: 'nowrap' }}>Pan No : {company.pan}</div>}
                 </div>
