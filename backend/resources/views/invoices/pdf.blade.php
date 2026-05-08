@@ -94,7 +94,7 @@
     <!-- Top Metadata -->
     <table class="small" style="margin-bottom: 10px; width: 100%;">
         <tr>
-            <td width="35%">
+            <td width="35%" class="text-left bold">
                 @if($company->k2_recipient_code) <strong>K-2 Recipient Code:</strong> {{ $company->k2_recipient_code }}<br> @endif
                 @if($company->gstin) <strong>GSTIN:</strong> {{ $company->gstin }}<br> @endif
                 @if($company->pan) <strong>PAN:</strong> {{ $company->pan }} @endif
