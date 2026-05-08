@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { getCompany, getInvoice, invoicePdfUrl } from '../api/endpoints';
 import Alert from '../components/Alert';
 import BackButton from '../components/BackButton';
+import { formatIndianCurrency } from '../utils/format';
 
 const CURRENCY_SYMBOL = process.env.REACT_APP_CURRENCY_SYMBOL || '₹';
 
@@ -137,7 +138,7 @@ export default function InvoiceView() {
   if (error) return <Alert message={error} />;
   if (!invoice) return null;
 
-  const money = (n) => `${CURRENCY_SYMBOL}${Math.round(Number(n || 0))}`;
+  const money = (n) => `${CURRENCY_SYMBOL}${formatIndianCurrency(n)}`;
 
   // Combined tax calculation for total reference
   const combinedTax = Number(invoice.sgst_percent || 0) + Number(invoice.cgst_percent || 0);
@@ -217,7 +218,7 @@ export default function InvoiceView() {
       <style>
         {`
           @media print {
-            @page { size: A4 portrait; margin: 2mm; }
+            @page { size: A4 portrait; margin: 2mm 15mm; }
             body { margin: 0; }
             .bottom-nav, .navbar, .fab-container, .no-print { display: none !important; }
             .invoice-footer-block { break-inside: avoid; page-break-inside: avoid; }
@@ -264,7 +265,7 @@ export default function InvoiceView() {
             <div style={{ border: '1px solid #000', padding: '10px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginBottom: '10px', width: '100%' }}>
                 <div style={{ flex: '0 0 35%', textAlign: 'left', fontWeight: 'bold' }}>
-                  {company?.k2_recipient_code && <div style={{ whiteSpace: 'nowrap',marginRight:'12px' }}>K-2 Recipient Code : {company.k2_recipient_code}</div>}
+                  {company?.k2_recipient_code && <div style={{ whiteSpace: 'nowrap', marginRight: '12px' }}>K-2 Recipient Code : {company.k2_recipient_code}</div>}
                   {company?.gstin && <div style={{ whiteSpace: 'nowrap' }}>GSTIN : {company.gstin}</div>}
                   {company?.pan && <div style={{ whiteSpace: 'nowrap' }}>Pan No : {company.pan}</div>}
                 </div>
@@ -327,8 +328,8 @@ export default function InvoiceView() {
                         <td style={{ borderLeft: '1px solid #000', borderRight: '1px solid #000', padding: '4px 8px', textAlign: 'center', borderBottom: 'none', paddingBottom: isAbsoluteLast ? '10px' : '4px' }}>{String(idx + 1).padStart(2, '0')}.</td>
                         <td style={{ borderLeft: '1px solid #000', borderRight: '1px solid #000', padding: '4px 8px', textAlign: 'left', borderBottom: 'none', paddingBottom: isAbsoluteLast ? '10px' : '4px' }}>{it.item_name}</td>
                         <td style={{ borderLeft: '1px solid #000', borderRight: '1px solid #000', padding: '4px 8px', textAlign: 'center', borderBottom: 'none', paddingBottom: isAbsoluteLast ? '10px' : '4px' }}>{it.quantity}</td>
-                        <td style={{ borderLeft: '1px solid #000', borderRight: '1px solid #000', padding: '4px 8px', textAlign: 'center', borderBottom: 'none', paddingBottom: isAbsoluteLast ? '10px' : '4px' }}>{Math.round(it.price)}/-</td>
-                        <td style={{ borderLeft: '1px solid #000', borderRight: '1px solid #000', padding: '4px 8px', textAlign: 'right', borderBottom: 'none', paddingBottom: isAbsoluteLast ? '10px' : '4px' }}>{Number(it.line_total).toFixed(2)}</td>
+                        <td style={{ borderLeft: '1px solid #000', borderRight: '1px solid #000', padding: '4px 8px', textAlign: 'center', borderBottom: 'none', paddingBottom: isAbsoluteLast ? '10px' : '4px' }}>{formatIndianCurrency(it.price)}/-</td>
+                        <td style={{ borderLeft: '1px solid #000', borderRight: '1px solid #000', padding: '4px 8px', textAlign: 'right', borderBottom: 'none', paddingBottom: isAbsoluteLast ? '10px' : '4px' }}>{formatIndianCurrency(it.line_total)}</td>
                       </tr>
                     );
                   })}
@@ -362,19 +363,19 @@ export default function InvoiceView() {
                     <tbody>
                       <tr>
                         <th style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'left', fontWeight: 'bold', borderLeft: 'none' }}>Total</th>
-                        <td style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold', width: '140px' }}>{Math.round(Number(invoice.subtotal))}</td>
+                        <td style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold', width: '140px' }}>{formatIndianCurrency(invoice.subtotal)}</td>
                       </tr>
                       <tr>
                         <th style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'left', fontWeight: 'bold', borderLeft: 'none' }}>CGST ({Number(invoice.cgst_percent || 0)}%)</th>
-                        <td style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold' }}>{Math.round(Number(invoice.cgst_amount))}</td>
+                        <td style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold' }}>{formatIndianCurrency(invoice.cgst_amount)}</td>
                       </tr>
                       <tr>
                         <th style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'left', fontWeight: 'bold', borderLeft: 'none' }}>SGST ({Number(invoice.sgst_percent || 0)}%)</th>
-                        <td style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold' }}>{Math.round(Number(invoice.sgst_amount))}</td>
+                        <td style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold' }}>{formatIndianCurrency(invoice.sgst_amount)}</td>
                       </tr>
                       <tr>
                         <th style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'left', fontWeight: 'bold', borderLeft: 'none', borderBottom: 'none' }}>Grand Total</th>
-                        <td style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold', borderBottom: 'none' }}>{Math.round(Number(invoice.grand_total))}</td>
+                        <td style={{ border: '1px solid #000', padding: '6px 12px', fontSize: '14px', textAlign: 'right', fontWeight: 'bold', borderBottom: 'none' }}>{formatIndianCurrency(invoice.grand_total)}</td>
                       </tr>
                     </tbody>
                   </table>

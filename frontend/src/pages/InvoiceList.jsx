@@ -7,6 +7,7 @@ import Pagination from '../components/Pagination';
 import BackButton from '../components/BackButton';
 import * as XLSX from 'xlsx';
 import Swal from 'sweetalert2';
+import { formatIndianCurrency } from '../utils/format';
 
 // Invoice list with search by invoice number/customer name and date range.
 export default function InvoiceList() {
@@ -129,7 +130,7 @@ export default function InvoiceList() {
     {
       key: 'grand_total',
       header: 'Total',
-      render: (r) => Number(r.grand_total).toFixed(2),
+      render: (r) => formatIndianCurrency(r.grand_total),
     },
     {
       key: 'actions',
@@ -347,7 +348,7 @@ export default function InvoiceList() {
                         Amount
                       </p>
                       <p className="fw-bold text-primary m-0 fs-5">
-                        ₹{Number(row.grand_total).toFixed(2)}
+                        ₹{formatIndianCurrency(row.grand_total)}
                       </p>
                     </div>
                   </div>

@@ -66,4 +66,27 @@ class Invoice extends Model
 
         return 'INV-'.str_pad((string) $currentValue, 6, '0', STR_PAD_LEFT);
     }
+
+    /**
+     * Format number to Indian Currency style.
+     */
+    public static function formatIndianCurrency($number): string
+    {
+        if ($number === null || $number === '') {
+            return '0.00';
+        }
+        
+        $number = (float) $number;
+        $number_str = sprintf("%.2f", $number);
+        
+        list($amount, $decimal) = explode('.', $number_str);
+
+        $lastThree = substr($amount, -3);
+        $restUnits = substr($amount, 0, -3);
+        if ($restUnits != '') {
+            $restUnits = preg_replace("/\B(?=(\d{2})+(?!\d))/", ",", $restUnits);
+            $lastThree = "," . $lastThree;
+        }
+        return $restUnits . $lastThree . '.' . $decimal;
+    }
 }

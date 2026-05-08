@@ -12,6 +12,7 @@ import Alert from '../components/Alert';
 import BackButton from '../components/BackButton';
 import CreatableSelect from 'react-select/creatable';
 import Swal from 'sweetalert2';
+import { formatIndianCurrency } from '../utils/format';
 
 // Page to create or edit an invoice. Loads customers, items and the current
 // SGST/CGST configuration, lets the user enter a custom price per line,
@@ -180,16 +181,16 @@ export default function InvoiceForm() {
       };
     } else {
       const grand_total = baseSum;
-      
+
       const sgst_multiplier = (Number(tax.sgst) || 0) / 100;
       const cgst_multiplier = (Number(tax.cgst) || 0) / 100;
 
       const sgst_value = sgst_multiplier * grand_total;
       const cgst_value = cgst_multiplier * grand_total;
-      
+
       const total_gst = sgst_value + cgst_value;
       const subtotal = grand_total - total_gst;
-      
+
       return {
         subtotal: Math.round(subtotal),
         sgstAmount: Math.round(sgst_value),
@@ -277,7 +278,7 @@ export default function InvoiceForm() {
           </div>
 
           <hr className="my-4" />
-          
+
           <div className="skeleton mb-3" style={{ height: 24, width: 100 }}></div>
           <div className="table-responsive">
             <table className="table">
@@ -313,7 +314,7 @@ export default function InvoiceForm() {
               <div className="skeleton" style={{ height: 180, width: '100%' }}></div>
             </div>
           </div>
-          
+
           <div className="d-flex gap-2 mt-4">
             <div className="skeleton skeleton-button"></div>
             <div className="skeleton skeleton-button" style={{ width: 100 }}></div>
@@ -448,7 +449,7 @@ export default function InvoiceForm() {
                         required
                       />
                     </td>
-                    <td className="text-end align-middle">{lineTotal.toFixed(2)}</td>
+                    <td className="text-end align-middle">{formatIndianCurrency(lineTotal)}</td>
                     <td className="align-middle">
                       {rows.length > 1 && (
                         <button
@@ -537,7 +538,7 @@ export default function InvoiceForm() {
 
                 {/* Row 3: Total + Remove */}
                 <div className="d-flex justify-content-between align-items-center">
-                  <span className="text-sm font-medium">₹{lineTotal.toFixed(2)}</span>
+                  <span className="text-sm font-medium">₹{formatIndianCurrency(lineTotal)}</span>
                   <button
                     type="button"
                     onClick={() => removeRow(index)}
@@ -575,23 +576,23 @@ export default function InvoiceForm() {
               <tbody>
                 <tr>
                   <th>Subtotal</th>
-                  <td className="text-end">{totals.subtotal}</td>
+                  <td className="text-end">{formatIndianCurrency(totals.subtotal)}</td>
                 </tr>
                 <tr>
                   <th>SGST ({Number(tax.sgst)}%)</th>
-                  <td className="text-end">{totals.sgstAmount}</td>
+                  <td className="text-end">{formatIndianCurrency(totals.sgstAmount)}</td>
                 </tr>
                 <tr>
                   <th>CGST ({Number(tax.cgst)}%)</th>
-                  <td className="text-end">{totals.cgstAmount}</td>
+                  <td className="text-end">{formatIndianCurrency(totals.cgstAmount)}</td>
                 </tr>
                 <tr>
                   <th>Total Tax</th>
-                  <td className="text-end">{totals.taxTotal}</td>
+                  <td className="text-end">{formatIndianCurrency(totals.taxTotal)}</td>
                 </tr>
                 <tr>
                   <th className="fs-5">Grand Total</th>
-                  <td className="text-end fs-5 fw-bold">{totals.total}</td>
+                  <td className="text-end fs-5 fw-bold">{formatIndianCurrency(totals.total)}</td>
                 </tr>
               </tbody>
             </table>

@@ -5,7 +5,7 @@
     <title>Invoice - {{ $invoice->invoice_number }}</title>
     <style>
         @page {
-            margin: 5mm;
+            margin: 5mm 15mm;
         }
         body {
             font-family: 'Helvetica', 'Arial', sans-serif;
@@ -168,8 +168,8 @@
                 <td class="text-center">{{ sprintf('%02d', $i+1) }}.</td>
                 <td class="text-left text-bold" style="font-weight: bold;">{{ $item->item_name }}</td>
                 <td class="text-center">{{ $item->quantity }}</td>
-                <td class="text-center">{{ round($item->price) }}/-</td>
-                <td class="text-right">{{ number_format($item->line_total, 2) }}</td>
+                <td class="text-center">{{ \App\Models\Invoice::formatIndianCurrency($item->price) }}/-</td>
+                <td class="text-right">{{ \App\Models\Invoice::formatIndianCurrency($item->line_total) }}</td>
             </tr>
             @endforeach
 
@@ -196,19 +196,19 @@
         <table class="totals-box">
             <tr>
                 <td width="55%" class="label-cell">Total</td>
-                <td width="45%" class="text-right bold">{{ number_format(round($subtotal), 0) }}</td>
+                <td width="45%" class="text-right bold">{{ \App\Models\Invoice::formatIndianCurrency($subtotal) }}</td>
             </tr>
             <tr>
                 <td class="label-cell">CGST ({{ (float)$invoice->cgst_percent }}%)</td>
-                <td class="text-right bold">{{ number_format(round($cgst), 0) }}</td>
+                <td class="text-right bold">{{ \App\Models\Invoice::formatIndianCurrency($cgst) }}</td>
             </tr>
             <tr>
                 <td class="label-cell">SGST ({{ (float)$invoice->sgst_percent }}%)</td>
-                <td class="text-right bold">{{ number_format(round($sgst), 0) }}</td>
+                <td class="text-right bold">{{ \App\Models\Invoice::formatIndianCurrency($sgst) }}</td>
             </tr>
             <tr>
                 <td class="label-cell" style="border-bottom: none;">Grand Total</td>
-                <td class="text-right bold" style="border-bottom: none; font-size: 14px;">{{ number_format(round($grand_total), 0) }}</td>
+                <td class="text-right bold" style="border-bottom: none; font-size: 14px;">{{ \App\Models\Invoice::formatIndianCurrency($grand_total) }}</td>
             </tr>
         </table>
     </div>
