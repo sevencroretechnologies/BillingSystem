@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { logout as apiLogout } from '../api/endpoints';
-import PwaInstallPrompt from './PwaInstallPrompt';
 
 // Top-level layout with a Bootstrap navbar and routed page content.
 export default function Layout() {
@@ -150,7 +149,7 @@ export default function Layout() {
 
         <div className="drawer-body">
           <div className="text-uppercase text-secondary x-small fw-bold mb-3 px-2" style={{ fontSize: '0.65rem', letterSpacing: '0.05em' }}>
-            System & Settings
+            System &amp; Settings
           </div>
           <ul className="nav flex-column">
             <li className="nav-item">
@@ -196,9 +195,6 @@ export default function Layout() {
           </div> */}
         </div>
       </div>
-
-      {/* PWA Install Prompt – shown above bottom nav */}
-      <PwaInstallPrompt />
 
       <main className="container py-4">
         <Outlet />
