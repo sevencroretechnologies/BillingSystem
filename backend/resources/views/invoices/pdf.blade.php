@@ -19,7 +19,8 @@
 
         .invoice-container {
             border: 1px solid #000;
-            padding: 5px 15px;
+            padding: 5px 5px;
+
             position: relative;
         }
 
