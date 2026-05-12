@@ -226,7 +226,7 @@ export default function InvoiceView() {
             .print-col-qty { width: 40px !important; }
             .print-col-rate { width: 70px !important; }
             .print-col-amount { width: 80px !important; }
-            .print-contact-info { text-align: left !important; padding-left: 40px !important; }
+            .print-contact-info { text-align: right !important; padding-right: 10px !important; }
           }
         `}
       </style>
