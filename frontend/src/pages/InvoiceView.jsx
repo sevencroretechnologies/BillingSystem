@@ -226,6 +226,7 @@ export default function InvoiceView() {
             .print-col-qty { width: 40px !important; }
             .print-col-rate { width: 70px !important; }
             .print-col-amount { width: 80px !important; }
+            .print-contact-info { text-align: left !important; padding-left: 40px !important; }
           }
         `}
       </style>
@@ -262,22 +263,22 @@ export default function InvoiceView() {
 
         <div className="card shadow-sm border-0">
           <div className="card-body invoice-print" style={{ color: '#000', fontSize: '13px', lineHeight: 1.4, padding: 0 }}>
-            <div style={{ border: '1px solid #000', padding: '10px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginBottom: '10px', width: '100%' }}>
-                <div style={{ flex: '0 0 35%', textAlign: 'left', fontWeight: 'bold' }}>
+            <div style={{ border: '1px solid #000', padding: '4px 10px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px',marginBottom:'10px', width: '100%' }}>
+                <div style={{ flex: '0 0 30%', textAlign: 'left', fontWeight: 'bold', fontSize: '9px' }}>
                   {company?.k2_recipient_code && <div style={{ whiteSpace: 'nowrap', marginRight: '12px' }}>K-2 Recipient Code : {company.k2_recipient_code}</div>}
                   {company?.gstin && <div style={{ whiteSpace: 'nowrap' }}>GSTIN : {company.gstin}</div>}
                   {company?.pan && <div style={{ whiteSpace: 'nowrap' }}>Pan No : {company.pan}</div>}
                 </div>
-                <div style={{ flex: '0 0 20%', textAlign: 'center' }}>
-                  <span style={{ fontSize: '10px', fontWeight: 'bold' }}>|| Shri Banashankari Devi Prasanna ||</span><br />
+                <div style={{ flex: '0 0 30%', textAlign: 'center' }}>
+                  <span style={{ fontSize: '9px', fontWeight: 'bold', whiteSpace: 'nowrap' }}>|| Shri Banashankari Devi Prasanna ||</span><br />
                   <div style={{ border: '1px solid #000', display: 'inline-block', padding: '2px 10px', marginTop: '5px', fontWeight: 'bold', fontSize: '10px' }}>
                     CASH / CREDIT BILL
                   </div>
                 </div>
-                <div style={{ flex: '0 0 45%', textAlign: 'right', fontWeight: 'bold', fontSize: '11px' }}>
+                <div className="print-contact-info" style={{ flex: '0 0 40%', textAlign: 'right', fontWeight: 'bold', fontSize: '9px' }}>
                   {company?.phone && <div style={{ whiteSpace: 'nowrap' }}>Phone : {company.phone}</div>}
-                  {company?.whatsapp_no && <div style={{ whiteSpace: 'nowrap' }}>{company.whatsapp_no}</div>}
+                  {company?.whatsapp_no && <div style={{ whiteSpace: 'nowrap' }}>WhatsApp: {company.whatsapp_no}</div>}
                   {company?.email && <div style={{ whiteSpace: 'nowrap' }}>Email: {company.email}</div>}
                 </div>
               </div>
@@ -287,7 +288,7 @@ export default function InvoiceView() {
                   {company?.logo && <img src={`${baseURL}/storage/${company.logo}`} alt="Logo" style={{ maxHeight: '60px', maxWidth: '150px' }} />}
                   <div style={{ textAlign: 'center' }}>
                     <div style={{ fontSize: '15px', fontWeight: 'bold', textTransform: 'uppercase', lineHeight: 1.1 }}>{company?.company_name || 'Your Company'}</div>
-                    {company?.address && <div style={{ fontSize: '13px', marginTop: '2px' }}>{company.address}</div>}
+                    {company?.address && <div style={{ fontSize: '10px', marginTop: '2px', fontWeight: 'bold' }}>{company.address}</div>}
                   </div>
                 </div>
               </div>
