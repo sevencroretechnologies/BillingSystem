@@ -5,6 +5,7 @@ import Alert from '../components/Alert';
 import DataTable from '../components/DataTable';
 import Pagination from '../components/Pagination';
 import BackButton from '../components/BackButton';
+import Swal from 'sweetalert2';
 
 // Item/product list with search, pagination and delete.
 export default function ItemList() {
@@ -41,12 +42,34 @@ export default function ItemList() {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Delete this item?')) return;
-    try {
-      await deleteItem(id);
-      fetchData();
-    } catch (e) {
-      setError(e?.response?.data?.message || 'Failed to delete item.');
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: "This item will be soft-deleted.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await deleteItem(id);
+        Swal.fire({
+          icon: 'success',
+          title: 'Deleted!',
+          text: 'Item has been deleted.',
+          timer: 1500,
+          showConfirmButton: false
+        });
+        fetchData();
+      } catch (e) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error!',
+          text: e?.response?.data?.message || 'Failed to delete item.'
+        });
+      }
     }
   };
 

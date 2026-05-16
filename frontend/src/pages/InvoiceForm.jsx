@@ -470,7 +470,7 @@ export default function InvoiceForm() {
 
           <div className="mt-2">
             <button type="button" className="btn btn-outline-secondary btn-sm" onClick={addRow}>
-              + Add Row
+              + Add Items
             </button>
           </div>
         </div>

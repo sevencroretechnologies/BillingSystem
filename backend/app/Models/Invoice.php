@@ -12,6 +12,35 @@ use App\Models\InvoiceCounter;
 class Invoice extends Model
 {
     use HasFactory, SoftDeletes;
+    
+    /**
+     * The "booted" method of the model.
+     */
+    protected static function booted()
+    {
+        static::deleting(function ($invoice) {
+            // If it's a soft delete (not a force delete), rename the invoice number
+            // to free up the original number for future use.
+            if (!$invoice->isForceDeleting()) {
+                $originalNumber = $invoice->invoice_number;
+                $invoice->invoice_number = $originalNumber . '-DEL-' . time();
+                $invoice->save();
+
+                // Roll back the global counter if this was the most recent invoice created.
+                // This allows the user to immediately reuse the number.
+                $counter = InvoiceCounter::first();
+                if ($counter) {
+                    preg_match('/INV-(\d+)/', $originalNumber, $matches);
+                    if (isset($matches[1])) {
+                        $num = (int) $matches[1];
+                        if ($num === ($counter->invoice_counter - 1)) {
+                            $counter->decrement('invoice_counter');
+                        }
+                    }
+                }
+            }
+        });
+    }
 
     protected $fillable = [
         'invoice_number',

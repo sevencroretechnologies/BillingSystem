@@ -114,12 +114,34 @@ export default function InvoiceList() {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Delete this invoice?')) return;
-    try {
-      await deleteInvoice(id);
-      fetchData();
-    } catch (e) {
-      setError(e?.response?.data?.message || 'Failed to delete invoice.');
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: "This invoice will be soft-deleted.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await deleteInvoice(id);
+        Swal.fire({
+          icon: 'success',
+          title: 'Deleted!',
+          text: 'Invoice has been deleted.',
+          timer: 1500,
+          showConfirmButton: false
+        });
+        fetchData();
+      } catch (e) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error!',
+          text: e?.response?.data?.message || 'Failed to delete invoice.'
+        });
+      }
     }
   };
 

@@ -5,6 +5,7 @@ import Alert from '../components/Alert';
 import DataTable from '../components/DataTable';
 import Pagination from '../components/Pagination';
 import BackButton from '../components/BackButton';
+import Swal from 'sweetalert2';
 
 // Customer list page with search + pagination + delete action.
 export default function CustomerList() {
@@ -42,12 +43,34 @@ export default function CustomerList() {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Delete this customer?')) return;
-    try {
-      await deleteCustomer(id);
-      fetchData();
-    } catch (e) {
-      setError(e?.response?.data?.message || 'Failed to delete customer.');
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: "This customer will be soft-deleted.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await deleteCustomer(id);
+        Swal.fire({
+          icon: 'success',
+          title: 'Deleted!',
+          text: 'Customer has been deleted.',
+          timer: 1500,
+          showConfirmButton: false
+        });
+        fetchData();
+      } catch (e) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error!',
+          text: e?.response?.data?.message || 'Failed to delete customer.'
+        });
+      }
     }
   };
 
